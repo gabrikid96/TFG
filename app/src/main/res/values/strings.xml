@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TFG</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="Logo">Logo</string>
+    <string name="login_information">login</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_login">Login</string>
+    <string name="no_account">Without account</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="action_register">Register</string>
+    <string name="prompt_name">Name</string>
+</resources>
