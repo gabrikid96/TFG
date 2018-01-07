@@ -1,5 +1,7 @@
 package grodrich7.tfg;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
@@ -23,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     private AutoCompleteTextView emailInput;
     private EditText passwordInput;
     private ProgressBar progressBar;
+    private Button registerBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,18 @@ public class RegisterActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.input_email);
         passwordInput = findViewById(R.id.input_password);
         progressBar = findViewById(R.id.progressBar);
+        registerBtn = findViewById(R.id.btn_register);
+        registerBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (BuildConfig.DEBUG) {
+                    nameInput.setText("Gabriel");
+                    emailInput.setText("admin@admin.com");
+                    passwordInput.setText("admin1");
+                }
+                return false;
+            }
+        });
     }
 
     public void register(View v){
@@ -48,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                         // Sign in success, update UI with the signed-in user's information
                         FirebaseUser user = mAuth.getCurrentUser();
                         Snackbar.make(passwordInput,"Good register", Snackbar.LENGTH_SHORT).show();
-                        //updateUI(user);
+                        updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
                         Snackbar.make(passwordInput,"Bad register", Snackbar.LENGTH_SHORT).show();
@@ -58,6 +74,17 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             });
     }
+
+    private void updateUI(FirebaseUser user) {
+        if (user == null){
+
+        }else{
+            Intent returnIntent = new Intent();
+            setResult(Activity.RESULT_OK,returnIntent);
+            finish();
+        }
+    }
+
 
     public boolean checkInputs(){
         boolean isCorrect = true;
@@ -99,7 +126,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        super.onBackPressed();
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_CANCELED, returnIntent);
         overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
+        finish();
     }
 }

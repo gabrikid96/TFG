@@ -1,5 +1,6 @@
 package grodrich7.tfg;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -26,11 +27,12 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int LOGIN_RESULT = 1;
     private ProgressBar progressBar;
     private ImageView logoImage;
     private LinearLayout loginLayout;
 
-    /*Login Views*/
+    /**Login Views**/
     private AutoCompleteTextView emailInput;
     private EditText passwordInput;
 
@@ -50,18 +52,39 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if (!restarted){
             // Check if user is signed in (non-null) and update UI accordingly.
-            FirebaseUser currentUser = mAuth.getCurrentUser();
             updateUI(currentUser);
+        }else{
+            if (currentUser != null){
+                goHome();
+            }
         }
     }
 
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        restarted = true;
-        Toast.makeText(this, "Restart", Toast.LENGTH_SHORT);
+    private void getViewsByXML() {
+        /*TITLE LAYOUT*/
+        logoImage = findViewById(R.id.logoImage);
+        progressBar = findViewById(R.id.progressBar);
+        loginLayout = findViewById(R.id.loginLayout);
+
+        logoImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (BuildConfig.DEBUG && mAuth.getCurrentUser() != null) {
+                    Snackbar.make(logoImage,"Log Out " + mAuth.getCurrentUser().getEmail(), Snackbar.LENGTH_SHORT).show();
+                    mAuth.signOut();
+                    updateUI(null);
+                }
+
+                return false;
+            }
+        });
+
+        /*LOGIN LAYOUT*/
+        emailInput = findViewById(R.id.input_email);
+        passwordInput = findViewById(R.id.input_password);
     }
 
     public void login(View v){
@@ -77,34 +100,6 @@ public class MainActivity extends AppCompatActivity {
             });
     }
 
-    public void register(View v){
-        Intent intent = new Intent(MainActivity.this,RegisterActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
-    }
-
-    public boolean checkInputs(){
-        boolean isCorrect = true;
-        emailInput.setError(null);
-        passwordInput.setError(null);
-
-        String email = emailInput.getText().toString();
-        String password = passwordInput.getText().toString();
-
-        if (password.isEmpty() || !isValidPassword(password)){
-            passwordInput.setError(getString(R.string.error_invalid_password));
-            isCorrect = false;
-        }
-
-        if (email.isEmpty()){
-            emailInput.setError(getString(R.string.error_field_required));
-            isCorrect = false;
-        }else if (!isValidEmail(email)){
-            emailInput.setError(getString(R.string.error_invalid_email));
-            isCorrect = false;
-        }
-        return isCorrect;
-    }
 
     private void updateUI(FirebaseUser user) {
         if (loginLayout.getVisibility() == View.VISIBLE && user == null){
@@ -113,21 +108,9 @@ public class MainActivity extends AppCompatActivity {
         else if (user == null){
             animationDelay(2000);
         }else{
-            //TODO : App home
             progressBar.setVisibility(View.GONE);
-            Snackbar.make(logoImage,"Good Login", Snackbar.LENGTH_SHORT).show();
+            goHome();
         }
-    }
-
-    private void getViewsByXML() {
-        /*TITLE LAYOUT*/
-        logoImage = findViewById(R.id.logoImage);
-        progressBar = findViewById(R.id.progressBar);
-        loginLayout = findViewById(R.id.loginLayout);
-
-        /*LOGIN LAYOUT*/
-        emailInput = findViewById(R.id.input_email);
-        passwordInput = findViewById(R.id.input_password);
     }
 
     private void animationDelay(final long milis){
@@ -162,6 +145,60 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**Activities**/
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode ==  LOGIN_RESULT) {
+            if(resultCode == Activity.RESULT_OK){
+                setContentView(R.layout.activity_main);
+                updateUI(mAuth.getCurrentUser());
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                restarted = true;
+            }
+        }
+    }
+
+    public void register(View v){
+        Intent intent = new Intent(MainActivity.this,RegisterActivity.class);
+        startActivityForResult(intent, LOGIN_RESULT);
+        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
+    }
+
+
+    public void goHome(){
+        Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
+    }
+
+    /**Validations**/
+
+    public boolean checkInputs(){
+        boolean isCorrect = true;
+        emailInput.setError(null);
+        passwordInput.setError(null);
+
+        String email = emailInput.getText().toString();
+        String password = passwordInput.getText().toString();
+
+        if (password.isEmpty() || !isValidPassword(password)){
+            passwordInput.setError(getString(R.string.error_invalid_password));
+            isCorrect = false;
+        }
+
+        if (email.isEmpty()){
+            emailInput.setError(getString(R.string.error_field_required));
+            isCorrect = false;
+        }else if (!isValidEmail(email)){
+            emailInput.setError(getString(R.string.error_invalid_email));
+            isCorrect = false;
+        }
+        return isCorrect;
+    }
+
     public boolean isValidPassword(String password){
         return password.length() > 4;
     }
@@ -169,5 +206,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean isValidEmail(String email){
         return email.contains("@");
     }
+
 
 }

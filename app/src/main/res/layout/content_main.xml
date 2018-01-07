@@ -32,6 +32,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:contentDescription="@string/Logo"
+            android:longClickable="true"
             android:minHeight="130dp"
             android:minWidth="130dp"
             android:visibility="visible"
