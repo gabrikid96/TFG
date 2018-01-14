@@ -49,7 +49,7 @@
         android:src="@drawable/view" />
 
     <ImageButton
-        android:id="@+id/button11"
+        android:id="@+id/groupsBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/button9"
@@ -58,15 +58,16 @@
         android:layout_marginTop="40dp"
         android:background="@drawable/button_shape"
         android:contentDescription="Group configuration"
+        android:onClick="handleButtons"
         android:src="@drawable/groups" />
 
     <ImageButton
-        android:id="@+id/button12"
+        android:id="@+id/settingsBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/viewBtn"
         android:layout_alignRight="@+id/viewBtn"
-        android:layout_alignTop="@+id/button11"
+        android:layout_alignTop="@+id/groupsBtn"
         android:background="@drawable/button_shape"
         android:contentDescription="Settings"
         android:src="@drawable/settings" />

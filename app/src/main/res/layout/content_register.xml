@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="grodrich7.tfg.RegisterActivity"
+    tools:context="grodrich7.tfg.Activities.RegisterActivity"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:background="@color/colorPrimary"

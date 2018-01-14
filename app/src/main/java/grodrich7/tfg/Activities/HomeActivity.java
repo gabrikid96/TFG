@@ -1,4 +1,4 @@
-package grodrich7.tfg;
+package grodrich7.tfg.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,25 +11,33 @@ import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class HomeActivity extends AppCompatActivity {
+import grodrich7.tfg.Controller;
+import grodrich7.tfg.R;
 
+public class HomeActivity extends AppCompatActivity {
+    Controller controller;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        controller = Controller.getInstance();
     }
 
     public void handleButtons(View v){
         switch (v.getId()){
             case R.id.viewBtn:
-                FirebaseAuth.getInstance().signOut();
-                Intent returnIntent = new Intent();
-                setResult(Activity.RESULT_CANCELED, returnIntent);
-                overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
-                finish();
+                break;
+            case R.id.groupsBtn:
+                launchIntent(ScrollingActivity.class);
                 break;
         }
+    }
+
+
+    private void launchIntent(Class<?> activity){
+        Intent intent = new Intent(HomeActivity.this,activity);
+        startActivity(intent);
+        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
     }
 
 }

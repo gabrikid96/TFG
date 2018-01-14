@@ -1,4 +1,4 @@
-package grodrich7.tfg;
+package grodrich7.tfg.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,6 +18,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.zzn;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import grodrich7.tfg.BuildConfig;
+import grodrich7.tfg.Models.User;
+import grodrich7.tfg.R;
 
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -83,12 +89,18 @@ public class RegisterActivity extends AppCompatActivity {
         if (user == null){
 
         }else{
+            writeNewUser(user.getUid(), nameInput.getText().toString(), user.getEmail());
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_OK,returnIntent);
             finish();
         }
     }
 
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email);
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("users").child(userId).setValue(user);
+    }
 
     public boolean checkInputs(){
         boolean isCorrect = true;

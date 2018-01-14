@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="grodrich7.tfg.MainActivity"
+    tools:context="grodrich7.tfg.Activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <RelativeLayout
@@ -31,6 +31,7 @@
             android:layout_height="130dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:layout_marginTop="50dp"
             android:contentDescription="@string/Logo"
             android:longClickable="true"
             android:minHeight="130dp"
