@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -19,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.zzn;
 
 public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -57,22 +56,27 @@ public class RegisterActivity extends AppCompatActivity {
         }
         progressBar.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        Snackbar.make(passwordInput,"Good register", Snackbar.LENGTH_SHORT).show();
-                        updateUI(user);
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Snackbar.make(passwordInput,"Bad register", Snackbar.LENGTH_SHORT).show();
-                        //updateUI(null);
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Snackbar.make(passwordInput,"Good register", Snackbar.LENGTH_SHORT).show();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Snackbar.make(passwordInput,"Bad register", Snackbar.LENGTH_SHORT).show();
+                            handleError(task);
+                            //updateUI(null);
+                        }
+                        progressBar.setVisibility(View.GONE);
                     }
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
+                });
+    }
+
+    private void handleError(Task<AuthResult> task) {
+        String errorMessage = task.getException().getMessage();
     }
 
     private void updateUI(FirebaseUser user) {

@@ -92,12 +92,12 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         mAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    updateUI(task.isSuccessful() ? mAuth.getCurrentUser() : null);
-                }
-            });
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        updateUI(task.isSuccessful() ? mAuth.getCurrentUser() : null);
+                    }
+                });
     }
 
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loginAnimation(){
         if (loginLayout.getVisibility() != View.VISIBLE) {
-            logoImage.animate().y(0).setDuration(1500);
+            logoImage.animate().y(200).setDuration(1500);
             loginLayout.setVisibility(View.VISIBLE);
             loginLayout.setAlpha(0.0f);
             loginLayout.animate().alpha(1.0f).setDuration(2000);
