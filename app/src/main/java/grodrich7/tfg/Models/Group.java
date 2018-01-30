@@ -2,6 +2,7 @@ package grodrich7.tfg.Models;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +15,9 @@ import java.util.Set;
 
 public class Group {
     private String nameGroup;
+
     private Map<Constants.Data, Boolean> permissions;
+    private ArrayList<String> users;
 
     public Group (String nameGroup){
         this.nameGroup = nameGroup;
@@ -23,6 +26,7 @@ public class Group {
 
     private void initPermissions() {
         permissions = new HashMap<>();
+        users = new ArrayList<>();
         for (Constants.Data data : Constants.Data.values() ){
             permissions.put(data,false);
         }
@@ -32,5 +36,27 @@ public class Group {
         permissions.put(data,value);
     }
 
+    public String getNameGroup() {
+        return nameGroup;
+    }
 
+    public void setNameGroup(String nameGroup) {
+        this.nameGroup = nameGroup;
+    }
+
+    public Map<Constants.Data, Boolean> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Map<Constants.Data, Boolean> permissions) {
+        this.permissions = permissions;
+    }
+
+    public ArrayList<String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(ArrayList<String> users) {
+        this.users = users;
+    }
 }

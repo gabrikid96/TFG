@@ -45,6 +45,10 @@ public class Controller {
         });
     }
 
+    public User getCurrentUser(){
+        return currentUser;
+    }
+
     public static Controller getInstance() {
         if(instance == null) {
             instance = new Controller();

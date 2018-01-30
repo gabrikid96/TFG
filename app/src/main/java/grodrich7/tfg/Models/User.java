@@ -1,9 +1,12 @@
 package grodrich7.tfg.Models;
 
+import java.util.ArrayList;
+
 public class User {
 
     private String name;
     private String email;
+    private ArrayList<Group> groups;
 
     public User() {
     }
@@ -11,6 +14,7 @@ public class User {
     public User(String name, String email) {
         this.name = name;
         this.email = email;
+        this.groups = new ArrayList<Group>();
     }
 
     public String getName() {
@@ -19,5 +23,9 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public ArrayList<Group> getGroups() {
+        return groups;
     }
 }

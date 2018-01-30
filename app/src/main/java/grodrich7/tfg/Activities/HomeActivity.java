@@ -28,7 +28,7 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.viewBtn:
                 break;
             case R.id.groupsBtn:
-                launchIntent(ScrollingActivity.class);
+                launchIntent(GroupsActivity.class);
                 break;
         }
     }
