@@ -28,4 +28,8 @@ public class User {
     public ArrayList<Group> getGroups() {
         return groups;
     }
+
+    public void setGroups(ArrayList<Group> groups) {
+        this.groups = groups;
+    }
 }

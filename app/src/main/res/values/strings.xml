@@ -1,22 +1,22 @@
 <resources>
-    <string name="app_name">TFG</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="Logo">Logo</string>
-    <string name="login_information">login</string>
+    <string name="app_name" translatable="false">TFG</string>
+    <string name="title_activity_main" translatable="false">MainActivity</string>
+    <string name="Logo" translatable="false">Logo</string>
+    <string name="login_information" translatable="false">login</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_login">Login</string>
+    <string name="action_login" translatable="false">Login</string>
     <string name="no_account">Without account</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="title_activity_register">RegisterActivity</string>
-    <string name="action_register">Register</string>
+    <string name="title_activity_register" translatable="false">RegisterActivity</string>
+    <string name="action_register" translatable="false">Register</string>
     <string name="prompt_name">Name</string>
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
-    <string name="large_text">
+    <string name="title_activity_home" translatable="false">HomeActivity</string>
+    <string name="title_activity_scrolling" translatable="false">ScrollingActivity</string>
+    <string name="large_text" translatable="false">
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."
@@ -107,5 +107,5 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="group">Group</string>
-    <string name="title_activity_groups">GroupsActivity</string>
+    <string name="title_activity_groups" translatable="false">GroupsActivity</string>
 </resources>

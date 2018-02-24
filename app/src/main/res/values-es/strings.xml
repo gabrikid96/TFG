@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TFG</string>
+    <string name="no_account">No tengo cuenta</string>
+    <string name="error_invalid_email">Esta dirección de email no es valida</string>
+    <string name="error_invalid_password">La contraseña es demasiado corta</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta</string>
+    <string name="prompt_email">Correo</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="error_field_required">Este campo es requerido</string>
+    <string name="prompt_name">Nombre</string>
+    <string name="action_settings">Opciones</string>
+    <string name="group">Grupo</string>
+</resources>

@@ -16,8 +16,11 @@ import java.util.Set;
 public class Group {
     private String nameGroup;
 
-    private Map<Constants.Data, Boolean> permissions;
+    //private Map<Constants.Data, Boolean> permissions;
     private ArrayList<String> users;
+
+
+    public Group(){}
 
     public Group (String nameGroup){
         this.nameGroup = nameGroup;
@@ -25,15 +28,15 @@ public class Group {
     }
 
     private void initPermissions() {
-        permissions = new HashMap<>();
+       // permissions = new HashMap<>();
         users = new ArrayList<>();
-        for (Constants.Data data : Constants.Data.values() ){
+        /*for (Constants.Data data : Constants.Data.values() ){
             permissions.put(data,false);
-        }
+        }*/
     }
 
     private void changePermission(Constants.Data data, boolean value){
-        permissions.put(data,value);
+      //  permissions.put(data,value);
     }
 
     public String getNameGroup() {
@@ -44,13 +47,13 @@ public class Group {
         this.nameGroup = nameGroup;
     }
 
-    public Map<Constants.Data, Boolean> getPermissions() {
+   /* public Map<Constants.Data, Boolean> getPermissions() {
         return permissions;
-    }
+    }*/
 
-    public void setPermissions(Map<Constants.Data, Boolean> permissions) {
+  /*  public void setPermissions(Map<Constants.Data, Boolean> permissions) {
         this.permissions = permissions;
-    }
+    }*/
 
     public ArrayList<String> getUsers() {
         return users;

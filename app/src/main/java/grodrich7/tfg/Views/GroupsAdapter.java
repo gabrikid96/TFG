@@ -67,7 +67,16 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         lastPosition = position;
 
         groupItem.name_label.setText(group.getNameGroup());
-        groupItem.user_count_label.setText(String.valueOf(group.getUsers().size()));
+        try{
+            groupItem.user_count_label.setText(String.valueOf(group.getUsers().size()));
+        }catch (NullPointerException e){
+            groupItem.user_count_label.setText("0");
+        }
+
         return convertView;
+    }
+
+    public void updateData(ArrayList<Group> list){
+        groups = list;
     }
 }

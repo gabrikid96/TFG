@@ -21,7 +21,7 @@
             android:maxLines="1"
             android:text="@string/group"
             android:textColor="@color/colorAccent"
-            android:textSize="36sp" />
+            android:textSize="18sp" />
 
         <ImageButton
             android:id="@+id/action_btn"
@@ -29,8 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:background="#00000000"
+            android:onClick="deleteGroup"
             android:src="@android:drawable/ic_delete" />
 
     </RelativeLayout>
@@ -42,5 +43,5 @@
         android:maxLines="1"
         android:text="@string/group"
         android:textColor="#FFF"
-        android:textSize="18sp" />
+        android:textSize="10sp" />
 </LinearLayout>
