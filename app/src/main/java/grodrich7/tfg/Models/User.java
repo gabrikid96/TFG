@@ -1,12 +1,13 @@
 package grodrich7.tfg.Models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
 
     private String name;
     private String email;
-    private ArrayList<Group> groups;
+    private HashMap<String,Group> groups;
 
     public User() {
     }
@@ -14,7 +15,7 @@ public class User {
     public User(String name, String email) {
         this.name = name;
         this.email = email;
-        this.groups = new ArrayList<Group>();
+        this.groups = new HashMap<>();
     }
 
     public String getName() {
@@ -25,11 +26,12 @@ public class User {
         return email;
     }
 
-    public ArrayList<Group> getGroups() {
+    public HashMap<String,Group> getGroups() {
+
         return groups;
     }
 
-    public void setGroups(ArrayList<Group> groups) {
+    public void setGroups(HashMap<String,Group> groups) {
         this.groups = groups;
     }
 }

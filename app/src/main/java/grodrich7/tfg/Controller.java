@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.Models.User;
 
 /**
@@ -34,13 +35,14 @@ public class Controller {
         userReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("CONTROLLER", "User changes");
                 currentUser = dataSnapshot.getValue(User.class);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("The read failed: " + databaseError.getCode());
-                Log.e("DATABASE ERROR",databaseError.getMessage());
+                Log.e("CONTROLLER",databaseError.getMessage());
             }
         });
     }

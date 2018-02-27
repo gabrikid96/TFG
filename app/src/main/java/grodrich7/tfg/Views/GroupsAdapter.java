@@ -62,7 +62,8 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
             result=convertView;
         }
 
-        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+//        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+        Animation animation = AnimationUtils.loadAnimation(mContext,  R.anim.down_from_top);
         result.startAnimation(animation);
         lastPosition = position;
 
@@ -76,7 +77,8 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         return convertView;
     }
 
-    public void updateData(ArrayList<Group> list){
-        groups = list;
+    public void updateData(Group group){
+        this.groups.add(group);
+        notifyDataSetChanged();
     }
 }

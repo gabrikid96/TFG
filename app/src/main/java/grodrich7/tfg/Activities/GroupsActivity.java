@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -38,7 +39,7 @@ public class GroupsActivity extends AppCompatActivity {
     private ListView groups_list;
     private ProgressBar progressBar;
     private Toolbar toolbar;
-    private static GroupsAdapter groupsAdapter;
+    private GroupsAdapter groupsAdapter;
     private Controller controller;
     private HashMap<String,User> users;
 
@@ -75,11 +76,13 @@ public class GroupsActivity extends AppCompatActivity {
 
     }
 
-    private void putGroups(){
-        groupsAdapter = new GroupsAdapter(controller.getCurrentUser().getGroups() != null ?
-                                        controller.getCurrentUser().getGroups() :
-                                        new ArrayList<Group>(),getApplicationContext());
+    private void putGroups() {
+        groupsAdapter = new GroupsAdapter(getGroupsArray(), getApplicationContext());
         groups_list.setAdapter(groupsAdapter);
+    }
+
+    public ArrayList<Group> getGroupsArray(){
+        return controller.getCurrentUser().getGroups() == null ? new ArrayList<Group>() : new ArrayList<>(controller.getCurrentUser().getGroups().values());
     }
 
     @Override
@@ -90,44 +93,42 @@ public class GroupsActivity extends AppCompatActivity {
         finish();
     }
 
-
     /**
      *
      * @param v
      */
     public void createGroup(View v){
         Group group = new Group("Familiar");
-        ArrayList<String> users = new ArrayList<>();
-        users.add("Admin");
-        group.setUsers(users);
-        if (controller.getCurrentUser().getGroups() == null){
-            ArrayList<Group> groups;
-            groups = new ArrayList<>();
-            groups.add(group);
-            controller.getCurrentUser().setGroups(groups);
-        }else{
-            controller.getCurrentUser().getGroups().add(group);
-        }
-        saveGroups();
+        group.addUser("gabrikid96@gmail.com");
+        saveGroup(group);
     }
 
-    private void refreshGroups(ArrayList<Group> groups) {
-        groupsAdapter.updateData(groups);
-        groupsAdapter.notifyDataSetChanged();
-    }
+//    private void refreshGroups(ArrayList<Group> groups) {
+//        groupsAdapter.updateData(groups);
+//        groupsAdapter.notifyDataSetChanged();
+//    }
 
-    private void saveGroups(){
+    private void saveGroup(final Group group){
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mDatabase.child("users").child(userUid).setValue(controller.getCurrentUser());
-        refreshGroups(controller.getCurrentUser().getGroups());
+        mDatabase.child("users").child(userUid).child("groups").push().setValue(group, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Log.d("GROUPS", "Data could not be saved " + databaseError.getMessage());
+                } else {
+                    Log.d("GROUPS", "Group saved succesfully");
+                    groupsAdapter.updateData(group);
+                }
+            }
+        });
     }
 
     public void deleteGroup(View v)
     {
-        Group group = groupsAdapter.getItem(groups_list.getPositionForView(v));
+        /*Group group = groupsAdapter.getItem(groups_list.getPositionForView(v));
         if (controller.getCurrentUser().getGroups().remove(group)){
             saveGroups();
-        }
+        }*/
     }
 }

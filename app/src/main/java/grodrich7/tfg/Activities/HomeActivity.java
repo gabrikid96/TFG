@@ -26,18 +26,22 @@ public class HomeActivity extends AppCompatActivity {
     public void handleButtons(View v){
         switch (v.getId()){
             case R.id.viewBtn:
+                FirebaseAuth.getInstance().signOut();
+                launchIntent(MainActivity.class, false);
+                finish();
                 break;
             case R.id.groupsBtn:
-                launchIntent(GroupsActivity.class);
+                launchIntent(GroupsActivity.class, true);
                 break;
         }
     }
 
 
-    private void launchIntent(Class<?> activity){
+    private void launchIntent(Class<?> activity, boolean transitionRight){
         Intent intent = new Intent(HomeActivity.this,activity);
         startActivity(intent);
-        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
+        overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
+                                  transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);
     }
 
 }
