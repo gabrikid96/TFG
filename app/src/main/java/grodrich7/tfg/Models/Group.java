@@ -1,7 +1,9 @@
 package grodrich7.tfg.Models;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,7 +15,7 @@ import java.util.Set;
  * Created by gabri on 14/01/2018.
  */
 
-public class Group {
+public class Group implements Serializable{
     private String nameGroup;
 
     private HashMap<String, Boolean> permissions;

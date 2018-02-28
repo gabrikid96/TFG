@@ -72,8 +72,19 @@ public class GroupsActivity extends AppCompatActivity {
     private void getViewsByXML() {
         /*List View*/
         groups_list = (ListView) findViewById(R.id.groups_list);
+        groups_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Group group =  groupsAdapter.getItem(i);
+                editGroup(group);
+            }
+        });
         progressBar = findViewById(R.id.progressBar);
+    }
 
+    public void editGroup(Group group){
+        Intent intent = new Intent(GroupsActivity.this,GroupActivity.class);
+        intent.putExtra("group",group);
     }
 
     private void putGroups() {

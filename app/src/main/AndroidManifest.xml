@@ -49,11 +49,11 @@
         <activity
             android:name=".Activities.GroupActivity"
             android:label="@string/title_activity_group"
-            android:parentActivityName=".GroupsActivity"
+            android:parentActivityName=".Activities.GroupsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="GroupsActivity" />
+                android:value=".Activities.GroupsActivity" />
         </activity>
     </application>
 
