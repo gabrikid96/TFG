@@ -98,9 +98,10 @@ public class GroupsActivity extends AppCompatActivity {
      * @param v
      */
     public void createGroup(View v){
-        Group group = new Group("Familiar");
-        group.addUser("gabrikid96@gmail.com");
-        saveGroup(group);
+//        Group group = new Group("Familiar");
+//        group.addUser("gabrikid96@gmail.com");
+//        saveGroup(group);
+        launchIntent(GroupActivity.class,true);
     }
 
 //    private void refreshGroups(ArrayList<Group> groups) {
@@ -130,5 +131,12 @@ public class GroupsActivity extends AppCompatActivity {
         if (controller.getCurrentUser().getGroups().remove(group)){
             saveGroups();
         }*/
+    }
+
+    private void launchIntent(Class<?> activity, boolean transitionRight){
+        Intent intent = new Intent(GroupsActivity.this,activity);
+        startActivity(intent);
+        overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
+                transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);
     }
 }
