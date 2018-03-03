@@ -46,6 +46,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="grodrich7.tfg.Activities.HomeActivity" />
         </activity>
+        <activity
+            android:name=".Activities.GroupActivity"
+            android:label="@string/title_activity_group"
+            android:parentActivityName=".Activities.GroupsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.GroupsActivity" />
+        </activity>
     </application>
 
 </manifest>

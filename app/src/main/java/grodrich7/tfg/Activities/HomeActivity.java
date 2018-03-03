@@ -1,13 +1,10 @@
 package grodrich7.tfg.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -16,11 +13,14 @@ import grodrich7.tfg.R;
 
 public class HomeActivity extends AppCompatActivity {
     Controller controller;
+    private TextView user_label;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         controller = Controller.getInstance();
+        user_label = findViewById(R.id.user_label);
+        user_label.setText(getResources().getString(R.string.welcome) + " " + FirebaseAuth.getInstance().getCurrentUser().getEmail());
     }
 
     public void handleButtons(View v){

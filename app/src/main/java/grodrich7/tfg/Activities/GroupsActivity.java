@@ -27,6 +27,8 @@ import java.net.UnknownServiceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import grodrich7.tfg.Controller;
 import grodrich7.tfg.Models.Group;
@@ -40,14 +42,17 @@ public class GroupsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Toolbar toolbar;
     private GroupsAdapter groupsAdapter;
-    private Controller controller;
+    private static Controller controller;
     private HashMap<String,User> users;
+    private static String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private static DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         controller = Controller.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         getViewsByXML();
         loadGroups();
     }
@@ -72,8 +77,19 @@ public class GroupsActivity extends AppCompatActivity {
     private void getViewsByXML() {
         /*List View*/
         groups_list = (ListView) findViewById(R.id.groups_list);
+        groups_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Group group =  groupsAdapter.getItem(i);
+                editGroup(group);
+            }
+        });
         progressBar = findViewById(R.id.progressBar);
+    }
 
+    public void editGroup(Group group){
+        Intent intent = new Intent(GroupsActivity.this,GroupActivity.class);
+        intent.putExtra("group",group);
     }
 
     private void putGroups() {
@@ -98,9 +114,10 @@ public class GroupsActivity extends AppCompatActivity {
      * @param v
      */
     public void createGroup(View v){
-        Group group = new Group("Familiar");
-        group.addUser("gabrikid96@gmail.com");
-        saveGroup(group);
+//        Group group = new Group("Familiar");
+//        group.addUser("gabrikid96@gmail.com");
+//        saveGroup(group);
+        launchIntent(GroupActivity.class,true);
     }
 
 //    private void refreshGroups(ArrayList<Group> groups) {
@@ -108,9 +125,8 @@ public class GroupsActivity extends AppCompatActivity {
 //        groupsAdapter.notifyDataSetChanged();
 //    }
 
+
     private void saveGroup(final Group group){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mDatabase.child("users").child(userUid).child("groups").push().setValue(group, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -123,12 +139,22 @@ public class GroupsActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void deleteGroup(View v)
+    public static void deleteGroup(Group group)
     {
-        /*Group group = groupsAdapter.getItem(groups_list.getPositionForView(v));
-        if (controller.getCurrentUser().getGroups().remove(group)){
-            saveGroups();
-        }*/
+        if (controller.getCurrentUser().getGroups() != null){
+            for (Map.Entry<String, Group> entry : controller.getCurrentUser().getGroups().entrySet()) {
+                if (Objects.equals(group, entry.getValue())) {
+                    mDatabase.child("users").child(userUid).child("groups").child(entry.getKey()).removeValue();
+                    break;
+                }
+            }
+        }
+    }
+
+    private void launchIntent(Class<?> activity, boolean transitionRight){
+        Intent intent = new Intent(GroupsActivity.this,activity);
+        startActivity(intent);
+        overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
+                transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);
     }
 }

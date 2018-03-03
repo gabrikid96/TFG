@@ -20,7 +20,6 @@ public class Controller {
     private static Controller instance = null;
     private FirebaseDatabase database;
     private DatabaseReference userReference;
-
     private User currentUser;
 
 

@@ -3,6 +3,7 @@ package grodrich7.tfg.Views;
 import android.content.Context;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +11,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import grodrich7.tfg.Activities.GroupActivity;
+import grodrich7.tfg.Activities.GroupsActivity;
 import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.R;
 
@@ -43,7 +47,7 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Group group = getItem(position);
+        final Group group = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         GroupItem groupItem; // view lookup cache stored in tag
 
@@ -62,23 +66,39 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
             result=convertView;
         }
 
-//        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
         Animation animation = AnimationUtils.loadAnimation(mContext,  R.anim.down_from_top);
         result.startAnimation(animation);
         lastPosition = position;
 
+
+        groupItem.action_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    removeGroup(group);
+                    GroupsActivity.deleteGroup(group);
+                }catch(Exception ex){
+                    Log.e("GROUPS_ADAPTER", "Error deleting group");
+                }
+
+            }
+        });
         groupItem.name_label.setText(group.getNameGroup());
         try{
             groupItem.user_count_label.setText(String.valueOf(group.getUsers().size()));
         }catch (NullPointerException e){
             groupItem.user_count_label.setText("0");
         }
-
         return convertView;
     }
 
     public void updateData(Group group){
         this.groups.add(group);
+        notifyDataSetChanged();
+    }
+
+    public void removeGroup(Group group){
+        this.groups.remove(group);
         notifyDataSetChanged();
     }
 }
