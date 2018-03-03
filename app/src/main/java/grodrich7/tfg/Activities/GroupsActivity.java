@@ -157,4 +157,11 @@ public class GroupsActivity extends AppCompatActivity {
         overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
                 transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);
     }
+
+    private void launchIntent(Class<?> activity, boolean transitionRight){
+        Intent intent = new Intent(GroupsActivity.this,activity);
+        startActivity(intent);
+        overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
+                transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);
+    }
 }
