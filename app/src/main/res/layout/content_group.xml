@@ -43,7 +43,7 @@
         android:layout_toLeftOf="@+id/add_user_button"
         android:layout_toStartOf="@+id/add_user_button">
 
-        <android.support.design.widget.TextInputEditText
+        <AutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorAccent"
@@ -54,24 +54,25 @@
     </android.support.design.widget.TextInputLayout>
 
 
-    <ImageButton
-        android:id="@+id/add_user_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/layout_user"
-        android:layout_toLeftOf="@+id/usersButton"
-        android:layout_toStartOf="@+id/usersButton"
-        android:src="@mipmap/add_user_1" />
+        <ImageButton
+            android:id="@+id/add_user_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/layout_user"
+            android:layout_toLeftOf="@+id/usersButton"
+            android:layout_toStartOf="@+id/usersButton"
+            android:onClick="handleButtons"
+            android:src="@mipmap/add_user_1" />
 
-    <ImageButton
-        android:id="@+id/usersButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/layout_name_group"
-        android:layout_alignRight="@+id/layout_name_group"
-        android:layout_alignTop="@+id/add_user_button"
-        android:onClick="handleButtons"
-        android:src="@mipmap/groups_icon" />
+        <ImageButton
+            android:id="@+id/usersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/layout_name_group"
+            android:layout_alignRight="@+id/layout_name_group"
+            android:layout_alignTop="@+id/add_user_button"
+            android:onClick="handleButtons"
+            android:src="@mipmap/groups_icon" />
 
     <TextView
         android:id="@+id/dataLabel"

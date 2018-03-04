@@ -34,4 +34,6 @@ public class User {
     public void setGroups(HashMap<String,Group> groups) {
         this.groups = groups;
     }
+
+
 }

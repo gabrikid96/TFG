@@ -143,19 +143,12 @@ public class GroupsActivity extends AppCompatActivity {
     {
         if (controller.getCurrentUser().getGroups() != null){
             for (Map.Entry<String, Group> entry : controller.getCurrentUser().getGroups().entrySet()) {
-                if (Objects.equals(group, entry.getValue())) {
+                if (group.equals(entry.getValue())) {
                     mDatabase.child("users").child(userUid).child("groups").child(entry.getKey()).removeValue();
                     break;
                 }
             }
         }
-    }
-
-    private void launchIntent(Class<?> activity, boolean transitionRight){
-        Intent intent = new Intent(GroupsActivity.this,activity);
-        startActivity(intent);
-        overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
-                transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);
     }
 
     private void launchIntent(Class<?> activity, boolean transitionRight){

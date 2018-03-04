@@ -36,8 +36,8 @@ public class Group implements Serializable{
         }
     }
 
-    private void changePermission(Constants.Data data, boolean value){
-      //  permissions.put(data,value);
+    public void changePermission(Constants.Data data, boolean value){
+        permissions.put(data.toString(),value);
     }
 
     public String getNameGroup() {
@@ -68,4 +68,5 @@ public class Group implements Serializable{
     public void addUser(String userEmail) {
         this.users.add(userEmail);
     }
+
 }
