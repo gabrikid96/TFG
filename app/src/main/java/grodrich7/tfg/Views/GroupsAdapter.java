@@ -1,6 +1,7 @@
 package grodrich7.tfg.Views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import grodrich7.tfg.Activities.GroupActivity;
 import grodrich7.tfg.Activities.GroupsActivity;
@@ -71,15 +73,12 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         lastPosition = position;
 
 
-        groupItem.action_btn.setOnClickListener(new View.OnClickListener() {
+        convertView.findViewById(R.id.shape_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try{
-                    removeGroup(group);
-                    GroupsActivity.deleteGroup(group);
-                }catch(Exception ex){
-                    Log.e("GROUPS_ADAPTER", "Error deleting group");
-                }
+                Intent intent = new Intent(mContext,GroupActivity.class);
+                intent.putExtra("group",group);
+                mContext.startActivity(intent);
 
             }
         });
@@ -94,6 +93,11 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
 
     public void updateData(Group group){
         this.groups.add(group);
+        notifyDataSetChanged();
+    }
+
+    public void updateData(ArrayList<Group> groups){
+        this.groups = groups;
         notifyDataSetChanged();
     }
 

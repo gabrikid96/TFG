@@ -61,6 +61,7 @@
             android:layout_alignTop="@+id/layout_user"
             android:layout_toLeftOf="@+id/usersButton"
             android:layout_toStartOf="@+id/usersButton"
+            android:contentDescription="@string/add_users_group"
             android:onClick="handleButtons"
             android:src="@mipmap/add_user_1" />
 
@@ -71,6 +72,7 @@
             android:layout_alignEnd="@+id/layout_name_group"
             android:layout_alignRight="@+id/layout_name_group"
             android:layout_alignTop="@+id/add_user_button"
+            android:contentDescription="@string/show_users_groups"
             android:onClick="handleButtons"
             android:src="@mipmap/groups_icon" />
 
@@ -94,6 +96,7 @@
             android:layout_alignLeft="@+id/dataLabel"
             android:layout_alignStart="@+id/dataLabel"
             android:layout_below="@+id/dataLabel"
+            android:checked="false"
             android:text="@string/driving_label"
             android:textColor="#FFF"
             android:textSize="16sp" />
@@ -109,18 +112,20 @@
         android:layout_centerInParent="false"
         android:text="@string/location_label"
         android:textColor="#FFF"
+        android:checked="false"
         android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/destinationToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/destination_label"
-            android:textColor="#FFF"
-            android:layout_alignLeft="@+id/drivingToggle"
-            android:layout_alignStart="@+id/drivingToggle"
-            android:layout_below="@+id/drivingToggle"
-            android:textSize="16sp" />
+    <CheckBox
+        android:id="@+id/destinationToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/destination_label"
+        android:textColor="#FFF"
+        android:layout_alignLeft="@+id/drivingToggle"
+        android:layout_alignStart="@+id/drivingToggle"
+        android:layout_below="@+id/drivingToggle"
+        android:checked="false"
+        android:textSize="16sp" />
 
     <CheckBox
         android:id="@+id/startTimeToggle"
@@ -129,6 +134,7 @@
         android:layout_alignLeft="@+id/locationToggle"
         android:layout_alignStart="@+id/locationToggle"
         android:layout_below="@+id/locationToggle"
+        android:checked="false"
         android:text="@string/start_time_label"
         android:textColor="#FFF"
         android:textSize="16sp" />
@@ -142,6 +148,7 @@
             android:layout_alignLeft="@+id/destinationToggle"
             android:layout_alignStart="@+id/destinationToggle"
             android:layout_below="@+id/destinationToggle"
+            android:checked="false"
             android:textSize="16sp" />
 
     <CheckBox
@@ -151,6 +158,7 @@
         android:layout_alignLeft="@+id/startTimeToggle"
         android:layout_alignStart="@+id/startTimeToggle"
         android:layout_below="@+id/startTimeToggle"
+        android:checked="false"
         android:text="@string/call_accept_label"
         android:textColor="#FFF"
         android:textSize="16sp" />
@@ -163,6 +171,7 @@
             android:layout_alignLeft="@+id/imagesToggle"
             android:layout_alignStart="@+id/imagesToggle"
             android:layout_below="@+id/imagesToggle"
+            android:checked="false"
             android:textSize="16sp" />
     </RelativeLayout>
 </ScrollView>

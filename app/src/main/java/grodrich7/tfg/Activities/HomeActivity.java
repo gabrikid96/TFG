@@ -26,12 +26,15 @@ public class HomeActivity extends AppCompatActivity {
     public void handleButtons(View v){
         switch (v.getId()){
             case R.id.viewBtn:
-                FirebaseAuth.getInstance().signOut();
-                launchIntent(MainActivity.class, false);
-                finish();
+                launchIntent(ViewUserActiviy.class, true);
                 break;
             case R.id.groupsBtn:
                 launchIntent(GroupsActivity.class, true);
+                break;
+            case R.id.settingsBtn:
+                FirebaseAuth.getInstance().signOut();
+                launchIntent(MainActivity.class, false);
+                finish();
                 break;
         }
     }

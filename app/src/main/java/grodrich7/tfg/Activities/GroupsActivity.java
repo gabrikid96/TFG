@@ -46,6 +46,7 @@ public class GroupsActivity extends AppCompatActivity {
     private HashMap<String,User> users;
     private static String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private static DatabaseReference mDatabase;
+    public static final int GROUP_EDIT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,19 +78,7 @@ public class GroupsActivity extends AppCompatActivity {
     private void getViewsByXML() {
         /*List View*/
         groups_list = (ListView) findViewById(R.id.groups_list);
-        groups_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Group group =  groupsAdapter.getItem(i);
-                editGroup(group);
-            }
-        });
         progressBar = findViewById(R.id.progressBar);
-    }
-
-    public void editGroup(Group group){
-        Intent intent = new Intent(GroupsActivity.this,GroupActivity.class);
-        intent.putExtra("group",group);
     }
 
     private void putGroups() {
@@ -114,31 +103,9 @@ public class GroupsActivity extends AppCompatActivity {
      * @param v
      */
     public void createGroup(View v){
-//        Group group = new Group("Familiar");
-//        group.addUser("gabrikid96@gmail.com");
-//        saveGroup(group);
         launchIntent(GroupActivity.class,true);
     }
 
-//    private void refreshGroups(ArrayList<Group> groups) {
-//        groupsAdapter.updateData(groups);
-//        groupsAdapter.notifyDataSetChanged();
-//    }
-
-
-    private void saveGroup(final Group group){
-        mDatabase.child("users").child(userUid).child("groups").push().setValue(group, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    Log.d("GROUPS", "Data could not be saved " + databaseError.getMessage());
-                } else {
-                    Log.d("GROUPS", "Group saved succesfully");
-                    groupsAdapter.updateData(group);
-                }
-            }
-        });
-    }
     public static void deleteGroup(Group group)
     {
         if (controller.getCurrentUser().getGroups() != null){
@@ -147,6 +114,18 @@ public class GroupsActivity extends AppCompatActivity {
                     mDatabase.child("users").child(userUid).child("groups").child(entry.getKey()).removeValue();
                     break;
                 }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode ==  GROUP_EDIT) {
+            if(resultCode == Activity.RESULT_OK){
+                groupsAdapter.updateData(getGroupsArray());
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+
             }
         }
     }
