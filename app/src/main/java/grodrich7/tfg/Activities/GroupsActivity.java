@@ -82,7 +82,7 @@ public class GroupsActivity extends AppCompatActivity {
     }
 
     private void putGroups() {
-        groupsAdapter = new GroupsAdapter(getGroupsArray(), getApplicationContext());
+        groupsAdapter = new GroupsAdapter(getGroupsArray(), this);
         groups_list.setAdapter(groupsAdapter);
     }
 
@@ -103,7 +103,9 @@ public class GroupsActivity extends AppCompatActivity {
      * @param v
      */
     public void createGroup(View v){
-        launchIntent(GroupActivity.class,true);
+        Intent intent = new Intent(this,GroupActivity.class);
+        startActivityForResult(intent,GROUP_EDIT);
+        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
     }
 
     public static void deleteGroup(Group group)
@@ -128,6 +130,13 @@ public class GroupsActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    public void editGroup(Group group){
+        Intent intent = new Intent(this,GroupActivity.class);
+        intent.putExtra("group",group);
+        startActivityForResult(intent,GROUP_EDIT);
+        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
     }
 
     private void launchIntent(Class<?> activity, boolean transitionRight){

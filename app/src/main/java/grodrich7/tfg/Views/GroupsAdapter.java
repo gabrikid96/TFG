@@ -1,5 +1,6 @@
 package grodrich7.tfg.Views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
@@ -76,10 +77,7 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         convertView.findViewById(R.id.shape_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext,GroupActivity.class);
-                intent.putExtra("group",group);
-                mContext.startActivity(intent);
-
+                ((GroupsActivity)mContext).editGroup(group);
             }
         });
         groupItem.name_label.setText(group.getNameGroup());
