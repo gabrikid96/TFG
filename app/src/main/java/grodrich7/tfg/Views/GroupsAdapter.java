@@ -82,9 +82,9 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         });
         groupItem.name_label.setText(group.getNameGroup());
         try{
-            groupItem.user_count_label.setText(String.valueOf(group.getUsers().size()));
+            groupItem.user_count_label.setText(String.valueOf(group.getUsers().size()) + " " +  mContext.getResources().getString(R.string.users));
         }catch (NullPointerException e){
-            groupItem.user_count_label.setText("0");
+            groupItem.user_count_label.setText("0 " + mContext.getResources().getString(R.string.users));
         }
         return convertView;
     }

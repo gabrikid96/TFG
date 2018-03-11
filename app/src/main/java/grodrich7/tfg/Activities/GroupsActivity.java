@@ -78,7 +78,7 @@ public class GroupsActivity extends AppCompatActivity {
     private void getViewsByXML() {
         /*List View*/
         groups_list = (ListView) findViewById(R.id.groups_list);
-        progressBar = findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     private void putGroups() {

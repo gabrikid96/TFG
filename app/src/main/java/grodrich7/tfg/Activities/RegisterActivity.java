@@ -38,11 +38,11 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         mAuth = FirebaseAuth.getInstance();
-        nameInput = findViewById(R.id.input_name);
-        emailInput = findViewById(R.id.input_email);
-        passwordInput = findViewById(R.id.input_password);
-        progressBar = findViewById(R.id.progressBar);
-        registerBtn = findViewById(R.id.btn_register);
+        nameInput = (AutoCompleteTextView) findViewById(R.id.input_name);
+        emailInput =(AutoCompleteTextView) findViewById(R.id.input_email);
+        passwordInput = (EditText) findViewById(R.id.input_password);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        registerBtn = (Button) findViewById(R.id.btn_register);
         registerBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {

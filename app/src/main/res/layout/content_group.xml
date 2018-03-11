@@ -8,62 +8,65 @@
     tools:context="grodrich7.tfg.Activities.GroupActivity"
     tools:showIn="@layout/activity_group"
     android:fillViewport="true">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/layout_name_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/activity_horizontal_margin">
 
-
-        <AutoCompleteTextView
-            android:id="@+id/input_name_group"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/layout_name_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name_group"
-            android:inputType="textPersonName"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:nextFocusDown="@id/input_add_user"
-            android:textColor="@color/colorAccent" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_margin="@dimen/activity_horizontal_margin">
 
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/layout_user"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_name_group"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:layout_toLeftOf="@+id/add_user_button"
-        android:layout_toStartOf="@+id/add_user_button">
+            <AutoCompleteTextView
+                android:id="@+id/input_name_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name_group"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:nextFocusDown="@id/input_add_user"
+                android:singleLine="true"
+                android:textColor="@color/colorAccent" />
+        </android.support.design.widget.TextInputLayout>
 
-        <AutoCompleteTextView
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/layout_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
-            android:id="@+id/input_add_user"
-            android:nextFocusUp="@id/input_add_user"
-            android:hint="@string/user_email" />
+            android:layout_below="@+id/layout_name_group"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_toLeftOf="@+id/add_user_button"
+            android:layout_toStartOf="@+id/add_user_button">
 
-    </android.support.design.widget.TextInputLayout>
+            <AutoCompleteTextView
+                android:id="@+id/input_add_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/user_email"
+                android:nextFocusUp="@id/input_add_user"
+                android:textColor="@color/colorAccent" />
+
+        </android.support.design.widget.TextInputLayout>
 
 
         <ImageButton
             android:id="@+id/add_user_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/layout_user"
+            android:layout_alignBottom="@+id/layout_user"
             android:layout_toLeftOf="@+id/usersButton"
             android:layout_toStartOf="@+id/usersButton"
+            android:background="@mipmap/add_user_1"
+            android:backgroundTint="@color/colorAccent"
             android:contentDescription="@string/add_users_group"
-            android:onClick="handleButtons"
-            android:src="@mipmap/add_user_1" />
+            android:onClick="handleButtons" />
 
         <ImageButton
             android:id="@+id/usersButton"
@@ -72,21 +75,22 @@
             android:layout_alignEnd="@+id/layout_name_group"
             android:layout_alignRight="@+id/layout_name_group"
             android:layout_alignTop="@+id/add_user_button"
+            android:background="@mipmap/groups_icon"
+            android:backgroundTint="@color/colorAccent"
             android:contentDescription="@string/show_users_groups"
-            android:onClick="handleButtons"
-            android:src="@mipmap/groups_icon" />
+            android:onClick="handleButtons" />
 
-    <TextView
-        android:id="@+id/dataLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_user"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:divider="?attr/dividerHorizontal"
-        android:showDividers="beginning"
-        android:text="@string/data_to_share"
-        android:textColor="@color/colorAccent"
-        android:textSize="20sp" />
+        <TextView
+            android:id="@+id/dataLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_user"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:divider="?attr/dividerHorizontal"
+            android:showDividers="beginning"
+            android:text="@string/data_to_share"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp" />
 
         <!--Texts-->
         <CheckBox
@@ -102,76 +106,77 @@
             android:textSize="16sp" />
 
 
-    <CheckBox
-        android:id="@+id/locationToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/destinationToggle"
-        android:layout_alignLeft="@+id/add_user_button"
-        android:layout_alignStart="@+id/add_user_button"
-        android:layout_centerInParent="false"
-        android:text="@string/location_label"
-        android:textColor="#FFF"
-        android:checked="false"
-        android:textSize="16sp" />
+        <CheckBox
+            android:id="@+id/locationToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dataLabel"
+            android:layout_centerInParent="false"
+            android:layout_toEndOf="@+id/callToggle"
+            android:layout_toRightOf="@+id/callToggle"
+            android:checked="false"
+            android:text="@string/location_label"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
 
-    <CheckBox
-        android:id="@+id/destinationToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/destination_label"
-        android:textColor="#FFF"
-        android:layout_alignLeft="@+id/drivingToggle"
-        android:layout_alignStart="@+id/drivingToggle"
-        android:layout_below="@+id/drivingToggle"
-        android:checked="false"
-        android:textSize="16sp" />
+        <CheckBox
+            android:id="@+id/destinationToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/drivingToggle"
+            android:layout_alignStart="@+id/drivingToggle"
+            android:layout_below="@+id/drivingToggle"
+            android:checked="false"
+            android:text="@string/destination_label"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
 
-    <CheckBox
-        android:id="@+id/startTimeToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/locationToggle"
-        android:layout_alignStart="@+id/locationToggle"
-        android:layout_below="@+id/locationToggle"
-        android:checked="false"
-        android:text="@string/start_time_label"
-        android:textColor="#FFF"
-        android:textSize="16sp" />
+        <CheckBox
+            android:id="@+id/startTimeToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/locationToggle"
+            android:layout_alignStart="@+id/locationToggle"
+            android:layout_below="@+id/locationToggle"
+            android:checked="false"
+            android:text="@string/start_time_label"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
 
         <CheckBox
             android:id="@+id/imagesToggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/callToggle"
+            android:layout_alignStart="@+id/callToggle"
+            android:layout_below="@+id/callToggle"
+            android:checked="false"
             android:text="@string/images_label"
             android:textColor="#FFF"
-            android:layout_alignLeft="@+id/destinationToggle"
-            android:layout_alignStart="@+id/destinationToggle"
-            android:layout_below="@+id/destinationToggle"
-            android:checked="false"
             android:textSize="16sp" />
 
-    <CheckBox
-        android:id="@+id/callToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/startTimeToggle"
-        android:layout_alignStart="@+id/startTimeToggle"
-        android:layout_below="@+id/startTimeToggle"
-        android:checked="false"
-        android:text="@string/call_accept_label"
-        android:textColor="#FFF"
-        android:textSize="16sp" />
+        <CheckBox
+            android:id="@+id/callToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/destinationToggle"
+            android:layout_alignLeft="@+id/destinationToggle"
+            android:layout_alignStart="@+id/destinationToggle"
+            android:checked="false"
+            android:text="@string/call_accept_label"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
         <CheckBox
             android:id="@+id/parkingToggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/parking_label"
-            android:textColor="#FFF"
             android:layout_alignLeft="@+id/imagesToggle"
             android:layout_alignStart="@+id/imagesToggle"
             android:layout_below="@+id/imagesToggle"
             android:checked="false"
+            android:text="@string/parking_label"
+            android:textColor="#FFF"
             android:textSize="16sp" />
     </RelativeLayout>
 </ScrollView>

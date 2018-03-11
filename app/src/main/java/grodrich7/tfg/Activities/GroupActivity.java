@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -45,26 +47,29 @@ public class GroupActivity extends AppCompatActivity {
     private CheckBox acceptCalls;
     private CheckBox parking;
     private boolean isUpdate;
+    private ImageButton addUserBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getViewsByXML();
         controller = Controller.getInstance();
+        getViewsByXML();
         group = (Group)  getIntent().getSerializableExtra("group");
         if (group != null){
             isUpdate = true;
             fillGroupInfo();
-
+            toolbar.setTitle(getResources().getString(R.string.edit_title));
+            nameInput.setEnabled(false);
         }else{
             isUpdate = false;
             group = new Group("");
+            toolbar.setTitle(getResources().getString(R.string.create_group));
         }
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void fillGroupInfo() {
@@ -79,15 +84,16 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void getViewsByXML() {
-        nameInput = findViewById(R.id.input_name_group);
-        userAddInput = findViewById(R.id.input_add_user);
-        destination = findViewById(R.id.destinationToggle);
-        location = findViewById(R.id.locationToggle);
-        driving = findViewById(R.id.drivingToggle);
-        startTime= findViewById(R.id.startTimeToggle);
-        frontalImages = findViewById(R.id.imagesToggle);
-        acceptCalls = findViewById(R.id.callToggle);
-        parking = findViewById(R.id.parkingToggle);
+        nameInput = (AutoCompleteTextView) findViewById(R.id.input_name_group);
+        userAddInput = (AutoCompleteTextView) findViewById(R.id.input_add_user);
+        destination = (CheckBox) findViewById(R.id.destinationToggle);
+        location = (CheckBox) findViewById(R.id.locationToggle);
+        driving = (CheckBox) findViewById(R.id.drivingToggle);
+        startTime= (CheckBox) findViewById(R.id.startTimeToggle);
+        frontalImages = (CheckBox) findViewById(R.id.imagesToggle);
+        acceptCalls = (CheckBox) findViewById(R.id.callToggle);
+        parking = (CheckBox) findViewById(R.id.parkingToggle);
+        addUserBtn = (ImageButton) findViewById(R.id.add_user_button);
     }
 
     @Override
@@ -114,14 +120,16 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private boolean checkInputs(){
-        if (nameInput.getText().toString().isEmpty()){
+        boolean result = true;
+        /*if (nameInput.getText().toString().isEmpty()){
             nameInput.setError(getResources().getText(R.string.error_field_required));
-            return false;
+            result = false;
+        }*/
+        if (group.getUsers() == null || group.getUsers().size() < 1){
+            userAddInput.setError(getResources().getString(R.string.user_required_error));
+            result = false;
         }
-        if (group.getUsers().size() < 1){
-
-        }
-        return true;
+        return result;
     }
 
     private void setPermissions(){
@@ -200,12 +208,19 @@ public class GroupActivity extends AppCompatActivity {
                     userAddInput.setError(getResources().getText(R.string.error_field_required));
                 }else if (!isValidEmail(userAddInput.getText().toString())){
                     userAddInput.setError(getResources().getText(R.string.error_invalid_email));
-                }else if (group.getUsers().contains(userAddInput.getText().toString())) {
-                    userAddInput.setError(getResources().getText(R.string.email_added));
-                }else
-                {
-                    group.addUser(userAddInput.getText().toString());
-                    Snackbar.make(userAddInput, getResources().getText(R.string.user_added), Snackbar.LENGTH_SHORT).show();
+                }else{
+                    if (group.getUsers() == null) {
+                        group.setUsers(new ArrayList<String>());
+                        group.addUser(userAddInput.getText().toString());
+                        Snackbar.make(userAddInput, getResources().getText(R.string.user_added), Snackbar.LENGTH_SHORT).show();
+                    }else{
+                        if (group.getUsers().contains(userAddInput.getText().toString())){
+                            userAddInput.setError(getResources().getText(R.string.email_added));
+                        }else{
+                            group.addUser(userAddInput.getText().toString());
+                            Snackbar.make(userAddInput, getResources().getText(R.string.user_added), Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
                 }
                 break;
             default:
@@ -218,37 +233,42 @@ public class GroupActivity extends AppCompatActivity {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(GroupActivity.this);
         builderSingle.setTitle(R.string.users_added);
         builderSingle.setCancelable(false);
-        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+        builderSingle.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-
-        final boolean[] selected = new boolean[group.getUsers().size()];
-        String[] usersArray = new String[group.getUsers().size()];
-        usersArray = group.getUsers().toArray(usersArray);
+        final boolean[] selected;
+        String[] usersArray;
+        if (group.getUsers() != null){
+            selected = new boolean[group.getUsers().size()];
+            usersArray = new String[group.getUsers().size()];
+            usersArray = group.getUsers().toArray(usersArray);
+        }else{
+            selected = new boolean[0];
+            usersArray = new String[0];
+        }
         builderSingle.setMultiChoiceItems(usersArray, selected, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                // Update the current focused item's checked status
                 selected[which] = isChecked;
             }
         });
-
-        builderSingle.setPositiveButton("remove", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //TODO : hacer con iterator
-                int offset = 0;
-                for (int j = 0; j < selected.length; j++){
-                    if (selected[j]){
-                        group.getUsers().remove(j-offset);
-                        offset+=1;
+        if (selected.length > 0){
+            builderSingle.setPositiveButton(getResources().getString(R.string.remove), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    int offset = 0;
+                    for (int j = 0; j < selected.length; j++){
+                        if (selected[j]){
+                            group.getUsers().remove(j-offset);
+                            offset+=1;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         builderSingle.show();
     }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/image"
+    android:layout_width="?android:attr/listPreferredItemHeightLarge"
+    android:layout_height="?android:attr/listPreferredItemHeightLarge"
+    android:layout_margin="@dimen/activity_horizontal_margin"
+    android:background="@drawable/button_shape"
+    android:elevation="2dp"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Hello world"
+        android:textColor="@color/colorAccent" />
+</FrameLayout>

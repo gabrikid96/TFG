@@ -63,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getViewsByXML() {
         /*TITLE LAYOUT*/
-        logoImage = findViewById(R.id.logoImage);
-        progressBar = findViewById(R.id.progressBar);
-        loginLayout = findViewById(R.id.loginLayout);
+        logoImage = (ImageView) findViewById(R.id.logoImage);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        loginLayout = (LinearLayout) findViewById(R.id.loginLayout);
 
         logoImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /*LOGIN LAYOUT*/
-        emailInput = findViewById(R.id.input_email);
-        passwordInput = findViewById(R.id.input_password);
+        emailInput = (AutoCompleteTextView) findViewById(R.id.input_email);
+        passwordInput = (EditText) findViewById(R.id.input_password);
     }
 
     public void login(View v){

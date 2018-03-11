@@ -19,7 +19,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         controller = Controller.getInstance();
-        user_label = findViewById(R.id.user_label);
+        user_label = (TextView) findViewById(R.id.user_label);
         user_label.setText(getResources().getString(R.string.welcome) + " " + FirebaseAuth.getInstance().getCurrentUser().getEmail());
     }
 
