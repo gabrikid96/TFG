@@ -20,7 +20,7 @@
         android:visibility="invisible" />
 
     <ImageButton
-        android:id="@+id/button9"
+        android:id="@+id/drivingModeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/centerVerticalShim"
@@ -31,18 +31,20 @@
         android:layout_toStartOf="@+id/centerHorizontalShim"
         android:background="@drawable/button_shape"
         android:contentDescription="Drive mode"
-        android:src="@drawable/drive" />
+        android:onClick="handleButtons"
+        android:src="@drawable/drive"
+        android:tooltipText="Drive Mode" />
 
     <ImageButton
         android:id="@+id/viewBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button9"
-        android:layout_alignBottom="@+id/button9"
+        android:layout_alignBaseline="@+id/drivingModeBtn"
+        android:layout_alignBottom="@+id/drivingModeBtn"
         android:layout_marginLeft="40dp"
         android:layout_marginStart="40dp"
-        android:layout_toEndOf="@+id/button9"
-        android:layout_toRightOf="@+id/button9"
+        android:layout_toEndOf="@+id/drivingModeBtn"
+        android:layout_toRightOf="@+id/drivingModeBtn"
         android:background="@drawable/button_shape"
         android:contentDescription="View friend"
         android:onClick="handleButtons"
@@ -52,8 +54,8 @@
         android:id="@+id/groupsBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button9"
-        android:layout_alignStart="@+id/button9"
+        android:layout_alignLeft="@+id/drivingModeBtn"
+        android:layout_alignStart="@+id/drivingModeBtn"
         android:layout_below="@+id/centerVerticalShim"
         android:layout_marginTop="40dp"
         android:background="@drawable/button_shape"

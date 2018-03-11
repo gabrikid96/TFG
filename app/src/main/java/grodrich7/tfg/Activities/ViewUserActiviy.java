@@ -3,7 +3,6 @@ package grodrich7.tfg.Activities;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,9 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -35,7 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import grodrich7.tfg.R;
-import grodrich7.tfg.Views.GroupsAdapter;
 
 public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -92,7 +89,7 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
             @Override
             public void onClick(View view) {
                 DisplayMetrics displayMetrics = getMetrics();
-                fullBtn.setImageResource(!full ? R.mipmap.unfull_window : R.mipmap.full_window);
+                fullBtn.setBackgroundResource(!full ? R.mipmap.unfull_window : R.mipmap.full_window);
                 ResizeAnimation resizeAnimation = new ResizeAnimation(
                         mapFragment.getView(),
                         !full ? displayMetrics.heightPixels : displayMetrics.heightPixels/4,
@@ -110,6 +107,8 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
         acceptCallsData = (TextView) findViewById(R.id.acceptCallsData);
         parkingData = (TextView) findViewById(R.id.parkingData);
         recyclerImages();
+        //ScrollView scrollView = findViewById(R.id.scroll);
+        //scrollView.fullScroll(ScrollView.FOCUS_UP);
     }
 
     private void recyclerImages(){
@@ -143,6 +142,11 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
             @Override
             public void onBindViewHolder(CustomViewHolder viewHolder, int i) {
                 viewHolder.description.setText("Imagen " + String.valueOf(i));
+                try{
+                    viewHolder.imageButton.setImageResource(R.drawable.front_image);
+                }catch (Exception ex){
+
+                }
             }
 
             @Override
@@ -156,11 +160,11 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
     private class CustomViewHolder extends RecyclerView.ViewHolder {
 
         private TextView description;
-        private FrameLayout frameLayout;
+        private ImageButton imageButton;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
-            frameLayout = (FrameLayout) findViewById(R.id.image);
+            imageButton = (ImageButton) itemView.findViewById(R.id.image);
             description = (TextView) itemView.findViewById(R.id.description);
         }
     }
@@ -191,7 +195,7 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
     }
 
     public String parseString(boolean bool){
-        return bool ? "Yes" : "No";
+        return bool ? getResources().getString(R.string.yes) : getResources().getString(R.string.no);
     }
 
 

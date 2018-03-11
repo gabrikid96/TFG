@@ -56,4 +56,9 @@
     <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
     <string name="user_required_error">At least one user is required</string>
+    <string name="title_activity_driving" translatable="false">DrivingActivity</string>
+    <string name="on_driving">Activate/Deactivate driving mode</string>
+    <string name="driving_title">Driving mode</string>
+    <string name="driving_mode_on_attempt">The driving mode is going to be activated, remember that your data will be shared with the groups that you have configured, are you sure you want to activate the driving mode?</string>
+    <string name="driving_mode_off_attempt">Are you sure you want to deactivate the driving mode? It will stop sharing data.</string>
 </resources>

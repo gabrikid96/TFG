@@ -25,6 +25,9 @@ public class HomeActivity extends AppCompatActivity {
 
     public void handleButtons(View v){
         switch (v.getId()){
+            case R.id.drivingModeBtn:
+                launchIntent(DrivingActivity.class, true);
+                break;
             case R.id.viewBtn:
                 launchIntent(ViewUserActiviy.class, true);
                 break;

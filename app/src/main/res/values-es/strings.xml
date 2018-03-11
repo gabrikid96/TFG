@@ -43,4 +43,8 @@
     <string name="cancel">Cancelar</string>
     <string name="remove">Eliminar</string>
     <string name="user_required_error">" Se requiere al menos un usuario"</string>
+    <string name="on_driving">Activar/Desactivar modo conducción</string>
+    <string name="driving_title">Modo conducción</string>
+    <string name="driving_mode_on_attempt">El modo conducción va a ser activado, recuerda que se van a compartir tus datos con los grupos que hayas configurado, ¿estás seguro que quieres activar el modo conducción?</string>
+    <string name="driving_mode_off_attempt">¿Estás seguro que quieres desactivar el modo conducción? Se va a dejar de emitir datos.</string>
 </resources>

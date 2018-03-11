@@ -68,6 +68,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="grodrich7.tfg.Activities.HomeActivity" />
         </activity>
+        <activity
+            android:name=".Activities.DrivingActivity"
+            android:label="@string/title_activity_driving"
+            android:parentActivityName=".Activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="grodrich7.tfg.Activities.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>
