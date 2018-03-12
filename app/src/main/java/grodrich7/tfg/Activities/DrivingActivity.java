@@ -1,5 +1,6 @@
 package grodrich7.tfg.Activities;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -17,6 +19,7 @@ import grodrich7.tfg.R;
 public class DrivingActivity extends AppCompatActivity {
 
     private ImageButton drivingToggle;
+    private ImageButton helpBtn;
     private boolean isDrivingActivate;
 
     @Override
@@ -33,10 +36,23 @@ public class DrivingActivity extends AppCompatActivity {
     private void getViewsByXML() {
         isDrivingActivate = false;
         drivingToggle = findViewById(R.id.drivingToggle);
+        helpBtn = findViewById(R.id.helpBtn);
         drivingToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDrivingDialog();
+            }
+        });
+        helpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialog dialog = new Dialog(DrivingActivity.this, R.style.FullHeightDialog);
+                dialog.setContentView(R.layout.help_actions);
+                dialog.setTitle("");
+                dialog.setCancelable(true);
+//                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+                dialog.show();
             }
         });
     }

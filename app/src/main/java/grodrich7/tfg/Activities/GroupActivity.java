@@ -121,10 +121,10 @@ public class GroupActivity extends AppCompatActivity {
 
     private boolean checkInputs(){
         boolean result = true;
-        /*if (nameInput.getText().toString().isEmpty()){
+        if (nameInput.getText().toString().isEmpty()){
             nameInput.setError(getResources().getText(R.string.error_field_required));
             result = false;
-        }*/
+        }
         if (group.getUsers() == null || group.getUsers().size() < 1){
             userAddInput.setError(getResources().getString(R.string.user_required_error));
             result = false;

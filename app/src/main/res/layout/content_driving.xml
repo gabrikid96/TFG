@@ -1,11 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="grodrich7.tfg.Activities.DrivingActivity"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_driving">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-</android.support.constraint.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/actualInformation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@android:drawable/dialog_holo_dark_frame"
+        android:padding="@dimen/activity_horizontal_margin">
+
+
+        <TextView
+            android:id="@+id/driverLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/actualInformation"
+            android:textColor="@color/colorAccent"
+            android:layout_marginBottom="5dp"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/destinationLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/driverLabel"
+            android:layout_alignStart="@+id/driverLabel"
+            android:layout_below="@+id/driverLabel"
+            android:text="@string/destination_label_2"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/destinationData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/destinationLabel"
+            android:layout_alignBottom="@+id/destinationLabel"
+            android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/destinationLabel"
+            android:layout_toRightOf="@+id/destinationLabel"
+            android:text="Barcelona"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/startTimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/destinationLabel"
+            android:layout_alignStart="@+id/destinationLabel"
+            android:layout_below="@+id/destinationLabel"
+            android:layout_marginTop="15dp"
+            android:text="@string/startTime_label_2"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/startTimeData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/startTimeLabel"
+            android:layout_alignBottom="@+id/startTimeLabel"
+            android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/startTimeLabel"
+            android:layout_toRightOf="@+id/startTimeLabel"
+            android:text="15:00"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/acceptCallsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/startTimeLabel"
+            android:layout_alignStart="@+id/startTimeLabel"
+            android:layout_below="@+id/startTimeLabel"
+            android:layout_marginTop="15dp"
+            android:text="@string/acceptCalls_label_2"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/acceptCallsData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/acceptCallsLabel"
+            android:layout_alignBottom="@+id/acceptCallsLabel"
+            android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/acceptCallsLabel"
+            android:layout_toRightOf="@+id/acceptCallsLabel"
+            android:text="Yes"
+            android:textColor="#0F0"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/parkingLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/acceptCallsLabel"
+            android:layout_alignStart="@+id/acceptCallsLabel"
+            android:layout_below="@+id/acceptCallsLabel"
+            android:layout_marginTop="15dp"
+            android:text="@string/parking_label_2"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/parkingData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/parkingLabel"
+            android:layout_alignBottom="@+id/parkingLabel"
+            android:layout_marginLeft="5dp"
+            android:layout_toEndOf="@+id/parkingLabel"
+            android:layout_toRightOf="@+id/parkingLabel"
+            android:text="No"
+            android:textColor="#F00"
+
+            android:textSize="16sp" />
+    </RelativeLayout>
+</RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

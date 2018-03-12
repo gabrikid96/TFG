@@ -61,4 +61,16 @@
     <string name="driving_title">Driving mode</string>
     <string name="driving_mode_on_attempt">The driving mode is going to be activated, remember that your data will be shared with the groups that you have configured, are you sure you want to activate the driving mode?</string>
     <string name="driving_mode_off_attempt">Are you sure you want to deactivate the driving mode? It will stop sharing data.</string>
+    <string name="call">Make a call</string>
+    <string name="say_call">Say \"Call to\"</string>
+    <string name="contact_name_label">Contact name\"</string>
+    <string name="message">Send a message</string>
+    <string name="say_message">Say \"Message to\"</string>
+    <string name="actions_label">Actions</string>
+    <string name="change_data">Change information</string>
+    <string name="change_destination">Change \ndestination</string>
+    <string name="say_destination">Say \"Destination\"</string>
+    <string name="change_parking">Change looking\nfor parking</string>
+    <string name="say_parking">Say \"Parking\"</string>
+    <string name="actualInformation">Actual information</string>
 </resources>

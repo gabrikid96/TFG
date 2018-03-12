@@ -277,12 +277,19 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
     }
 
     public LatLng getRandomLocation(){
+        double lat;
+        double lon;
         try{
-            geoIndex++;
-            return new LatLng(randomLatitudes[geoIndex], randomLongitudes[geoIndex]);
+            lat = randomLatitudes[geoIndex];
+            lon = randomLongitudes[geoIndex];
+            return new LatLng(lat, lon);
         }catch(ArrayIndexOutOfBoundsException ex){
             geoIndex = 0;
-            return new LatLng(randomLatitudes[geoIndex], randomLongitudes[geoIndex]);
+            lat = randomLatitudes[geoIndex];
+            lon = randomLongitudes[geoIndex];
+            return new LatLng(lat, lon);
+        }finally {
+            geoIndex++;
         }
     }
 
