@@ -35,9 +35,6 @@ public class HomeActivity extends AppCompatActivity {
                 launchIntent(GroupsActivity.class, true);
                 break;
             case R.id.settingsBtn:
-                /*FirebaseAuth.getInstance().signOut();
-                launchIntent(MainActivity.class, false);
-                finish();*/
                 launchIntent(SettingsActivity.class, true);
                 break;
         }
