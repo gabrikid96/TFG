@@ -134,7 +134,9 @@ public class GroupsActivity extends AppCompatActivity {
 
     public void editGroup(Group group){
         Intent intent = new Intent(this,GroupActivity.class);
+        String key = "Hola";
         intent.putExtra("group",group);
+        intent.putExtra("key",key);
         startActivityForResult(intent,GROUP_EDIT);
         overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
     }

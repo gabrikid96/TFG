@@ -155,6 +155,7 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
             }
         };
         recyclerView.setAdapter(groupsAdapter);
+
     }
 
     private class CustomViewHolder extends RecyclerView.ViewHolder {
