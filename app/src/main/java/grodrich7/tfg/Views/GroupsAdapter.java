@@ -80,7 +80,7 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
                 ((GroupsActivity)mContext).editGroup(group);
             }
         });
-        groupItem.name_label.setText(group.getNameGroup());
+        groupItem.name_label.setText(group.getNameGroup().toUpperCase());
         try{
             groupItem.user_count_label.setText(String.valueOf(group.getUsers().size()) + " " +  mContext.getResources().getString(R.string.users));
         }catch (NullPointerException e){

@@ -23,7 +23,7 @@
             android:id="@+id/fullBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|top"
+            android:layout_gravity="right|bottom"
             android:layout_marginTop="10dp"
             android:background="@mipmap/full_window" />
     </fragment>
@@ -45,12 +45,15 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
+
+                android:backgroundTint="@color/layoutBackground"
                 android:background="@android:drawable/dialog_holo_dark_frame"
                 android:paddingBottom="@dimen/activity_horizontal_margin">
 
 
                 <TextView
                     android:id="@+id/driverLabel"
+                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/activity_horizontal_margin"
@@ -67,7 +70,8 @@
                     android:layout_below="@+id/driverLabel"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:text="@string/driving_label_2"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
+                    android:textStyle="bold"
                     android:textSize="16sp" />
 
                 <TextView
@@ -80,7 +84,7 @@
                     android:layout_toEndOf="@+id/drivingLabel"
                     android:layout_toRightOf="@+id/drivingLabel"
                     android:text="Yes"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="16sp" />
 
                 <TextView
@@ -92,7 +96,8 @@
                     android:layout_below="@+id/drivingLabel"
                     android:layout_marginTop="15dp"
                     android:text="@string/destination_label_2"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
+                    android:textStyle="bold"
                     android:textSize="16sp" />
 
                 <TextView
@@ -105,7 +110,7 @@
                     android:layout_toEndOf="@+id/destinationLabel"
                     android:layout_toRightOf="@+id/destinationLabel"
                     android:text="dfdgdgzdr"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="16sp" />
 
                 <TextView
@@ -117,7 +122,8 @@
                     android:layout_below="@+id/destinationLabel"
                     android:layout_marginTop="15dp"
                     android:text="@string/startTime_label_2"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
+                    android:textStyle="bold"
                     android:textSize="16sp" />
 
                 <TextView
@@ -130,7 +136,7 @@
                     android:layout_toEndOf="@+id/startTimeLabel"
                     android:layout_toRightOf="@+id/startTimeLabel"
                     android:text="ersgazergtrh"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="16sp" />
 
                 <TextView
@@ -142,7 +148,8 @@
                     android:layout_below="@+id/startTimeLabel"
                     android:layout_marginTop="15dp"
                     android:text="@string/acceptCalls_label_2"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
+                    android:textStyle="bold"
                     android:textSize="16sp" />
 
                 <TextView
@@ -155,7 +162,7 @@
                     android:layout_toEndOf="@+id/acceptCallsLabel"
                     android:layout_toRightOf="@+id/acceptCallsLabel"
                     android:text="12zrredgedr34"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="16sp" />
 
                 <TextView
@@ -167,7 +174,8 @@
                     android:layout_below="@+id/acceptCallsLabel"
                     android:layout_marginTop="15dp"
                     android:text="@string/parking_label_2"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
+                    android:textStyle="bold"
                     android:textSize="16sp" />
 
                 <TextView
@@ -180,12 +188,13 @@
                     android:layout_toEndOf="@+id/parkingLabel"
                     android:layout_toRightOf="@+id/parkingLabel"
                     android:text="12zrredgedr34"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
 
                     android:textSize="16sp" />
             </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
+                android:backgroundTint="@color/layoutBackground"
                 android:id="@+id/recyclerImages"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -193,7 +202,9 @@
                 android:background="@android:drawable/dialog_holo_dark_frame"
                 android:clipChildren="false"
                 android:orientation="horizontal"
-                android:padding="@dimen/activity_horizontal_margin"></android.support.v7.widget.RecyclerView>
+                android:padding="@dimen/activity_horizontal_margin">
+
+            </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

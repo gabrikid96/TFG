@@ -22,7 +22,8 @@
             android:maxLines="1"
             android:text="@string/group"
             android:textColor="@color/colorAccent"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/action_btn"
@@ -33,7 +34,7 @@
             android:layout_alignParentTop="true"
             android:background="#00000000"
             android:focusable="false"
-            android:src="@android:drawable/ic_delete" />
+            android:src="@android:drawable/ic_menu_delete" />
 
     </RelativeLayout>
 
@@ -43,6 +44,6 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:text="@string/group"
-        android:textColor="#FFF"
-        android:textSize="10sp" />
+        android:textColor="#252525"
+        android:textSize="12sp" />
 </LinearLayout>

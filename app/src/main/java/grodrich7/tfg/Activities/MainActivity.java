@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         if (loginLayout.getVisibility() == View.VISIBLE && user == null){
-            Snackbar.make(logoImage,"Bad Login", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(logoImage,getResources().getText(R.string.bad_login), Snackbar.LENGTH_SHORT).show();
         }
         else if (user == null){
             animationDelay(2000);

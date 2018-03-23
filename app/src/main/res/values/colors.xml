@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#282828</color>
+    <color name="colorPrimary">#FFF</color>
     <color name="colorSwitch">#FF0000</color>
-    <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#00d0ff</color>
+    <color name="colorPrimaryDark">#000</color>
+    <color name="colorBar">#505050</color>
+    <color name="colorAccent">#000</color>
     <color name="colorHint">#d4d4d4</color>
+    <color name="layoutBackground">#bebebe</color>
     <color name="white">#ffffff</color>
 </resources>

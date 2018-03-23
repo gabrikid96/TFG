@@ -80,103 +80,113 @@
             android:contentDescription="@string/show_users_groups"
             android:onClick="handleButtons" />
 
-        <TextView
-            android:id="@+id/dataLabel"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layout_user"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:divider="?attr/dividerHorizontal"
-            android:showDividers="beginning"
-            android:text="@string/data_to_share"
-            android:textColor="@color/colorAccent"
-            android:textSize="20sp" />
+            android:layout_alignEnd="@+id/usersButton"
+            android:layout_alignLeft="@+id/layout_user"
+            android:layout_alignRight="@+id/usersButton"
+            android:layout_alignStart="@+id/layout_user"
+            android:layout_below="@+id/layout_user">
 
-        <!--Texts-->
-        <CheckBox
-            android:id="@+id/drivingToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/dataLabel"
-            android:layout_alignStart="@+id/dataLabel"
-            android:layout_below="@+id/dataLabel"
-            android:checked="false"
-            android:text="@string/driving_label"
-            android:textColor="#FFF"
-            android:textSize="16sp" />
+            <TextView
+                android:id="@+id/dataLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:divider="?attr/dividerHorizontal"
+                android:showDividers="beginning"
+                android:text="@string/data_to_share"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp" />
+
+            <!--Texts-->
+            <CheckBox
+                android:id="@+id/drivingToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/dataLabel"
+                android:layout_alignStart="@+id/dataLabel"
+                android:layout_below="@+id/dataLabel"
+                android:checked="false"
+                android:text="@string/driving_label"
+                android:textColor="#303030"
+                android:textSize="16sp" />
 
 
-        <CheckBox
-            android:id="@+id/locationToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/dataLabel"
-            android:layout_centerInParent="false"
-            android:layout_toEndOf="@+id/callToggle"
-            android:layout_toRightOf="@+id/callToggle"
-            android:checked="false"
-            android:text="@string/location_label"
-            android:textColor="#FFF"
-            android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/locationToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/dataLabel"
+                android:layout_centerInParent="false"
+                android:layout_toEndOf="@+id/callToggle"
+                android:layout_toRightOf="@+id/callToggle"
+                android:checked="false"
+                android:text="@string/location_label"
+                android:textColor="#303030"
+                android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/destinationToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/drivingToggle"
-            android:layout_alignStart="@+id/drivingToggle"
-            android:layout_below="@+id/drivingToggle"
-            android:checked="false"
-            android:text="@string/destination_label"
-            android:textColor="#FFF"
-            android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/destinationToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/drivingToggle"
+                android:layout_alignStart="@+id/drivingToggle"
+                android:layout_below="@+id/drivingToggle"
+                android:checked="false"
+                android:text="@string/destination_label"
+                android:textColor="#303030"
+                android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/startTimeToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/locationToggle"
-            android:layout_alignStart="@+id/locationToggle"
-            android:layout_below="@+id/locationToggle"
-            android:checked="false"
-            android:text="@string/start_time_label"
-            android:textColor="#FFF"
-            android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/startTimeToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/locationToggle"
+                android:layout_alignStart="@+id/locationToggle"
+                android:layout_below="@+id/locationToggle"
+                android:checked="false"
+                android:text="@string/start_time_label"
+                android:textColor="#303030"
+                android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/imagesToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/callToggle"
-            android:layout_alignStart="@+id/callToggle"
-            android:layout_below="@+id/callToggle"
-            android:checked="false"
-            android:text="@string/images_label"
-            android:textColor="#FFF"
-            android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/imagesToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/callToggle"
+                android:layout_alignStart="@+id/callToggle"
+                android:layout_below="@+id/callToggle"
+                android:checked="false"
+                android:text="@string/images_label"
+                android:textColor="#303030"
+                android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/callToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/destinationToggle"
-            android:layout_alignLeft="@+id/destinationToggle"
-            android:layout_alignStart="@+id/destinationToggle"
-            android:checked="false"
-            android:text="@string/call_accept_label"
-            android:textColor="#FFF"
-            android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/callToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/destinationToggle"
+                android:checked="false"
+                android:text="@string/call_accept_label"
+                android:textColor="#303030"
+                android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/parkingToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/imagesToggle"
-            android:layout_alignStart="@+id/imagesToggle"
-            android:layout_below="@+id/imagesToggle"
-            android:checked="false"
-            android:text="@string/parking_label"
-            android:textColor="#FFF"
-            android:textSize="16sp" />
+            <CheckBox
+                android:id="@+id/parkingToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/imagesToggle"
+                android:checked="false"
+                android:text="@string/parking_label"
+                android:textColor="#303030"
+                android:textSize="16sp" />
+        </RelativeLayout>
     </RelativeLayout>
 </ScrollView>

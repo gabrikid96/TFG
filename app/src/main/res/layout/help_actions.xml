@@ -13,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:drawable/dialog_holo_dark_frame"
+            android:backgroundTint="@color/layoutBackground"
             android:padding="@dimen/activity_horizontal_margin">
             <TextView
                 android:id="@+id/actions_label"
@@ -22,6 +23,7 @@
                 android:layout_below="@+id/layout_user"
                 android:text="@string/actions_label"
                 android:textColor="@color/colorAccent"
+                android:textStyle="bold"
                 android:textSize="16sp" />
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -36,7 +38,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:background="@android:drawable/stat_sys_phone_call"
-                    android:backgroundTint="#00d500" />
+                    android:backgroundTint="#0f9d58" />
 
                 <TextView
                     android:id="@+id/call_label_1"
@@ -48,7 +50,7 @@
                     android:layout_toEndOf="@+id/iconCall"
                     android:layout_toRightOf="@+id/iconCall"
                     android:text="@string/call"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="14sp" />
 
                 <TextView
@@ -59,7 +61,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:text="@string/say_call"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="14sp"
                     android:textStyle="italic" />
             </RelativeLayout>
@@ -89,7 +91,7 @@
                     android:layout_toEndOf="@+id/iconMessage"
                     android:layout_toRightOf="@+id/iconMessage"
                     android:text="@string/message"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="14sp" />
 
                 <TextView
@@ -100,7 +102,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:text="@string/say_message"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="14sp"
                     android:textStyle="italic" />
             </RelativeLayout>
@@ -112,12 +114,14 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@id/actions_layout"
             android:background="@android:drawable/dialog_holo_dark_frame"
+            android:backgroundTint="@color/layoutBackground"
             android:padding="@dimen/activity_horizontal_margin">
             <TextView
                 android:id="@+id/change_data_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
+                android:textStyle="bold"
                 android:layout_below="@+id/layout_user"
                 android:text="@string/change_data"
                 android:textColor="@color/colorAccent"
@@ -135,7 +139,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:background="@mipmap/destination_icon"
-                    android:backgroundTint="#FFF" />
+                    android:backgroundTint="#a10000" />
 
                 <TextView
                     android:id="@+id/change_destination_label_1"
@@ -147,8 +151,8 @@
                     android:layout_toEndOf="@+id/iconDestination"
                     android:layout_toRightOf="@+id/iconDestination"
                     android:text="@string/change_destination"
-                    android:minLines="2"
-                    android:textColor="#FFF"
+                    android:lines="2"
+                    android:textColor="#252525"
                     android:textSize="14sp" />
 
                 <TextView
@@ -159,7 +163,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:text="@string/say_destination"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="14sp"
                     android:textStyle="italic" />
             </RelativeLayout>
@@ -176,7 +180,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:background="@mipmap/parking_icon"
-                    android:backgroundTint="#FFF" />
+                    android:backgroundTint="#0080ff" />
 
                 <TextView
                     android:id="@+id/change_parking_label_1"
@@ -188,8 +192,8 @@
                     android:layout_toEndOf="@+id/iconParking"
                     android:layout_toRightOf="@+id/iconParking"
                     android:text="@string/change_parking"
-                    android:minLines="2"
-                    android:textColor="#FFF"
+                    android:lines="2"
+                    android:textColor="#252525"
                     android:textSize="14sp" />
 
                 <TextView
@@ -200,7 +204,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:text="@string/say_parking"
-                    android:textColor="#FFF"
+                    android:textColor="#252525"
                     android:textSize="14sp"
                     android:textStyle="italic" />
             </RelativeLayout>

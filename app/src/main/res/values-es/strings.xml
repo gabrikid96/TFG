@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">TFG</string>
     <string name="no_account">No tengo cuenta</string>
-    <string name="error_invalid_email">Esta dirección de email no es valida</string>
+    <string name="error_invalid_email">Esta dirección de email no es válida</string>
     <string name="error_invalid_password">La contraseña es demasiado corta</string>
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="prompt_email">Correo</string>
@@ -25,7 +25,7 @@
     <string name="users_added">Usuarios añadidos</string>
     <string name="user_added">Usuario añadido</string>
     <string name="add_users_group">Añadir usuarios al grupo</string>
-    <string name="show_users_groups">Mostrar usuaris del grupo</string>
+    <string name="show_users_groups">Mostrar usuarios del grupo</string>
     <string name="email_added">Este correo ya ha sido añadido</string>
     <string name="refresh_label">Actualizar</string>
     <string name="driving_label_2">Conduciendo:</string>
@@ -35,7 +35,7 @@
     <string name="startTime_label_2">Hora de inicio:</string>
     <string name="acceptCalls_label_2">Acepta llamadas:</string>
     <string name="parking_label_2">Buscando aparcamiento:</string>
-    <string name="users">usuarios en el grupo</string>
+    <string name="users">Usuarios en el grupo</string>
     <string name="name_group">Nombre del grupo</string>
     <string name="yes">Sí</string>
     <string name="edit_title">Editar grupo</string>
@@ -47,4 +47,28 @@
     <string name="driving_title">Modo conducción</string>
     <string name="driving_mode_on_attempt">El modo conducción va a ser activado, recuerda que se van a compartir tus datos con los grupos que hayas configurado, ¿estás seguro que quieres activar el modo conducción?</string>
     <string name="driving_mode_off_attempt">¿Estás seguro que quieres desactivar el modo conducción? Se va a dejar de emitir datos.</string>
+    <string name="action_login">Iniciar sesión</string>
+    <string name="call">Realizar llamada</string>
+    <string name="say_call">Di \"Llamar a\"</string>
+    <string name="contact_name_label">Nombre del contacto</string>
+    <string name="message">Enviar mensaje</string>
+    <string name="say_message">Di \"Mensaje para\"</string>
+    <string name="actions_label">Acciones</string>
+    <string name="change_data">Cambiar información</string>
+    <string name="change_destination">Cambiar destinación</string>
+    <string name="say_destination">Di \"Destino\"</string>
+    <string name="change_parking">Buscando aparcamiento</string>
+    <string name="say_parking">Di \"Aparcando\"</string>
+    <string name="actualInformation">Información actual</string>
+    <string name="title_activity_settings">Ajustes</string>
+    <string name="pref_header_notifications">Notificaciones</string>
+    <string name="logout_title">Cerrar sesión</string>
+    <string name="pref_title_vibrate">Vibración</string>
+    <string name="pref_title_ringtone">Tono notificación</string>
+    <string name="pref_title_user_driving_notifications">Notificación usuario conduciendo</string>
+    <string name="pref_header_data_sync">Sincronización de datos</string>
+    <string name="pref_title_location_sync_frequency">Actualización de ubicación</string>
+    <string name="pref_title_image_sync_frequency">Actualización de imágenes</string>
+    <string name="bad_login">Error al iniciar sesión</string>
+    <string name="groups">Grupos</string>
 </resources>

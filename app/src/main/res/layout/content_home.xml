@@ -24,15 +24,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/centerVerticalShim"
-        android:layout_marginBottom="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
         android:layout_toLeftOf="@+id/centerHorizontalShim"
         android:layout_toStartOf="@+id/centerHorizontalShim"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/group_shape"
         android:contentDescription="Drive mode"
         android:onClick="handleButtons"
         android:src="@drawable/drive"
+        android:tint="#0f9d58"
         android:tooltipText="Drive Mode" />
 
     <ImageButton
@@ -41,13 +42,14 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/drivingModeBtn"
         android:layout_alignBottom="@+id/drivingModeBtn"
-        android:layout_marginLeft="40dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
         android:layout_toEndOf="@+id/drivingModeBtn"
         android:layout_toRightOf="@+id/drivingModeBtn"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/group_shape"
         android:contentDescription="View friend"
         android:onClick="handleButtons"
+        android:tint="#00008e"
         android:src="@drawable/view" />
 
     <ImageButton
@@ -57,10 +59,11 @@
         android:layout_alignLeft="@+id/drivingModeBtn"
         android:layout_alignStart="@+id/drivingModeBtn"
         android:layout_below="@+id/centerVerticalShim"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/button_shape"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/group_shape"
         android:contentDescription="Group configuration"
         android:onClick="handleButtons"
+        android:tint="#e4e700"
         android:src="@drawable/groups" />
 
     <ImageButton
@@ -70,9 +73,10 @@
         android:layout_alignEnd="@+id/viewBtn"
         android:layout_alignRight="@+id/viewBtn"
         android:layout_alignTop="@+id/groupsBtn"
-        android:background="@drawable/button_shape"
+        android:background="@drawable/group_shape"
         android:contentDescription="Settings"
         android:onClick="handleButtons"
+        android:tint="#a10000"
         android:src="@drawable/settings" />
 
     <TextView

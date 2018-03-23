@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="grodrich7.tfg.Activities.DrivingActivity"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_driving">
 
@@ -19,6 +20,7 @@
             <RelativeLayout
                 android:id="@+id/destinationInfo"
                 android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
@@ -52,7 +54,7 @@
                     android:layout_alignLeft="@+id/textView"
                     android:layout_alignStart="@+id/textView"
                     android:layout_below="@id/textView"
-                    android:text="Time estimated: "
+                    android:text="Tiempo estimado: "
                     android:textColor="#FFF" />
 
                 <TextView
@@ -70,6 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/destinationInfo"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="7dp"
                 android:weightSum="2">
@@ -95,7 +98,7 @@
                         android:layout_alignLeft="@+id/startTimeData"
                         android:layout_alignParentTop="true"
                         android:layout_alignStart="@+id/startTimeData"
-                        android:text="Start time"
+                        android:text="Hora inicio"
                         android:textColor="#FFF" />
 
                     <TextView
@@ -136,6 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/time_parking_layout"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="7dp"
                 android:weightSum="2">

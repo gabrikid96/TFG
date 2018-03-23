@@ -5,7 +5,7 @@
     <string name="login_information" translatable="false">login</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_login" translatable="false">Login</string>
+    <string name="action_login">Login</string>
     <string name="no_account">Without account</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -78,17 +78,8 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+    <string name="pref_header_general" translatable="false">General</string>
 
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>
@@ -106,11 +97,11 @@
     <string name="pref_title_image_sync_frequency">Image sync frequency</string>
     <string name="pref_title_location_sync_frequency">Location sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
-        <item>5 minutes</item>
-        <item>10 minutes</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>15 minutos</item>
+        <item>30 minutos</item>
+        <item>1 hora</item>
     </string-array>
     <string-array name="pref_location_sync_frequency_values">
         <item>15</item>
@@ -120,12 +111,12 @@
         <item>10</item>
     </string-array>
     <string-array name="pref_location_sync_frequency_titles">
-        <item>15 seconds</item>
-        <item>30 seconds</item>
-        <item>1 minute</item>
-        <item>2 minutes</item>
-        <item>5 minutes</item>
-        <item>10 minutes</item>
+        <item>15 segundos</item>
+        <item>30 segundos</item>
+        <item>1 minuto</item>
+        <item>2 minutos</item>
+        <item>5 minutos</item>
+        <item>10 minutos</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">
         <item>5</item>
@@ -149,7 +140,7 @@
 
     <string-array name="multi_select_list_preference_default_value" />
 
-    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_title_system_sync_settings" translatable="false">System sync settings</string>
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
@@ -157,8 +148,10 @@
     <string name="pref_title_user_driving_notifications">User driving notifications</string>
 
     <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_ringtone_silent" translatable="false">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="logout_title">Logout</string>
+    <string name="bad_login">Bad login</string>
+    <string name="groups">Groups</string>
 </resources>
