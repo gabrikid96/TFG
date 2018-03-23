@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             loginAnimation();
                             progressBar.setVisibility(View.GONE);
-                            Snackbar.make(logoImage,"Bad Login", Snackbar.LENGTH_SHORT).show();
                         }
                     });
 
@@ -136,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loginAnimation(){
         if (loginLayout.getVisibility() != View.VISIBLE) {
-            logoImage.animate().y(0).setDuration(1500);
+            logoImage.animate().y(100).setDuration(1500);
             loginLayout.setVisibility(View.VISIBLE);
             loginLayout.setAlpha(0.0f);
             loginLayout.animate().alpha(1.0f).setDuration(2000);
