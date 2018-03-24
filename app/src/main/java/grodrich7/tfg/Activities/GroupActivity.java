@@ -123,10 +123,14 @@ public class GroupActivity extends AppCompatActivity {
         boolean result = true;
         if (nameInput.getText().toString().isEmpty()){
             nameInput.setError(getResources().getText(R.string.error_field_required));
+            nameInput.setFocusableInTouchMode(true);
+            nameInput.requestFocus();
             result = false;
         }
         if (group.getUsers() == null || group.getUsers().size() < 1){
             userAddInput.setError(getResources().getString(R.string.user_required_error));
+            userAddInput.setFocusableInTouchMode(true);
+            userAddInput.requestFocus();
             result = false;
         }
         return result;
@@ -206,8 +210,12 @@ public class GroupActivity extends AppCompatActivity {
             case R.id.add_user_button:
                 if (userAddInput.getText().toString().isEmpty()){
                     userAddInput.setError(getResources().getText(R.string.error_field_required));
+                    userAddInput.setFocusableInTouchMode(true);
+                    userAddInput.requestFocus();
                 }else if (!isValidEmail(userAddInput.getText().toString())){
                     userAddInput.setError(getResources().getText(R.string.error_invalid_email));
+                    userAddInput.setFocusableInTouchMode(true);
+                    userAddInput.requestFocus();
                 }else{
                     if (group.getUsers() == null) {
                         group.setUsers(new ArrayList<String>());

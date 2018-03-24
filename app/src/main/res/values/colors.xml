@@ -5,6 +5,7 @@
     <color name="colorPrimaryDark">#000</color>
     <color name="colorBar">#505050</color>
     <color name="colorAccent">#000</color>
+    <color name="transparent">#c0000000</color>
     <color name="colorHint">#d4d4d4</color>
     <color name="layoutBackground">#bebebe</color>
     <color name="white">#ffffff</color>

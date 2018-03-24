@@ -6,7 +6,7 @@
     android:elevation="2dp"
     android:padding="2dp">
 
-    <ImageButton
+    <ImageView
         android:id="@id/image"
         android:layout_width="?android:attr/listPreferredItemHeightLarge"
         android:layout_height="?android:attr/listPreferredItemHeightLarge"

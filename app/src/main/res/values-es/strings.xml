@@ -55,9 +55,9 @@
     <string name="say_message">Di \"Mensaje para\"</string>
     <string name="actions_label">Acciones</string>
     <string name="change_data">Cambiar información</string>
-    <string name="change_destination">Cambiar destinación</string>
+    <string name="change_destination">Cambiar\ndestinación</string>
     <string name="say_destination">Di \"Destino\"</string>
-    <string name="change_parking">Buscando aparcamiento</string>
+    <string name="change_parking">Buscando\naparcamiento</string>
     <string name="say_parking">Di \"Aparcando\"</string>
     <string name="actualInformation">Información actual</string>
     <string name="title_activity_settings">Ajustes</string>

@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,9 +17,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -141,11 +144,24 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
 
             @Override
             public void onBindViewHolder(CustomViewHolder viewHolder, int i) {
-                viewHolder.description.setText("Imagen " + String.valueOf(i));
+                viewHolder.description.setText("Imagen " + String.valueOf(i+1));
                 try{
                     viewHolder.imageButton.setImageResource(R.drawable.front_image);
-                }catch (Exception ex){
+                    final ImagePopup imagePopup = new ImagePopup(ViewUserActiviy.this);
+                    imagePopup.setFullScreen(true); // Optional
+                    imagePopup.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    imagePopup.setImageOnClickClose(true);  // Optional
 
+                    imagePopup.initiatePopup(viewHolder.imageButton.getDrawable());
+                    viewHolder.imageButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            /** Initiate Popup view **/
+                            imagePopup.viewPopup();
+                        }
+                    });
+                }catch (Exception ex){
+                    Log.e("REC_IMAGES", ex.getMessage());
                 }
             }
 
@@ -161,11 +177,11 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
     private class CustomViewHolder extends RecyclerView.ViewHolder {
 
         private TextView description;
-        private ImageButton imageButton;
+        private ImageView imageButton;
 
         public CustomViewHolder(View itemView) {
             super(itemView);
-            imageButton = (ImageButton) itemView.findViewById(R.id.image);
+            imageButton = (ImageView) itemView.findViewById(R.id.image);
             description = (TextView) itemView.findViewById(R.id.description);
         }
     }
