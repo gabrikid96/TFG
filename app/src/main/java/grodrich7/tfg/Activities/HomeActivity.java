@@ -42,4 +42,9 @@ public class HomeActivity extends HelperActivity {
                 break;
         }
     }
+    @Override
+    public void onBackPressed(){
+        finish();
+    }
+
 }

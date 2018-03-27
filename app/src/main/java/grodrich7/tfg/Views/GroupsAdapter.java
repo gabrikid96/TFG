@@ -103,4 +103,6 @@ public class GroupsAdapter extends ArrayAdapter<Group> {
         this.groups.remove(group);
         notifyDataSetChanged();
     }
+
+
 }

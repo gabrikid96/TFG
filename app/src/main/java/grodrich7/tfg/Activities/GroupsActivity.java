@@ -96,14 +96,6 @@ public class GroupsActivity extends HelperActivity {
         return controller.getCurrentUser().getGroups() == null ? new ArrayList<Group>() : new ArrayList<>(controller.getCurrentUser().getGroups().values());
     }
 
-    @Override
-    public void onBackPressed(){
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_CANCELED, returnIntent);
-        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
-        finish();
-    }
-
     public void createGroup(View v){
         Intent intent = new Intent(this,GroupActivity.class);
         startActivityForResult(intent,GROUP_EDIT);
