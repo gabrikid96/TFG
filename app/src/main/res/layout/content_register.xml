@@ -6,11 +6,6 @@
     tools:context="grodrich7.tfg.Activities.RegisterActivity"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="@color/colorPrimary"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:showIn="@layout/activity_register">
 
 
@@ -79,12 +74,14 @@
             <Button
                 android:id="@+id/btn_register"
                 style="?android:textAppearanceSmall"
+                android:background="@drawable/group_shape"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:longClickable="true"
                 android:onClick="register"
                 android:text="@string/action_register"
+                android:textColor="#FFF"
                 android:textStyle="bold" />
 
             <ProgressBar

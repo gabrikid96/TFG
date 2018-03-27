@@ -9,7 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import grodrich7.tfg.Models.Group;
+import grodrich7.tfg.Models.Constants;
 import grodrich7.tfg.Models.User;
 
 /**
@@ -19,19 +19,19 @@ import grodrich7.tfg.Models.User;
 public class Controller {
     private static Controller instance = null;
     private FirebaseDatabase database;
-    private DatabaseReference userReference;
+    public DatabaseReference usersReference;
+    public DatabaseReference userGroupsReference;
     private User currentUser;
-
 
     protected Controller() {
         Log.d("CONTROLLER", "Get instance");
         database = FirebaseDatabase.getInstance();
-        userReference = database.getReference("users");
+        usersReference = database.getReference("users");
         loadUser();
     }
 
     private void loadUser() {
-        userReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+        usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.e("CONTROLLER", "User changes");
@@ -50,8 +50,25 @@ public class Controller {
         return currentUser;
     }
 
+    public DatabaseReference getUsersReference() {
+        return usersReference;
+    }
+
+
+    public DatabaseReference getUserGroupsReference(){
+        return userGroupsReference != null ? userGroupsReference : usersReference.child(getUserUid()).child("groups");
+    }
+
+    public String getUserUid(){
+        try{
+            return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }catch (NullPointerException ex){
+            return null;
+        }
+    }
+
     public static Controller getInstance() {
-        if(instance == null) {
+        if(instance == null && FirebaseAuth.getInstance().getCurrentUser() != null) {
             instance = new Controller();
         }
         return instance;

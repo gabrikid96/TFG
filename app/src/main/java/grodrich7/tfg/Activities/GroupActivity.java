@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,18 +22,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ListIterator;
 
-import grodrich7.tfg.Controller;
 import grodrich7.tfg.Models.Constants;
 import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.R;
 
 
-public class GroupActivity extends AppCompatActivity {
+public class GroupActivity extends HelperActivity {
     private Group group;
-    private Controller controller;
     private AutoCompleteTextView nameInput;
     private AutoCompleteTextView userAddInput;
     private CheckBox destination;
@@ -47,29 +40,11 @@ public class GroupActivity extends AppCompatActivity {
     private CheckBox acceptCalls;
     private CheckBox parking;
     private boolean isUpdate;
-    private ImageButton addUserBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        controller = Controller.getInstance();
-        getViewsByXML();
-        group = (Group)  getIntent().getSerializableExtra("group");
-        if (group != null){
-            isUpdate = true;
-            fillGroupInfo();
-            toolbar.setTitle(getResources().getString(R.string.edit_title));
-            nameInput.setEnabled(false);
-        }else{
-            isUpdate = false;
-            group = new Group("");
-            toolbar.setTitle(getResources().getString(R.string.create_group));
-        }
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
     }
 
     private void fillGroupInfo() {
@@ -83,17 +58,28 @@ public class GroupActivity extends AppCompatActivity {
         parking.setChecked(group.getPermissions().get(Constants.Data.SEARCHING_PARKING.toString()));
     }
 
-    private void getViewsByXML() {
-        nameInput = (AutoCompleteTextView) findViewById(R.id.input_name_group);
-        userAddInput = (AutoCompleteTextView) findViewById(R.id.input_add_user);
-        destination = (CheckBox) findViewById(R.id.destinationToggle);
-        location = (CheckBox) findViewById(R.id.locationToggle);
-        driving = (CheckBox) findViewById(R.id.drivingToggle);
-        startTime= (CheckBox) findViewById(R.id.startTimeToggle);
-        frontalImages = (CheckBox) findViewById(R.id.imagesToggle);
-        acceptCalls = (CheckBox) findViewById(R.id.callToggle);
-        parking = (CheckBox) findViewById(R.id.parkingToggle);
-        addUserBtn = (ImageButton) findViewById(R.id.add_user_button);
+    private void groupSettings(){
+        isUpdate = group != null;
+        int titleId = isUpdate ? R.string.edit_title : R.string.create_group;
+        enableToolbar(titleId);
+
+        if (isUpdate) fillGroupInfo();
+        else group = new Group("");
+    }
+
+    protected void getViewsByXML() {
+        setContentView(R.layout.activity_group);
+        nameInput = findViewById(R.id.input_name_group);
+        userAddInput = findViewById(R.id.input_add_user);
+        destination = findViewById(R.id.destinationToggle);
+        location = findViewById(R.id.locationToggle);
+        driving = findViewById(R.id.drivingToggle);
+        startTime = findViewById(R.id.startTimeToggle);
+        frontalImages = findViewById(R.id.imagesToggle);
+        acceptCalls = findViewById(R.id.callToggle);
+        parking = findViewById(R.id.parkingToggle);
+        group = (Group) getIntent().getSerializableExtra("group");
+        groupSettings();
     }
 
     @Override
@@ -148,27 +134,26 @@ public class GroupActivity extends AppCompatActivity {
 
     private void saveGroup(){
         if (!checkInputs()) return;
+
         group.setNameGroup(nameInput.getText().toString());
         setPermissions();
+
         if (!isUpdate) createGroup();
         else updateGroup();
     }
 
     private void updateGroup() {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String groupKey;
         for(HashMap.Entry<String, Group> entry : controller.getCurrentUser().getGroups().entrySet()) {
             if (group.getNameGroup().equals(entry.getValue().getNameGroup())) {
                 groupKey = entry.getKey();
-                mDatabase.child("users").child(userUid).child("groups").child(groupKey).setValue(group, new DatabaseReference.CompletionListener() {
+                controller.getUserGroupsReference().child(groupKey).setValue(group, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         if (databaseError != null) {
                             Snackbar.make(nameInput, "Update fails", Toast.LENGTH_SHORT)
                                     .show();
                             Log.d("GROUPS", "Data could not be update " + databaseError.getMessage());
-                            badEdit();
                         } else {
                             Snackbar.make(nameInput, "Update success", Toast.LENGTH_SHORT)
                                     .show();
@@ -183,9 +168,7 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     public void createGroup(){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mDatabase.child("users").child(userUid).child("groups").push().setValue(group, new DatabaseReference.CompletionListener() {
+       controller.getUserGroupsReference().push().setValue(group, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
@@ -281,14 +264,6 @@ public class GroupActivity extends AppCompatActivity {
         builderSingle.show();
     }
 
-    public boolean isValidEmail(String email) {
-        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
-        java.util.regex.Matcher m = p.matcher(email);
-        return m.matches();
-    }
-
-
     public void goodEdit(){
         Intent returnIntent = new Intent();
         returnIntent.putExtra("group", group);
@@ -304,14 +279,7 @@ public class GroupActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        super.onBackPressed();
-        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
         badEdit();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+        super.onBackPressed();
     }
 }

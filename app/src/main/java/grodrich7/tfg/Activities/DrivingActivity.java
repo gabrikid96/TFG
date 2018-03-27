@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import grodrich7.tfg.R;
 
-public class DrivingActivity extends AppCompatActivity {
+public class DrivingActivity extends HelperActivity {
 
     private ImageButton drivingToggle;
     private ImageButton helpBtn;
@@ -30,15 +30,11 @@ public class DrivingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driving);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.driving_title);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getViewsByXML();
     }
 
-    private void getViewsByXML() {
+    protected void getViewsByXML() {
+        setContentView(R.layout.activity_driving);
+        enableToolbar(R.string.driving_title);
         isDrivingActivate = false;
         drivingToggle = findViewById(R.id.drivingToggle);
         helpBtn = findViewById(R.id.helpBtn);
@@ -55,8 +51,6 @@ public class DrivingActivity extends AppCompatActivity {
                 dialog.setContentView(R.layout.help_actions);
                 dialog.setTitle("");
                 dialog.setCancelable(true);
-//                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
                 dialog.show();
             }
         });
@@ -70,7 +64,7 @@ public class DrivingActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.driving_title)
                 .setMessage(message)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -79,25 +73,11 @@ public class DrivingActivity extends AppCompatActivity {
                     }
 
                 })
-                .setNegativeButton("No", null)
+                .setNegativeButton(R.string.no, null)
                 .show();
     }
 
     private void toggleDrivingIcon(){
         drivingToggle.setBackgroundResource(isDrivingActivate ? R.mipmap.driving_on : R.mipmap.driving_off);
     }
-
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
-        finish();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
 }

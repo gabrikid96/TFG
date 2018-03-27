@@ -37,7 +37,7 @@ import java.util.List;
 
 import grodrich7.tfg.R;
 
-public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCallback {
+public class ViewUserActiviy extends HelperActivity implements OnMapReadyCallback {
 
     private MapFragment mapFragment;
     private GoogleMap googleMap;
@@ -75,19 +75,14 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_user_activiy);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Gabriel");
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        createMapFragment();
-        getViewsByXML();
         putData();
     }
 
-    private void getViewsByXML() {
-        fullBtn = (ImageButton) findViewById(R.id.fullBtn);
+    protected void getViewsByXML() {
+        setContentView(R.layout.activity_view_user_activiy);
+        createMapFragment();
+        enableToolbar("Gabriel");
+        fullBtn = findViewById(R.id.fullBtn);
         fullBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,14 +99,12 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-        drivingData = (TextView) findViewById(R.id.drivingData);
-        destinationData = (TextView) findViewById(R.id.destinationData);
-        startTimeData = (TextView) findViewById(R.id.startTimeData);
-        acceptCallsData = (TextView) findViewById(R.id.acceptCallsData);
-        parkingData = (TextView) findViewById(R.id.parkingData);
+        drivingData = findViewById(R.id.drivingData);
+        destinationData = findViewById(R.id.destinationData);
+        startTimeData = findViewById(R.id.startTimeData);
+        acceptCallsData = findViewById(R.id.acceptCallsData);
+        parkingData = findViewById(R.id.parkingData);
         recyclerImages();
-        //ScrollView scrollView = findViewById(R.id.scroll);
-        //scrollView.fullScroll(ScrollView.FOCUS_UP);
     }
 
     private void recyclerImages(){
@@ -181,8 +174,8 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
 
         public CustomViewHolder(View itemView) {
             super(itemView);
-            imageButton = (ImageView) itemView.findViewById(R.id.image);
-            description = (TextView) itemView.findViewById(R.id.description);
+            imageButton = itemView.findViewById(R.id.image);
+            description = itemView.findViewById(R.id.description);
         }
     }
 
@@ -211,11 +204,6 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
 
     }
 
-    public String parseString(boolean bool){
-        return bool ? getResources().getString(R.string.yes) : getResources().getString(R.string.no);
-    }
-
-
     public DisplayMetrics getMetrics(){
         return getApplicationContext().getResources().getDisplayMetrics();
     }
@@ -230,6 +218,7 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
         return start + (int)Math.round(Math.random() * (end - start));
     }
     //endregion
+
     //region ToolbarSettings
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -254,21 +243,8 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
 
         return true;
     }
-
-
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
-        finish();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
     //endregion
+
     //region MapFragment
     public void createMapFragment(){
         mapFragment = (MapFragment) getFragmentManager()
@@ -321,6 +297,7 @@ public class ViewUserActiviy extends AppCompatActivity implements OnMapReadyCall
         return CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(currentLocation).zoom(14.0f).build());
     }
     //endregion
+
     public class ResizeAnimation extends Animation {
         final int targetHeight;
         View view;

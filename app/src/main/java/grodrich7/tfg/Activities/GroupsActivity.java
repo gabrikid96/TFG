@@ -37,30 +37,16 @@ import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
 import grodrich7.tfg.Views.GroupsAdapter;
 
-public class GroupsActivity extends AppCompatActivity {
+public class GroupsActivity extends HelperActivity {
 
     private ListView groups_list;
     private ProgressBar progressBar;
-    private Toolbar toolbar;
     private GroupsAdapter groupsAdapter;
-    private static Controller controller;
     private HashMap<String,User> users;
-    private static String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    private static DatabaseReference mDatabase;
-    public static final int GROUP_EDIT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_groups);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getResources().getString(R.string.groups));
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        controller = Controller.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        getViewsByXML();
         loadGroups();
     }
 
@@ -93,7 +79,9 @@ public class GroupsActivity extends AppCompatActivity {
         }.execute();
     }
 
-    private void getViewsByXML() {
+    protected void getViewsByXML() {
+        setContentView(R.layout.activity_groups);
+        enableToolbar(R.string.groups);
         /*List View*/
         groups_list = (ListView) findViewById(R.id.groups_list);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -116,34 +104,18 @@ public class GroupsActivity extends AppCompatActivity {
         finish();
     }
 
-    /**
-     *
-     * @param v
-     */
     public void createGroup(View v){
         Intent intent = new Intent(this,GroupActivity.class);
         startActivityForResult(intent,GROUP_EDIT);
         overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
     }
 
-    public static void deleteGroup(Group group)
-    {
-        if (controller.getCurrentUser().getGroups() != null){
-            for (Map.Entry<String, Group> entry : controller.getCurrentUser().getGroups().entrySet()) {
-                if (group.equals(entry.getValue())) {
-                    mDatabase.child("users").child(userUid).child("groups").child(entry.getKey()).removeValue();
-                    break;
-                }
-            }
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode ==  GROUP_EDIT) {
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == GROUP_EDIT) {
+            if(resultCode == Activity.RESULT_OK)
                 groupsAdapter.updateData(getGroupsArray());
-            }
+
             if (resultCode == Activity.RESULT_CANCELED) {
 
             }
@@ -152,17 +124,8 @@ public class GroupsActivity extends AppCompatActivity {
 
     public void editGroup(Group group){
         Intent intent = new Intent(this,GroupActivity.class);
-        String key = "Hola";
         intent.putExtra("group",group);
-        intent.putExtra("key",key);
         startActivityForResult(intent,GROUP_EDIT);
         overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
-    }
-
-    private void launchIntent(Class<?> activity, boolean transitionRight){
-        Intent intent = new Intent(GroupsActivity.this,activity);
-        startActivity(intent);
-        overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
-                transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);
     }
 }

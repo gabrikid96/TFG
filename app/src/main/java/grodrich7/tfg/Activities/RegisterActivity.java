@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -25,7 +26,7 @@ import grodrich7.tfg.BuildConfig;
 import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends HelperActivity {
     private FirebaseAuth mAuth;
     private AutoCompleteTextView nameInput;
     private AutoCompleteTextView emailInput;
@@ -36,13 +37,18 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
         mAuth = FirebaseAuth.getInstance();
-        nameInput = (AutoCompleteTextView) findViewById(R.id.input_name);
-        emailInput =(AutoCompleteTextView) findViewById(R.id.input_email);
-        passwordInput = (EditText) findViewById(R.id.input_password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        registerBtn = (Button) findViewById(R.id.btn_register);
+    }
+
+    @Override
+    protected void getViewsByXML() {
+        setContentView(R.layout.activity_register);
+        enableToolbar(R.string.action_register);
+        nameInput = findViewById(R.id.input_name);
+        emailInput = findViewById(R.id.input_email);
+        passwordInput = findViewById(R.id.input_password);
+        progressBar = findViewById(R.id.progressBar);
+        registerBtn = findViewById(R.id.btn_register);
         registerBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -57,38 +63,30 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void register(View v){
-        if (!checkInputs()){
-            return;
-        }
+        if (!checkInputs())return;
+        /*if (!isOnline()){
+            Snackbar.make(registerBtn,R.string.no_connection, Snackbar.LENGTH_SHORT).show();
+        }*/
+
         progressBar.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Snackbar.make(passwordInput,"Good register", Snackbar.LENGTH_SHORT).show();
                             updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Snackbar.make(passwordInput,"Bad register", Snackbar.LENGTH_SHORT).show();
-                            handleError(task);
-                            //updateUI(null);
+                            Snackbar.make(registerBtn,R.string.no_connection, Snackbar.LENGTH_SHORT).show();
                         }
                         progressBar.setVisibility(View.GONE);
                     }
                 });
     }
 
-    private void handleError(Task<AuthResult> task) {
-        String errorMessage = task.getException().getMessage();
-    }
 
     private void updateUI(FirebaseUser user) {
-        if (user == null){
-
-        }else{
+        if (user != null){
             writeNewUser(user.getUid(), nameInput.getText().toString(), user.getEmail());
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_OK,returnIntent);
@@ -98,8 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void writeNewUser(String userId, String name, String email) {
         User user = new User(name, email);
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("users").child(userId).setValue(user);
+        controller.getUsersReference().child(userId).setValue(user);
     }
 
     public boolean checkInputs(){
@@ -132,19 +129,10 @@ public class RegisterActivity extends AppCompatActivity {
         return isCorrect;
     }
 
-    public boolean isValidPassword(String password){
-        return password.length() > 4;
-    }
-
-    public boolean isValidEmail(String email){
-        return email.contains("@");
-    }
-
     @Override
     public void onBackPressed(){
         Intent returnIntent = new Intent();
         setResult(Activity.RESULT_CANCELED, returnIntent);
-        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
-        finish();
+        super.onBackPressed();
     }
 }

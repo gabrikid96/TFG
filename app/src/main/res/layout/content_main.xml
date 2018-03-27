@@ -32,14 +32,12 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_marginTop="50dp"
+            android:background="@drawable/car"
             android:contentDescription="@string/Logo"
             android:longClickable="true"
             android:minHeight="130dp"
             android:minWidth="130dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/car"
-            tools:layout_editor_absoluteX="127dp"
-            tools:layout_editor_absoluteY="220dp" />
+            android:visibility="visible" />
 
         <include
             android:id="@+id/loginLayout"

@@ -23,9 +23,7 @@ import grodrich7.tfg.BuildConfig;
 import grodrich7.tfg.Controller;
 import grodrich7.tfg.R;
 
-public class MainActivity extends AppCompatActivity {
-
-    public static final int LOGIN_RESULT = 1;
+public class MainActivity extends HelperActivity {
     private ProgressBar progressBar;
     private ImageView logoImage;
     private LinearLayout loginLayout;
@@ -38,11 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private boolean restarted;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getViewsByXML();
         mAuth = FirebaseAuth.getInstance();
         restarted = false;
     }
@@ -51,44 +48,29 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (!restarted){
-            // Check if user is signed in (non-null) and update UI accordingly.
+        if (!restarted)
             updateUI(currentUser);
-        }else{
-            if (currentUser != null){
-                goHome();
-            }
+        else{
+            if (currentUser != null)
+                launchIntent(HomeActivity.class, TRANSITION_RIGHT);
         }
     }
 
-    private void getViewsByXML() {
+    protected void getViewsByXML() {
+        setContentView(R.layout.activity_main);
         /*TITLE LAYOUT*/
-        logoImage = (ImageView) findViewById(R.id.logoImage);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        loginLayout = (LinearLayout) findViewById(R.id.loginLayout);
-
-        logoImage.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (BuildConfig.DEBUG && mAuth.getCurrentUser() != null) {
-                    Snackbar.make(logoImage,"Log Out " + mAuth.getCurrentUser().getEmail(), Snackbar.LENGTH_SHORT).show();
-                    mAuth.signOut();
-                    updateUI(null);
-                }
-
-                return false;
-            }
-        });
+        logoImage = findViewById(R.id.logoImage);
+        progressBar = findViewById(R.id.progressBar);
+        loginLayout = findViewById(R.id.loginLayout);
 
         /*LOGIN LAYOUT*/
-        emailInput = (AutoCompleteTextView) findViewById(R.id.input_email);
-        passwordInput = (EditText) findViewById(R.id.input_password);
+        emailInput = findViewById(R.id.input_email);
+        passwordInput = findViewById(R.id.input_password);
     }
 
     public void login(View v){
-        if (!checkInputs()){
-            return;
-        }
+        if (!checkInputs()) return;
+
         mAuth.signInWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -100,14 +82,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void updateUI(FirebaseUser user) {
-        if (loginLayout.getVisibility() == View.VISIBLE && user == null){
-            Snackbar.make(logoImage,getResources().getText(R.string.bad_login), Snackbar.LENGTH_SHORT).show();
-        }
-        else if (user == null){
-            animationDelay(2000);
-        }else{
+        if (user == null)animationDelay(2000);
+        else{
             progressBar.setVisibility(View.GONE);
-            goHome();
+            launchIntent(HomeActivity.class, TRANSITION_RIGHT);
         }
     }
 
@@ -142,37 +120,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**Activities**/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode ==  LOGIN_RESULT) {
-            if(resultCode == Activity.RESULT_OK){
-                setContentView(R.layout.activity_main);
+        if (requestCode == LOGIN_RESULT) {
+            if(resultCode == Activity.RESULT_OK)
                 updateUI(mAuth.getCurrentUser());
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
+
+            if (resultCode == Activity.RESULT_CANCELED)
                 restarted = true;
-            }
         }
     }
 
     public void register(View v){
-        Intent intent = new Intent(MainActivity.this,RegisterActivity.class);
-        startActivityForResult(intent, LOGIN_RESULT);
-        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
+        launchIntentForResult(RegisterActivity.class, TRANSITION_RIGHT, LOGIN_RESULT);
     }
 
-
-    public void goHome(){
-        Intent intent = new Intent(MainActivity.this,HomeActivity.class);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
-    }
-
-    /**Validations**/
-
+    //region INPUT VALIDATIONS
     public boolean checkInputs(){
         boolean isCorrect = true;
         emailInput.setError(null);
@@ -180,29 +143,27 @@ public class MainActivity extends AppCompatActivity {
 
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();
-
-        if (password.isEmpty() || !isValidPassword(password)){
-            passwordInput.setError(getString(R.string.error_invalid_password));
-            isCorrect = false;
-        }
-
         if (email.isEmpty()){
             emailInput.setError(getString(R.string.error_field_required));
+            emailInput.setFocusableInTouchMode(true);
+            emailInput.requestFocus();
             isCorrect = false;
         }else if (!isValidEmail(email)){
             emailInput.setError(getString(R.string.error_invalid_email));
+            emailInput.setFocusableInTouchMode(true);
+            emailInput.requestFocus();
             isCorrect = false;
         }
+
+        if (password.isEmpty() || !isValidPassword(password)){
+            passwordInput.setError(getString(R.string.error_invalid_password));
+            passwordInput.setFocusableInTouchMode(true);
+            passwordInput.requestFocus();
+            isCorrect = false;
+        }
+
+
         return isCorrect;
     }
-
-    public boolean isValidPassword(String password){
-        return password.length() > 4;
-    }
-
-    public boolean isValidEmail(String email){
-        return email.contains("@");
-    }
-
-
+    //endregion
 }
