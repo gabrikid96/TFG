@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
 
@@ -68,28 +70,30 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <Button
-                android:id="@+id/btn_register"
-                style="?android:textAppearanceSmall"
-                android:background="@drawable/group_shape"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:longClickable="true"
-                android:onClick="register"
-                android:text="@string/action_register"
-                android:textColor="#FFF"
-                android:textStyle="bold" />
 
-            <ProgressBar
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/progressBar"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="16dp"
-                android:indeterminate="true"
-                android:visibility="gone" />
-
+                android:layout_height="wrap_content">
+                <ProgressBar
+                    android:id="@+id/registerProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true" />
+                <Button
+                    android:id="@+id/btn_register"
+                    style="?android:textAppearanceSmall"
+                    android:background="@drawable/group_shape"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:longClickable="true"
+                    android:onClick="register"
+                    android:text="@string/action_register"
+                    android:textColor="#FFF"
+                    android:textStyle="bold" />
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 

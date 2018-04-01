@@ -154,12 +154,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onMenuItemSelected(featureId, item);
     }
 
-    @Override
-    public void onBackPressed(){
-        super.onBackPressed();
-        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
-        finish();
-    }
+//    @Override
+//    public void onBackPressed(){
+//        super.onBackPressed();
+//        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
+//        finish();
+//    }
 
 
     @Override
@@ -174,6 +174,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     private void launchIntent(Class<?> activity, boolean transitionRight){
         Intent intent = new Intent(this,activity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         overridePendingTransition(transitionRight ? R.anim.transition_left_in : R.anim.transition_right_in ,
                 transitionRight ? R.anim.transition_left_out : R.anim.transition_right_in);

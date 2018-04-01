@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +37,7 @@ public class RegisterActivity extends HelperActivity {
     private EditText passwordInput;
     private ProgressBar progressBar;
     private Button registerBtn;
+    private ProgressBar registerProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,15 +77,18 @@ public class RegisterActivity extends HelperActivity {
                 return handled;
             }
         });
+
+        registerProgressBar = findViewById(R.id.registerProgressBar);
     }
 
-    public void register(View v){
+    public void register(final View v){
         if (!checkInputs())return;
-        /*if (!isOnline()){
+        if (!isOnline()){
             Snackbar.make(registerBtn,R.string.no_connection, Snackbar.LENGTH_SHORT).show();
-        }*/
-
-        progressBar.setVisibility(View.VISIBLE);
+            return;
+        }
+        switchViews(false);
+        hideKeyboard();
         mAuth.createUserWithEmailAndPassword(emailInput.getText().toString(), passwordInput.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -91,12 +96,30 @@ public class RegisterActivity extends HelperActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
-                        } else {
-                            Snackbar.make(registerBtn,R.string.no_connection, Snackbar.LENGTH_SHORT).show();
                         }
-                        progressBar.setVisibility(View.GONE);
+                        switchViews(true);
+                    }
+                }).addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        switchViews(true);
+                        showErrorMessage(e, emailInput);
                     }
                 });
+    }
+
+    private void switchViews(boolean action){
+        if (!action){
+            registerProgressBar.bringToFront();
+            registerProgressBar.setVisibility(View.VISIBLE);
+            registerBtn.setEnabled(action);
+            registerBtn.setText("");
+        }else{
+            registerProgressBar.setVisibility(View.GONE);
+            registerBtn.setEnabled(action);
+            registerBtn.setText(R.string.action_register);
+        }
+
     }
 
 
@@ -126,19 +149,22 @@ public class RegisterActivity extends HelperActivity {
 
         if (password.isEmpty() || !isValidPassword(password)){
             passwordInput.setError(getString(R.string.error_invalid_password));
+            requestFocus(passwordInput);
             isCorrect = false;
         }
 
         if (email.isEmpty()){
             emailInput.setError(getString(R.string.error_field_required));
+            requestFocus(emailInput);
             isCorrect = false;
         }else if (!isValidEmail(email)){
             emailInput.setError(getString(R.string.error_invalid_email));
+            requestFocus(emailInput);
             isCorrect = false;
         }
-
         if (name.isEmpty()){
             nameInput.setError(getString(R.string.error_field_required));
+            requestFocus(nameInput);
             isCorrect = false;
         }
         return isCorrect;

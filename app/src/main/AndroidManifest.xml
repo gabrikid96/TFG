@@ -16,7 +16,7 @@
         <activity
             android:name=".Activities.MainActivity"
             android:label="@string/title_activity_main"
-
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +28,7 @@
             android:name=".Activities.RegisterActivity"
             android:label="@string/title_activity_register"
             android:parentActivityName=".Activities.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -37,6 +38,7 @@
             android:name=".Activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:parentActivityName=".Activities.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -46,6 +48,7 @@
             android:name=".Activities.GroupsActivity"
             android:label="@string/title_activity_groups"
             android:parentActivityName=".Activities.HomeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -55,6 +58,7 @@
             android:name=".Activities.GroupActivity"
             android:label="@string/title_activity_group"
             android:parentActivityName=".Activities.GroupsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -64,6 +68,7 @@
             android:name=".Activities.ViewUserActiviy"
             android:label="@string/title_activity_view_user_activiy"
             android:parentActivityName=".Activities.HomeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -73,6 +78,7 @@
             android:name=".Activities.DrivingActivity"
             android:label="@string/title_activity_driving"
             android:parentActivityName=".Activities.HomeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -80,6 +86,7 @@
         </activity>
         <activity
             android:name=".Activities.SettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".Activities.HomeActivity">
             <meta-data

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TFG</string>
-    <string name="no_account">No tengo cuenta</string>
+    <string name="no_account">No tienes cuenta? Registrate</string>
     <string name="error_invalid_email">Esta dirección de email no es válida</string>
     <string name="error_invalid_password">La contraseña es demasiado corta</string>
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
@@ -71,4 +70,15 @@
     <string name="pref_title_image_sync_frequency">Actualización de imágenes</string>
     <string name="bad_login">Error al iniciar sesión</string>
     <string name="groups">Grupos</string>
+    <string name="action_register">Registrarse</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="no_connection">No se ha podido completar la acción. Revisa tu conexión a Internet</string>
+    <string name="error_message_password">La contraseña es incorrecta</string>
+    <string name="error_message_email">Este correo no existe</string>
+    <string name="error_message_disabled">Este correo ha sido deshabilitado</string>
+    <string name="error_message_email_in_use">Este correo ya esta en uso por otra cuenta</string>
+    <string name="send_email">Enviar</string>
+    <string name="error_send_email">Error al enviar email de recuperación</string>
+    <string name="email_sent">Correo de recuperación enviado. Sigue las intrucciones del correo para recuperar tu contraseña</string>
+    <string name="recover_password_title">Recuperar contraseña</string>
 </resources>

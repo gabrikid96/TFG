@@ -5,14 +5,14 @@
     <string name="login_information" translatable="false">login</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_login">Login</string>
-    <string name="no_account">Without account</string>
+    <string name="action_login">Sign in</string>
+    <string name="no_account">New here? Sign up</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="title_activity_register" translatable="false">RegisterActivity</string>
-    <string name="action_register" translatable="false">Register</string>
+    <string name="action_register">Sign up</string>
     <string name="prompt_name">Name</string>
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="title_activity_scrolling" translatable="false">ScrollingActivity</string>
@@ -154,5 +154,14 @@
     <string name="logout_title">Logout</string>
     <string name="bad_login">Bad login</string>
     <string name="groups">Groups</string>
-    <string name="no_connection">Register failed. Check your internet connection.</string>
+    <string name="no_connection">Check your internet connection.</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="error_message_password">The password is incorrect</string>
+    <string name="error_message_email">This email doesn\'t exists</string>
+    <string name="error_message_disabled">This account have been disabled</string>
+    <string name="error_message_email_in_use">This email is already in use by another account</string>
+    <string name="send_email">Send</string>
+    <string name="error_send_email">Error on send recovery email</string>
+    <string name="email_sent">Recovery mail sent. Follow the mail instructions to recover your password</string>
+    <string name="recover_password_title">Recover password</string>
 </resources>

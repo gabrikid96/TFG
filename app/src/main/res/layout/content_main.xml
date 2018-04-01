@@ -22,8 +22,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="36dp"
             android:indeterminate="false"
-            android:visibility="visible"
-/>
+            android:visibility="visible"/>
 
         <ImageView
             android:id="@+id/logoImage"
