@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import grodrich7.tfg.BuildConfig;
+import grodrich7.tfg.Controller;
 import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
 
@@ -134,7 +135,7 @@ public class RegisterActivity extends HelperActivity {
 
     private void writeNewUser(String userId, String name, String email) {
         User user = new User(name, email);
-        controller.getUsersReference().child(userId).setValue(user);
+        Controller.getInstance().getUsersReference().child(userId).setValue(user);
     }
 
     public boolean checkInputs(){

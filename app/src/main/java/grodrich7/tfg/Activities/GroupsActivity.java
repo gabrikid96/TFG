@@ -4,45 +4,37 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.Query;
 
-import java.net.UnknownServiceException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-import grodrich7.tfg.Controller;
 import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
-import grodrich7.tfg.Views.GroupsAdapter;
 
 public class GroupsActivity extends HelperActivity {
 
-    private ListView groups_list;
+    private RecyclerView groups_list;
     private ProgressBar progressBar;
-    private GroupsAdapter groupsAdapter;
-    private HashMap<String,User> users;
+   // private HashMap<String,User> users;
+    private FirebaseRecyclerAdapter groupsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +67,7 @@ public class GroupsActivity extends HelperActivity {
             protected void onPostExecute(Void aVoid) {
                 progressBar.setVisibility(View.GONE);
                 putGroups();
+                groupsAdapter.startListening();
             }
         }.execute();
     }
@@ -83,17 +76,79 @@ public class GroupsActivity extends HelperActivity {
         setContentView(R.layout.activity_groups);
         enableToolbar(R.string.groups);
         /*List View*/
-        groups_list = (ListView) findViewById(R.id.groups_list);
+        groups_list = (RecyclerView) findViewById(R.id.groups_list);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     private void putGroups() {
-        groupsAdapter = new GroupsAdapter(getGroupsArray(), this);
-        groups_list.setAdapter(groupsAdapter);
-    }
+        final int lastPosition = -1;
+        Query query = controller.getUserGroupsReference();
+        FirebaseRecyclerOptions<Group> options =
+                new FirebaseRecyclerOptions.Builder<Group>()
+                        .setQuery(query, Group.class)
+                        .build();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        groups_list.setLayoutManager(linearLayoutManager);
+        groupsAdapter = new FirebaseRecyclerAdapter<Group, GroupHolder>(options) {
+            @Override
+            public GroupHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.group_item, parent, false);
 
-    public ArrayList<Group> getGroupsArray(){
-        return controller.getCurrentUser().getGroups() == null ? new ArrayList<Group>() : new ArrayList<>(controller.getCurrentUser().getGroups().values());
+                return new GroupHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(final GroupHolder holder, int position, final Group model) {
+                final DatabaseReference postRef = getRef(holder.getAdapterPosition());
+                final String postKey = postRef.getKey();
+                holder.name_label.setText(model.getNameGroup().toUpperCase());
+                try{
+                    holder.user_count_label.setText(String.valueOf(model.getUsers().size()) + " " +  getApplicationContext().getResources().getString(R.string.users));
+                }catch (NullPointerException e){
+                    holder.user_count_label.setText("0 " + getApplicationContext().getResources().getString(R.string.users));
+                }
+                if (position > lastPosition)
+                {
+                    holder.setAnimation();
+                }
+
+                holder.container.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editGroup(postKey,model);
+                    }
+                });
+
+                holder.action_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Animation animation = AnimationUtils.loadAnimation(GroupsActivity.this, android.R.anim.slide_out_right);
+                        animation.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                deleteGroup(postKey, model);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+                        holder.itemView.startAnimation(animation);
+
+
+                    }
+                });
+            }
+        };
+
+        groups_list.setAdapter(groupsAdapter);
     }
 
     public void createGroup(View v){
@@ -106,7 +161,7 @@ public class GroupsActivity extends HelperActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == GROUP_EDIT) {
             if(resultCode == Activity.RESULT_OK)
-                groupsAdapter.updateData(getGroupsArray());
+                //groupsAdapter.updateData(getGroupsArray());
 
             if (resultCode == Activity.RESULT_CANCELED) {
 
@@ -114,10 +169,48 @@ public class GroupsActivity extends HelperActivity {
         }
     }
 
-    public void editGroup(Group group){
+    public void editGroup(String postKey, Group group){
         Intent intent = new Intent(this,GroupActivity.class);
         intent.putExtra("group",group);
+        intent.putExtra("key",postKey);
         startActivityForResult(intent,GROUP_EDIT);
         overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
+    }
+
+    public void deleteGroup(String postKey, Group group){
+        controller.getUserGroupsReference().child(postKey).removeValue();
+        Snackbar mySnackbar = Snackbar.make(groups_list,
+                "Grupo eliminado", Snackbar.LENGTH_LONG);
+        mySnackbar.setAction("Deshacer", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        mySnackbar.show();
+    }
+
+
+
+    private class GroupHolder extends RecyclerView.ViewHolder {
+
+        TextView name_label;
+        ImageButton action_btn;
+        TextView user_count_label;
+        LinearLayout container;
+
+        public GroupHolder(View itemView) {
+            super(itemView);
+            name_label = (TextView) itemView.findViewById(R.id.name_label);
+            action_btn = (ImageButton) itemView.findViewById(R.id.action_btn);
+            user_count_label = (TextView) itemView.findViewById(R.id.user_count_label);
+            container = (LinearLayout) itemView.findViewById(R.id.shape_layout);
+        }
+
+        private void setAnimation()
+        {
+            Animation animation = AnimationUtils.loadAnimation(this.itemView.getContext(), android.R.anim.slide_in_left);
+            this.itemView.startAnimation(animation);
+        }
     }
 }

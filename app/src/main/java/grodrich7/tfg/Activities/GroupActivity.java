@@ -30,6 +30,7 @@ import grodrich7.tfg.R;
 
 public class GroupActivity extends HelperActivity {
     private Group group;
+    private String key;
     private AutoCompleteTextView nameInput;
     private AutoCompleteTextView userAddInput;
     private CheckBox destination;
@@ -79,6 +80,7 @@ public class GroupActivity extends HelperActivity {
         acceptCalls = findViewById(R.id.callToggle);
         parking = findViewById(R.id.parkingToggle);
         group = (Group) getIntent().getSerializableExtra("group");
+        key = (String) getIntent().getSerializableExtra("key");
         groupSettings();
     }
 
@@ -143,28 +145,21 @@ public class GroupActivity extends HelperActivity {
     }
 
     private void updateGroup() {
-        String groupKey;
-        for(HashMap.Entry<String, Group> entry : controller.getCurrentUser().getGroups().entrySet()) {
-            if (group.getNameGroup().equals(entry.getValue().getNameGroup())) {
-                groupKey = entry.getKey();
-                controller.getUserGroupsReference().child(groupKey).setValue(group, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Snackbar.make(nameInput, "Update fails", Toast.LENGTH_SHORT)
-                                    .show();
-                            Log.d("GROUPS", "Data could not be update " + databaseError.getMessage());
-                        } else {
-                            Snackbar.make(nameInput, "Update success", Toast.LENGTH_SHORT)
-                                    .show();
-                            Log.d("GROUPS", "Group update succesfully");
-                            goodEdit();
-                        }
-                    }
-                });
-                break;
+        controller.getUserGroupsReference().child(key).setValue(group, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Snackbar.make(nameInput, "Update fails", Toast.LENGTH_SHORT)
+                            .show();
+                    Log.d("GROUPS", "Data could not be update " + databaseError.getMessage());
+                } else {
+                    Snackbar.make(nameInput, "Update success", Toast.LENGTH_SHORT)
+                            .show();
+                    Log.d("GROUPS", "Group update succesfully");
+                    goodEdit();
+                }
             }
-        }
+        });
     }
 
     public void createGroup(){
