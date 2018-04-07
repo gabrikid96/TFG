@@ -164,4 +164,6 @@
     <string name="error_send_email">Error on send recovery email</string>
     <string name="email_sent">Recovery mail sent. Follow the mail instructions to recover your password</string>
     <string name="recover_password_title">Recover password</string>
+    <string name="deleted_group">Group deleted</string>
+    <string name="undo">Undo</string>
 </resources>

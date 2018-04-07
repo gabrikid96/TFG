@@ -2,6 +2,7 @@ package grodrich7.tfg;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -9,7 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import grodrich7.tfg.Models.Constants;
+import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.Models.User;
 
 /**
@@ -25,8 +26,12 @@ public class Controller {
 
     protected Controller() {
         Log.d("CONTROLLER", "Get instance");
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         database = FirebaseDatabase.getInstance();
         usersReference = database.getReference("users");
+        usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).keepSynced(true);
+        userGroupsReference = usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("groups");
+        userGroupsReference.keepSynced(true);
         loadUser();
     }
 
@@ -46,6 +51,16 @@ public class Controller {
         });
     }
 
+    public Task<Void> createGroup(Group group){
+        return userGroupsReference.push().setValue(group);
+    }
+
+    public Task<Void> updateGroup(String key, Group group){
+        return userGroupsReference.child(key).setValue(group);
+    }
+
+    //region GETTERS
+
     public User getCurrentUser(){
         return currentUser;
     }
@@ -54,9 +69,8 @@ public class Controller {
         return usersReference;
     }
 
-
     public DatabaseReference getUserGroupsReference(){
-        return userGroupsReference != null ? userGroupsReference : usersReference.child(getUserUid()).child("groups");
+        return userGroupsReference;
     }
 
     public String getUserUid(){
@@ -67,6 +81,7 @@ public class Controller {
         }
     }
 
+    //endregion
     public static Controller getInstance() {
         if(instance == null && FirebaseAuth.getInstance().getCurrentUser() != null) {
             instance = new Controller();

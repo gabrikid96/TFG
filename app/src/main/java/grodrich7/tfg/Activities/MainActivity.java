@@ -121,7 +121,6 @@ public class MainActivity extends HelperActivity {
             loginButton.setEnabled(action);
             loginButton.setText(R.string.action_login);
         }
-
     }
 
     private void updateUI(FirebaseUser user) {

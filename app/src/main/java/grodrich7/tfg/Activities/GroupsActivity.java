@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +18,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
@@ -177,14 +180,15 @@ public class GroupsActivity extends HelperActivity {
         overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
     }
 
-    public void deleteGroup(String postKey, Group group){
+    public void deleteGroup(String postKey, final Group group){
         controller.getUserGroupsReference().child(postKey).removeValue();
         Snackbar mySnackbar = Snackbar.make(groups_list,
-                "Grupo eliminado", Snackbar.LENGTH_LONG);
-        mySnackbar.setAction("Deshacer", new View.OnClickListener() {
+                R.string.deleted_group, Snackbar.LENGTH_LONG);
+        mySnackbar.setAction(R.string.undo, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                controller.getUserGroupsReference().push().setValue(group);
             }
         });
         mySnackbar.show();

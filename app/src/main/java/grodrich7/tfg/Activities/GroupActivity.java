@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Menu;
@@ -13,8 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +46,7 @@ public class GroupActivity extends HelperActivity {
     private CheckBox acceptCalls;
     private CheckBox parking;
     private boolean isUpdate;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +94,7 @@ public class GroupActivity extends HelperActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_group, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -96,7 +103,9 @@ public class GroupActivity extends HelperActivity {
         switch (item.getItemId()) {
             // action with ID action_refresh was selected
             case R.id.save_action:
+                //item.setVisible(false);
                 saveGroup();
+                hideKeyboard();
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -139,45 +148,25 @@ public class GroupActivity extends HelperActivity {
 
         group.setNameGroup(nameInput.getText().toString());
         setPermissions();
-
+        switchViews(false);
         if (!isUpdate) createGroup();
         else updateGroup();
     }
 
     private void updateGroup() {
-        controller.getUserGroupsReference().child(key).setValue(group, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    Snackbar.make(nameInput, "Update fails", Toast.LENGTH_SHORT)
-                            .show();
-                    Log.d("GROUPS", "Data could not be update " + databaseError.getMessage());
-                } else {
-                    Snackbar.make(nameInput, "Update success", Toast.LENGTH_SHORT)
-                            .show();
-                    Log.d("GROUPS", "Group update succesfully");
-                    goodEdit();
-                }
-            }
-        });
+        controller.updateGroup(key, group).addOnCompleteListener(getOnCompleteListener())
+                                          .addOnFailureListener(this, getOnFailureListener());
     }
 
     public void createGroup(){
-       controller.getUserGroupsReference().push().setValue(group, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    Snackbar.make(nameInput, "Save fails", Toast.LENGTH_SHORT)
-                            .show();
-                    Log.d("GROUPS", "Data could not be saved " + databaseError.getMessage());
-                } else {
-                    Snackbar.make(nameInput, "Save good", Toast.LENGTH_SHORT)
-                            .show();
-                    Log.d("GROUPS", "Group saved succesfully");
-                    goodEdit();
-                }
-            }
-        });
+        controller.createGroup(group).addOnCompleteListener(getOnCompleteListener())
+                                     .addOnFailureListener(this, getOnFailureListener());
+    }
+
+    private void switchViews(boolean action){
+        mMenu.findItem(R.id.save_action).setVisible(action);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(!action ? View.VISIBLE : View.INVISIBLE);
     }
 
     public void handleButtons(View v){
@@ -257,6 +246,26 @@ public class GroupActivity extends HelperActivity {
         }
 
         builderSingle.show();
+    }
+
+    private OnCompleteListener<Void> getOnCompleteListener(){
+        return new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                goodEdit();
+                switchViews(true);
+            }
+        };
+    }
+
+    private OnFailureListener getOnFailureListener(){
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showErrorMessage(e, nameInput);
+                switchViews(true);
+            }
+        };
     }
 
     public void goodEdit(){
