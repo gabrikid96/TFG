@@ -81,4 +81,7 @@
     <string name="error_send_email">Error al enviar email de recuperación</string>
     <string name="email_sent">Correo de recuperación enviado. Sigue las intrucciones del correo para recuperar tu contraseña</string>
     <string name="recover_password_title">Recuperar contraseña</string>
+    <string name="deleted_group">Grupo eliminado</string>
+    <string name="undo">Deshacer</string>
+    <string name="view_users">Visualizar usuarios</string>
 </resources>

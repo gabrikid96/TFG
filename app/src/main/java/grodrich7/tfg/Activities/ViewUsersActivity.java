@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -78,7 +79,7 @@ public class ViewUsersActivity extends HelperActivity {
             @Override
             public FriendHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.group_item, parent, false);
+                        .inflate(R.layout.view_users_item, parent, false);
 
                 return new ViewUsersActivity.FriendHolder(view);
             }
@@ -88,7 +89,8 @@ public class ViewUsersActivity extends HelperActivity {
                 //final DatabaseReference postRef = getRef(holder.getAdapterPosition());
                 //final String postKey = postRef.getKey();
                 holder.name_label.setText(model.getName().toUpperCase());
-                holder.user_count_label.setText(String.valueOf(model.getEmail()));
+                holder.email_label.setText(String.valueOf(model.getEmail()));
+                toggleDrivingIcon(holder.action_btn, ViewUserActivity.getRandomBoolean());
                 if (position > lastPosition)
                 {
                     holder.setAnimation();
@@ -106,18 +108,22 @@ public class ViewUsersActivity extends HelperActivity {
         friends_list.setAdapter(friendsAdapter);
     }
 
+    private void toggleDrivingIcon(ImageView drivingState, boolean isDriving){
+        drivingState.setBackgroundResource(isDriving ? R.mipmap.driving_on : R.mipmap.driving_off);
+    }
+
     private class FriendHolder extends RecyclerView.ViewHolder {
 
         TextView name_label;
-        ImageButton action_btn;
-        TextView user_count_label;
+        ImageView action_btn;
+        TextView email_label;
         LinearLayout container;
 
         public FriendHolder(View itemView) {
             super(itemView);
             name_label = (TextView) itemView.findViewById(R.id.name_label);
-            action_btn = (ImageButton) itemView.findViewById(R.id.action_btn);
-            user_count_label = (TextView) itemView.findViewById(R.id.user_count_label);
+            action_btn = (ImageView) itemView.findViewById(R.id.action_btn);
+            email_label = (TextView) itemView.findViewById(R.id.email_label);
             container = (LinearLayout) itemView.findViewById(R.id.shape_layout);
         }
 
@@ -127,5 +133,4 @@ public class ViewUsersActivity extends HelperActivity {
             this.itemView.startAnimation(animation);
         }
     }
-
 }

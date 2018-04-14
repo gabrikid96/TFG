@@ -11,9 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.Models.User;
@@ -55,7 +53,6 @@ public class Controller {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
                 Log.e("CONTROLLER",databaseError.getMessage());
             }
         });
@@ -72,17 +69,18 @@ public class Controller {
     }
 
     public void setFriends(ArrayList<String> emails){
-        for (String email :emails){
+
+        for (final String email : emails){
             usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     try{
                         String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                        usersReference.child(uid).child("friends"). //uid del que vamos a añadirle como amigo
-                                child(FirebaseAuth.getInstance().getCurrentUser().getUid()).//el que crea el grupo
-                                setValue(new User(currentUser.getName(), currentUser.getEmail()));
+                        DatabaseReference ref = usersReference.child(uid).child("friends"). //uid del que vamos a añadirle como amigo
+                                child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        ref.setValue(new User(currentUser.getName(),currentUser.getEmail()));
                     }catch (NullPointerException ex){
-
+                        Log.e("CONTROLLER", "unknown email: " + email);
                     }
                 }
                 @Override
@@ -94,17 +92,25 @@ public class Controller {
     }
 
     public Task<Void> removeGroup(String key, Group group){
-        for (String email : group.getUsers()){
+        checkOccurrences(key, group);
+        return userGroupsReference.child(key).removeValue();
+    }
+
+    private void checkOccurrences(final String groupKey, Group group){
+        for (final String email : group.getUsers()){
             usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     try{
                         String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                        DatabaseReference ref = usersReference.child(uid).child("friends"). //uid del que vamos a añadirle como amigo
+                                child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                        usersReference.child(uid).child("friends"). //uid del que vamos a añadirle como amigo
-                                child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+                        if (!hasOccurrences(groupKey, email)){
+                            ref.removeValue();
+                        }
                     }catch (NullPointerException ex){
-
+                        Log.e("CONTROLLER", "unknown email: " + email);
                     }
                 }
                 @Override
@@ -113,9 +119,19 @@ public class Controller {
                 }
             });
         }
-        return userGroupsReference.child(key).removeValue();
     }
-
+    private boolean hasOccurrences(String groupKey, String email){
+        String key; //Group id
+        Group value; //Group
+        for(HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
+            key = entry.getKey();
+            value = entry.getValue();
+            if (!key.equals(groupKey) && value.getUsers().contains(email)){
+                return true;
+            }
+        }
+        return false;
+    }
     //region GETTERS
 
     public User getCurrentUser(){
@@ -132,14 +148,6 @@ public class Controller {
 
     public DatabaseReference getUserFriendsReference() {
         return userFriendsReference;
-    }
-
-    public String getUserUid(){
-        try{
-            return FirebaseAuth.getInstance().getCurrentUser().getUid();
-        }catch (NullPointerException ex){
-            return null;
-        }
     }
 
     //endregion
