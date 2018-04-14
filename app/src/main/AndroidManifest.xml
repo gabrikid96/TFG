@@ -15,8 +15,8 @@
 
         <activity
             android:name=".Activities.MainActivity"
-            android:label="@string/title_activity_main"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,9 +26,9 @@
         </activity>
         <activity
             android:name=".Activities.RegisterActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_register"
             android:parentActivityName=".Activities.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -36,9 +36,9 @@
         </activity>
         <activity
             android:name=".Activities.HomeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_home"
             android:parentActivityName=".Activities.MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -46,9 +46,9 @@
         </activity>
         <activity
             android:name=".Activities.GroupsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_groups"
             android:parentActivityName=".Activities.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -56,19 +56,19 @@
         </activity>
         <activity
             android:name=".Activities.GroupActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_group"
             android:parentActivityName=".Activities.GroupsActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.GroupsActivity" />
         </activity>
         <activity
-            android:name=".Activities.ViewUserActiviy"
+            android:name=".Activities.ViewUserActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_view_user_activiy"
             android:parentActivityName=".Activities.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -76,9 +76,9 @@
         </activity>
         <activity
             android:name=".Activities.DrivingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_driving"
             android:parentActivityName=".Activities.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -89,6 +89,15 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".Activities.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="grodrich7.tfg.Activities.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.ViewUsersActivity"
+            android:label="@string/title_activity_view_users"
+            android:parentActivityName=".Activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="grodrich7.tfg.Activities.HomeActivity" />

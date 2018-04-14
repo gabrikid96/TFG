@@ -36,7 +36,6 @@ public class GroupsActivity extends HelperActivity {
 
     private RecyclerView groups_list;
     private ProgressBar progressBar;
-   // private HashMap<String,User> users;
     private FirebaseRecyclerAdapter groupsAdapter;
 
     @Override
@@ -181,14 +180,13 @@ public class GroupsActivity extends HelperActivity {
     }
 
     public void deleteGroup(String postKey, final Group group){
-        controller.getUserGroupsReference().child(postKey).removeValue();
+        controller.removeGroup(postKey, group);
         Snackbar mySnackbar = Snackbar.make(groups_list,
                 R.string.deleted_group, Snackbar.LENGTH_LONG);
         mySnackbar.setAction(R.string.undo, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                controller.getUserGroupsReference().push().setValue(group);
+                controller.createGroup(group);
             }
         });
         mySnackbar.show();

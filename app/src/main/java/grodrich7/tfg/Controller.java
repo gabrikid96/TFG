@@ -10,6 +10,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.Models.User;
 
@@ -22,6 +27,8 @@ public class Controller {
     private FirebaseDatabase database;
     public DatabaseReference usersReference;
     public DatabaseReference userGroupsReference;
+    public DatabaseReference userFriendsReference;
+
     private User currentUser;
 
     protected Controller() {
@@ -31,7 +38,10 @@ public class Controller {
         usersReference = database.getReference("users");
         usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).keepSynced(true);
         userGroupsReference = usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("groups");
+        userFriendsReference = usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("friends");
+
         userGroupsReference.keepSynced(true);
+        userFriendsReference.keepSynced(true);
         loadUser();
     }
 
@@ -52,11 +62,58 @@ public class Controller {
     }
 
     public Task<Void> createGroup(Group group){
+        setFriends(group.getUsers());
         return userGroupsReference.push().setValue(group);
     }
 
     public Task<Void> updateGroup(String key, Group group){
+        setFriends(group.getUsers());
         return userGroupsReference.child(key).setValue(group);
+    }
+
+    public void setFriends(ArrayList<String> emails){
+        for (String email :emails){
+            usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    try{
+                        String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                        usersReference.child(uid).child("friends"). //uid del que vamos a añadirle como amigo
+                                child(FirebaseAuth.getInstance().getCurrentUser().getUid()).//el que crea el grupo
+                                setValue(new User(currentUser.getName(), currentUser.getEmail()));
+                    }catch (NullPointerException ex){
+
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    public Task<Void> removeGroup(String key, Group group){
+        for (String email : group.getUsers()){
+            usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    try{
+                        String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+
+                        usersReference.child(uid).child("friends"). //uid del que vamos a añadirle como amigo
+                                child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+                    }catch (NullPointerException ex){
+
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+        return userGroupsReference.child(key).removeValue();
     }
 
     //region GETTERS
@@ -71,6 +128,10 @@ public class Controller {
 
     public DatabaseReference getUserGroupsReference(){
         return userGroupsReference;
+    }
+
+    public DatabaseReference getUserFriendsReference() {
+        return userFriendsReference;
     }
 
     public String getUserUid(){

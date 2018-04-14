@@ -1,14 +1,11 @@
 package grodrich7.tfg.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import grodrich7.tfg.Controller;
 import grodrich7.tfg.R;
 
 public class HomeActivity extends HelperActivity {
@@ -32,7 +29,7 @@ public class HomeActivity extends HelperActivity {
                 launchIntent(DrivingActivity.class, TRANSITION_RIGHT);
                 break;
             case R.id.viewBtn:
-                launchIntent(ViewUserActiviy.class, TRANSITION_RIGHT);
+                launchIntent(ViewUsersActivity.class, TRANSITION_RIGHT);
                 break;
             case R.id.groupsBtn:
                 launchIntent(GroupsActivity.class, TRANSITION_RIGHT);

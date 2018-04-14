@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="grodrich7.tfg.Activities.ViewUserActiviy">
+    tools:context="grodrich7.tfg.Activities.ViewUserActivity">
     <item
         android:id="@+id/refresh_Action"
         android:icon="@android:drawable/ic_popup_sync"

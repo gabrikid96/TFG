@@ -166,4 +166,6 @@
     <string name="recover_password_title">Recover password</string>
     <string name="deleted_group">Group deleted</string>
     <string name="undo">Undo</string>
+    <string name="title_activity_view_users">ViewUsersActivity</string>
+    <string name="view_users">View users</string>
 </resources>

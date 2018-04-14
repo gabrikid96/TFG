@@ -1,6 +1,5 @@
 package grodrich7.tfg.Models;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class User {

@@ -2,10 +2,8 @@ package grodrich7.tfg.Activities;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +16,6 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.ceylonlabs.imageviewpopup.ImagePopup;
@@ -37,7 +34,7 @@ import java.util.List;
 
 import grodrich7.tfg.R;
 
-public class ViewUserActiviy extends HelperActivity implements OnMapReadyCallback {
+public class ViewUserActivity extends HelperActivity implements OnMapReadyCallback {
 
     private MapFragment mapFragment;
     private GoogleMap googleMap;
@@ -140,7 +137,7 @@ public class ViewUserActiviy extends HelperActivity implements OnMapReadyCallbac
                 viewHolder.description.setText("Imagen " + String.valueOf(i+1));
                 try{
                     viewHolder.imageButton.setImageResource(R.drawable.front_image);
-                    final ImagePopup imagePopup = new ImagePopup(ViewUserActiviy.this);
+                    final ImagePopup imagePopup = new ImagePopup(ViewUserActivity.this);
                     imagePopup.setFullScreen(true); // Optional
                     imagePopup.setBackgroundColor(getResources().getColor(R.color.transparent));
                     imagePopup.setImageOnClickClose(true);  // Optional
