@@ -166,7 +166,10 @@
                 </RelativeLayout>
                 <ImageView
                     android:layout_width="0dp"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:layout_height="match_parent"
+                    android:id="@+id/image_camera"
                     android:background="@drawable/front_image"
                     android:layout_weight="1"/>
             </LinearLayout>

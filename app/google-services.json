@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "633042993667-8aacd9lq7h6drqt10mgs8kit52mth29c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "grodrich7.tfg",
+            "certificate_hash": "437d78a4cfe6da421324edc1b553eda7accb7a09"
+          }
+        },
+        {
           "client_id": "633042993667-22uo2slsvlnj7j6sm4ovl1m72ugv5qq7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

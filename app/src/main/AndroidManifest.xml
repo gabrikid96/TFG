@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="grodrich7.tfg">
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <permission android:name="android.permission.CAMERA" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -102,6 +105,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="grodrich7.tfg.Activities.HomeActivity" />
         </activity>
+
+        <service android:name=".Models.Services.CameraService" />
     </application>
 
 </manifest>

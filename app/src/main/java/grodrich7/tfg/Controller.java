@@ -1,5 +1,6 @@
 package grodrich7.tfg;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -148,6 +149,10 @@ public class Controller {
 
     public DatabaseReference getUserFriendsReference() {
         return userFriendsReference;
+    }
+
+    public void registerNewImage(Uri url){
+        database.getReference("driving-images").child(FirebaseAuth.getInstance().getUid()).push().setValue(url);
     }
 
     //endregion
