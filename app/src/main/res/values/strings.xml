@@ -168,4 +168,7 @@
     <string name="undo">Undo</string>
     <string name="title_activity_view_users" translatable="false">ViewUsersActivity</string>
     <string name="view_users">View users</string>
+    <string name="unknownInformation">Unknown</string>
+    <string name="estimated_time">Estimated time:</string>
+    <string name="unknownTime">--:--</string>
 </resources>

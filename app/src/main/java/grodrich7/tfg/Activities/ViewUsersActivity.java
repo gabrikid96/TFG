@@ -1,5 +1,6 @@
 package grodrich7.tfg.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -85,12 +86,12 @@ public class ViewUsersActivity extends HelperActivity {
             }
 
             @Override
-            protected void onBindViewHolder(final FriendHolder holder, int position, final User model) {
+            protected void onBindViewHolder(final FriendHolder holder, final int position, final User model) {
                 //final DatabaseReference postRef = getRef(holder.getAdapterPosition());
                 //final String postKey = postRef.getKey();
                 holder.name_label.setText(model.getName().toUpperCase());
                 holder.email_label.setText(String.valueOf(model.getEmail()));
-                toggleDrivingIcon(holder.action_btn, ViewUserActivity.getRandomBoolean());
+                toggleDrivingIcon(holder.action_btn, true);
                 if (position > lastPosition)
                 {
                     holder.setAnimation();
@@ -99,7 +100,11 @@ public class ViewUsersActivity extends HelperActivity {
                 holder.container.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        launchIntent(ViewUserActivity.class, TRANSITION_RIGHT);
+                        Intent intent = new Intent(ViewUsersActivity.this,ViewUserActivity.class);
+                        intent.putExtra("key",getRef(position).getKey());
+                        intent.putExtra("name",holder.name_label.toString());
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
                     }
                 });
             }

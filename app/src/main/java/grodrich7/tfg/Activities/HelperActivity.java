@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -33,7 +35,7 @@ public abstract class HelperActivity extends AppCompatActivity {
     /*RESULTS*/
     public static final int LOGIN_RESULT = 1;
     public static final int GROUP_EDIT = 1;
-    public static final int RC_SIGN_IN = 123;
+    private static final int PLAY_SERVICES_RES_REQUEST = 7172;
 
     protected Controller controller;
 
@@ -164,6 +166,22 @@ public abstract class HelperActivity extends AppCompatActivity {
 
     }
 
+    protected boolean checkPlayServices(){
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS)
+        {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RES_REQUEST).show();
+            }else{
+
+            }
+            return false;
+        }
+        return true;
+    }
+
+
+
     @Override
     public void onBackPressed(){
         super.onBackPressed();
@@ -172,4 +190,6 @@ public abstract class HelperActivity extends AppCompatActivity {
     }
 
     protected abstract void getViewsByXML();
+
+
 }

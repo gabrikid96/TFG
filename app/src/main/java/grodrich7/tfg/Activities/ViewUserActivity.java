@@ -1,6 +1,7 @@
 package grodrich7.tfg.Activities;
 
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,11 +28,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.R;
 
 public class ViewUserActivity extends HelperActivity implements OnMapReadyCallback {
@@ -40,7 +46,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     private GoogleMap googleMap;
     private ImageButton fullBtn;
 
-    private double randomLatitudes[] = {
+    /*private double randomLatitudes[] = {
             41.392379,//Ronda Litoral
             41.386377,//Placa Universitat
             41.388732 //Everis
@@ -55,30 +61,47 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
             "Premià de Dalt",
             "Andorra",
             "Mataró"
-    };
+    };*/
 
-    private LatLng currentLocation;
-
-    private TextView drivingData;
+    private TextView driving;
     private TextView destinationData;
     private TextView startTimeData;
     private TextView acceptCallsData;
     private TextView parkingData;
     private RecyclerView recyclerView;
-
-    int geoIndex = 0;
+    private DrivingData drivingData;
     boolean full;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        putData();
+        getData((String) getIntent().getSerializableExtra("key"));
+    }
+
+    private void getData(String friendUid){
+        controller.dataReference.child(friendUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot drivingDataSnapshot : groupSnapshot.getChildren()){
+                        if (drivingDataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid())){
+                            drivingData = drivingDataSnapshot.getValue(DrivingData.class);
+                        }
+                    }
+                }
+                putData(drivingData);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     protected void getViewsByXML() {
         setContentView(R.layout.activity_view_user_activiy);
         createMapFragment();
-        enableToolbar("Gabriel");
+        enableToolbar((String) getIntent().getSerializableExtra("name"));
         fullBtn = findViewById(R.id.fullBtn);
         fullBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +119,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
             }
         });
 
-        drivingData = findViewById(R.id.drivingData);
+        driving = findViewById(R.id.drivingData);
         destinationData = findViewById(R.id.destinationData);
         startTimeData = findViewById(R.id.startTimeData);
         acceptCallsData = findViewById(R.id.acceptCallsData);
@@ -176,45 +199,32 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         }
     }
 
-    private void putData(){
-        boolean randomBoolean = getRandomBoolean();
-        int randomColor = randomBoolean ? Color.GREEN : Color.RED;
-        drivingData.setText(parseString(randomBoolean));
-        drivingData.setTextColor(randomColor);
+    private void putData(DrivingData data){
+        int booleanColor = data.isDriving() ? Color.GREEN : Color.RED;
+        driving.setText(parseString(data.isDriving()));
+        driving.setTextColor(booleanColor);
 
-        int randomNum = randBetween(0, 2);
-        destinationData.setText(randomDestinations[randomNum]);
+        destinationData.setText(data.getDestination() != null &&
+                data.getDestination().isEmpty() ? data.getDestination() :
+                getResources().getString(R.string.unknownInformation));
 
-        int hour = randBetween(0, 23);
-        int min = randBetween(0, 59);
+        int hour = data.getStartTimeHour();
+        int min = data.getStartTimeMin();
         startTimeData.setText(String.format("%02d", hour) + ":" + String.format("%02d", min));
 
-        randomBoolean = getRandomBoolean();
-        randomColor = randomBoolean ? Color.GREEN : Color.RED;
-        acceptCallsData.setText(parseString(randomBoolean));
-        acceptCallsData.setTextColor(randomColor);
+        booleanColor = data.isAcceptCalls() ? Color.GREEN : Color.RED;
+        acceptCallsData.setText(parseString(data.isAcceptCalls()));
+        acceptCallsData.setTextColor(booleanColor);
 
-        randomBoolean = getRandomBoolean();
-        randomColor = randomBoolean ? Color.GREEN : Color.RED;
-        parkingData.setText(parseString(randomBoolean));
-        parkingData.setTextColor(randomColor);
+        booleanColor = data.isSearchingParking() ? Color.GREEN : Color.RED;
+        parkingData.setText(parseString(data.isSearchingParking()));
+        parkingData.setTextColor(booleanColor);
 
     }
 
     public DisplayMetrics getMetrics(){
         return getApplicationContext().getResources().getDisplayMetrics();
     }
-
-    //region Random
-
-    public static boolean getRandomBoolean() {
-        return Math.random() < 0.5;
-    }
-
-    public static int randBetween(int start, int end) {
-        return start + (int)Math.round(Math.random() * (end - start));
-    }
-    //endregion
 
     //region ToolbarSettings
     @Override
@@ -230,7 +240,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
             // action with ID action_refresh was selected
             case R.id.refresh_Action:
                 updateLocation();
-                putData();
+                putData(drivingData);
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -256,42 +266,34 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        currentLocation = getRandomLocation();
+        LatLng location = getLocation();
         googleMap.addMarker(new MarkerOptions()
-                .position(currentLocation)
+                .position(location)
                 .title("Marker"));
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        googleMap.moveCamera(getCameraPosition());
+        googleMap.moveCamera(getCameraPosition(location));
         googleMap.setTrafficEnabled(true);
         this.googleMap = googleMap;
     }
 
-    public LatLng getRandomLocation(){
-        double lat;
-        double lon;
-        try{
-            lat = randomLatitudes[geoIndex];
-            lon = randomLongitudes[geoIndex];
-            return new LatLng(lat, lon);
-        }catch(ArrayIndexOutOfBoundsException ex){
-            geoIndex = 0;
-            lat = randomLatitudes[geoIndex];
-            lon = randomLongitudes[geoIndex];
-            return new LatLng(lat, lon);
-        }finally {
-            geoIndex++;
-        }
-    }
-
     public void updateLocation(){
-        currentLocation = getRandomLocation();
+        LatLng location = getLocation();
         googleMap.clear();
-        googleMap.addMarker(new MarkerOptions().position(currentLocation).title("Marker"));
-        googleMap.moveCamera(getCameraPosition());
+        googleMap.addMarker(new MarkerOptions().position(location).title("Marker"));
+        googleMap.moveCamera(getCameraPosition(location));
     }
 
-    public CameraUpdate getCameraPosition(){
-        return CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(currentLocation).zoom(14.0f).build());
+    public LatLng getLocation(){
+        if (drivingData != null && drivingData.getLat() != null && !drivingData.getLat().isEmpty() && drivingData.getLon() != null && !drivingData.getLon().isEmpty() ){
+            return new LatLng(Double.parseDouble(drivingData.getLat()), Double.parseDouble(drivingData.getLon()));
+        }
+        double lat = 41.386377;
+        double lon = 2.164178;
+        return new LatLng(lat, lon);
+    }
+
+    public CameraUpdate getCameraPosition(LatLng currLatLng){
+        return CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(currLatLng).zoom(14.0f).build());
     }
     //endregion
 

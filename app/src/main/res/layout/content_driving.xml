@@ -25,6 +25,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:clickable="true"
+                android:onClick="viewsHandles"
                 android:background="@drawable/destination_shape">
 
                 <ImageButton
@@ -35,7 +37,7 @@
                     android:backgroundTint="#FFF" />
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/destination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
@@ -43,7 +45,7 @@
                     android:layout_toRightOf="@id/imageButton"
                     android:lines="2"
                     android:maxLines="2"
-                    android:text="Gran Via de les Corts Catalanes"
+                    android:text="@string/unknownInformation"
                     android:textColor="#FFF"
                     android:textSize="18sp" />
 
@@ -51,18 +53,19 @@
                     android:id="@+id/time_estimated_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/textView"
-                    android:layout_alignStart="@+id/textView"
-                    android:layout_below="@id/textView"
-                    android:text="Tiempo estimado: "
+                    android:layout_alignLeft="@+id/destination"
+                    android:layout_alignStart="@+id/destination"
+                    android:layout_below="@id/destination"
+                    android:text="@string/estimated_time"
                     android:textColor="#FFF" />
 
                 <TextView
+                    android:id="@+id/time_estimated"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_toRightOf="@+id/time_estimated_label"
-                    android:text="54min"
+                    android:text="@string/unknownInformation"
                     android:textColor="#FFF" />
             </RelativeLayout>
 
@@ -98,7 +101,7 @@
                         android:layout_alignLeft="@+id/startTimeData"
                         android:layout_alignParentTop="true"
                         android:layout_alignStart="@+id/startTimeData"
-                        android:text="Hora inicio"
+                        android:text="@string/start_time_label"
                         android:textColor="#FFF" />
 
                     <TextView
@@ -110,7 +113,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_toEndOf="@+id/clock_icon"
                         android:layout_toRightOf="@+id/clock_icon"
-                        android:text="15:31"
+                        android:text="@string/unknownTime"
                         android:textColor="#FFF"
                         android:textSize="22sp" />
                 </RelativeLayout>
@@ -119,9 +122,12 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:clickable="true"
+                    android:onClick="viewsHandles"
+                    android:id="@+id/parking_layout"
                     android:background="#0080ff">
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/parking_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -134,7 +140,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/call_layout"
+                android:id="@+id/call_image_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/time_parking_layout"
@@ -145,6 +151,7 @@
                 android:weightSum="2">
 
                 <RelativeLayout
+                    android:id="@+id/call_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -152,9 +159,11 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginRight="15dp"
                     android:layout_weight="1"
+                    android:clickable="true"
+                    android:onClick="viewsHandles"
                     android:background="@drawable/disabled_shape">
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/call_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -168,6 +177,9 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/front_image"
+                    android:clickable="true"
+                    android:id="@+id/image"
+                    android:onClick="viewsHandles"
                     android:layout_weight="1"/>
             </LinearLayout>
 
@@ -175,7 +187,7 @@
                 layout="@layout/music_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/call_layout"
+                android:layout_below="@id/call_image_layout"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="7dp">

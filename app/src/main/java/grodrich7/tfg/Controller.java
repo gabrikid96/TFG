@@ -13,19 +13,26 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import grodrich7.tfg.Models.Constants;
+import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.Models.User;
+
+import static grodrich7.tfg.Models.Constants.DATA_REFERENCE;
+import static grodrich7.tfg.Models.Constants.FRIENDS_REFERENCE;
+import static grodrich7.tfg.Models.Constants.GROUPS_REFERENCE;
+import static grodrich7.tfg.Models.Constants.USERS_REFERENCE;
 
 /**
  * Created by gabri on 14/01/2018.
  */
-
 public class Controller {
     private static Controller instance = null;
     private FirebaseDatabase database;
     public DatabaseReference usersReference;
     public DatabaseReference userGroupsReference;
     public DatabaseReference userFriendsReference;
+    public DatabaseReference dataReference;
 
     private User currentUser;
 
@@ -33,13 +40,14 @@ public class Controller {
         Log.d("CONTROLLER", "Get instance");
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         database = FirebaseDatabase.getInstance();
-        usersReference = database.getReference("users");
+        usersReference = database.getReference(USERS_REFERENCE);
         usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).keepSynced(true);
-        userGroupsReference = usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("groups");
-        userFriendsReference = usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("friends");
-
+        userGroupsReference = usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(GROUPS_REFERENCE);
+        userFriendsReference = usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(FRIENDS_REFERENCE);
+        dataReference = database.getReference(DATA_REFERENCE);
         userGroupsReference.keepSynced(true);
         userFriendsReference.keepSynced(true);
+        dataReference.keepSynced(true);
         loadUser();
     }
 
@@ -57,7 +65,7 @@ public class Controller {
             }
         });
     }
-
+    //region Groups
     public Task<Void> createGroup(Group group){
         setFriends(group.getUsers());
         return userGroupsReference.push().setValue(group);
@@ -103,7 +111,7 @@ public class Controller {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     try{
                         String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                        DatabaseReference ref = usersReference.child(uid).child("friends"). //uid del que vamos a añadirle como amigo
+                        DatabaseReference ref = usersReference.child(uid).child(FRIENDS_REFERENCE). //uid del que vamos a añadirle como amigo
                                 child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                         if (!hasOccurrences(groupKey, email)){
@@ -132,6 +140,97 @@ public class Controller {
         }
         return false;
     }
+    //endregion
+
+    //region ShareData
+    public void saveDrivingData(final DrivingData model){
+        final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
+            for (final String email : entry.getValue().getUsers()){
+                usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        try{
+                            String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                            DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                            friend_ref.setValue(getPermittedData(model, entry.getValue()));
+                        }catch (NullPointerException ex){
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+        }
+    }
+
+    private DrivingData getPermittedData(DrivingData model, Group group){
+        DrivingData permitted = new DrivingData();
+        String permission;
+        boolean isPermitted;
+        for(HashMap.Entry<String, Boolean> entry : group.getPermissions().entrySet()) {
+            permission = entry.getKey();
+            isPermitted = entry.getValue();
+
+            if (isPermitted){
+                switch (Constants.Data.valueOf(permission)){
+                    case ACCEPT_CALLS:
+                        permitted.setAcceptCalls(model.isAcceptCalls());
+                        break;
+                    case DRIVING:
+                        permitted.setDriving(model.isDriving());
+                        break;
+                    case DESTINATION:
+                        permitted.setDestination(model.getDestination());
+                        break;
+                    case LOCATION:
+                        permitted.setLon(model.getLon());
+                        permitted.setLat(model.getLat());
+                        break;
+                    case TRIP_TIME_START:
+                        permitted.setStartTimeHour(model.getStartTimeHour());
+                        permitted.setStartTimeMin(model.getStartTimeMin());
+                        break;
+                    case SEARCHING_PARKING:
+                        permitted.setSearchingParking(model.isSearchingParking());
+                        break;
+                }
+            }
+        }
+        return permitted;
+    }
+
+    public void updateLocation(final DrivingData model){
+        final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
+            for (final String email : entry.getValue().getUsers()){
+                usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        try{
+                            String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                            DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                            if (entry.getValue().getPermissions().get(Constants.Data.LOCATION.toString())){
+                                friend_ref.child("lon").setValue(model.getLon());
+                                friend_ref.child("lat").setValue(model.getLat());
+                            }
+                        }catch (NullPointerException ex){
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+        }
+
+    }
+    //endregion
     //region GETTERS
 
     public User getCurrentUser(){

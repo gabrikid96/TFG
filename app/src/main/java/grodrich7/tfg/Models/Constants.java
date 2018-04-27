@@ -5,17 +5,18 @@ package grodrich7.tfg.Models;
  */
 
 public class Constants {
-    public static enum Data {
+    public enum Data {
         DRIVING,
         LOCATION,
         ACCEPT_CALLS,
         TRIP_TIME_START,
-        METEOROLOGY,
-        TRAFFIC,
         DESTINATION,
         SEARCHING_PARKING,
-        MUSIC,
-        NUMBER_OF_PASSENGERS,
         IMAGES
     }
+
+    public static final String USERS_REFERENCE = "users";
+    public static final String GROUPS_REFERENCE = "groups";
+    public static final String FRIENDS_REFERENCE = "friends";
+    public static final String DATA_REFERENCE = "driving_data";
 }
