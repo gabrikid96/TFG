@@ -93,7 +93,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
                 }catch (Exception ex){
 
                 }finally {
-                    putData(drivingData);
+                    putData(drivingData != null ? drivingData : new DrivingData());
                 }
             }
 
