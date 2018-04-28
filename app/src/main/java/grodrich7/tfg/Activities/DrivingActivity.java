@@ -1,14 +1,20 @@
 package grodrich7.tfg.Activities;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import com.google.android.gms.location.LocationListener;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.View;
@@ -18,25 +24,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-
 import java.util.Calendar;
 import java.util.Date;
 
-import grodrich7.tfg.Manifest;
+import grodrich7.tfg.LocationService;
 import grodrich7.tfg.Models.DrivingData;
-import grodrich7.tfg.Models.LocationHelper;
 import grodrich7.tfg.R;
 
-public class DrivingActivity extends HelperActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class DrivingActivity extends HelperActivity {
 
     private ImageButton drivingToggle;
     private ImageButton helpBtn;
-    private boolean isDrivingActivate;
 
     private TextView destination;
     private TextView timeEstimated;
@@ -44,15 +42,10 @@ public class DrivingActivity extends HelperActivity implements GoogleApiClient.C
 
     private ImageView parking_icon;
     private ImageView lastImage;
-    private DrivingData drivingData;
 
     private RelativeLayout call_layout;
 
     private static final int MY_PERMISSION_REQUEST_CODE = 7171;
-
-    private LocationRequest mLocationRequest;
-    private GoogleApiClient mGoogleApiClient;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,39 +62,14 @@ public class DrivingActivity extends HelperActivity implements GoogleApiClient.C
             }, MY_PERMISSION_REQUEST_CODE);
         }else{
             if (checkPlayServices()){
-                buildGoogleApiClient();
             }
         }
 
     }
 
-
-    private void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API).build();
-    }
-
-    private Location getLastLocation(){
-        return (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) ? null :
-                LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-    }
-
-    private void startLocationUpdates(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            return;
-        }else{
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
-    }
-
     protected void getViewsByXML() {
         setContentView(R.layout.activity_driving);
         enableToolbar(R.string.driving_title);
-        isDrivingActivate = false;
         drivingToggle = findViewById(R.id.drivingToggle);
         helpBtn = findViewById(R.id.helpBtn);
         drivingToggle.setOnClickListener(new View.OnClickListener() {
@@ -127,11 +95,15 @@ public class DrivingActivity extends HelperActivity implements GoogleApiClient.C
         parking_icon = findViewById(R.id.parking_icon);
         call_layout = findViewById(R.id.call_layout);
         lastImage = findViewById(R.id.image);
-        drivingData = new DrivingData();
+        this.destination.setText(controller.getDrivingData().getDestination() == null || controller.getDrivingData().getDestination().isEmpty() ? getString(R.string.unknownInformation) : controller.getDrivingData().getDestination());
+        toggleDrivingIcon();
+        toggleParkingIcon();
+        toggleCallIcon();
+        changeStartTimeText();
     }
 
     private void showDrivingDialog(){
-        int message = !isDrivingActivate ? R.string.driving_mode_on_attempt : R.string.driving_mode_off_attempt;
+        int message = !controller.getDrivingData().isDriving() ? R.string.driving_mode_on_attempt : R.string.driving_mode_off_attempt;
 
         new AlertDialog.Builder(DrivingActivity.this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -141,33 +113,59 @@ public class DrivingActivity extends HelperActivity implements GoogleApiClient.C
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        isDrivingActivate = !isDrivingActivate;
+                        controller.getDrivingData().setDriving(!controller.getDrivingData().isDriving());
                         toggleDrivingIcon();
-                        if (isDrivingActivate) shareData();
-                        else{
-                            if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
+
+                        if (controller.getDrivingData().isDriving()){
+                            shareData();
+                        }else{
+                            stopService(new Intent(DrivingActivity.this, LocationService.class));
+                            controller.endDriving();
+                            //turnGPSOff();
                         }
                     }
-
                 })
                 .setNegativeButton(R.string.no, null)
                 .show();
     }
 
     private void shareData() {
-        drivingData.setDriving(true);
+//        turnGPSOn();
+        controller.getDrivingData().setDriving(true);
         Date now = Calendar.getInstance().getTime();
-        int hour = now.getHours();
-        int min = now.getMinutes();
-        drivingData.setStartTimeHour(hour);
-        drivingData.setStartTimeMin(min);
-        startTimeData.setText(String.format("%02d", hour) + ":" + String.format("%02d", min));
-        if (mGoogleApiClient != null) mGoogleApiClient.connect();
-        mLocationRequest = LocationHelper.createLocationRequest();
+        controller.getDrivingData().setStartTimeHour(now.getHours());
+        controller.getDrivingData().setStartTimeMin(now.getMinutes());
+        changeStartTimeText();
+        startService(new Intent(this, LocationService.class));
+        createNotification();
+        controller.saveDrivingData();
+    }
+
+    private void createNotification(){
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this,getString(R.string.driving_title))
+                .setSmallIcon(R.mipmap.driving_on)
+                .setContentTitle(getString(R.string.driving_title))
+                .setContentText(getString(R.string.driving_notification))
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+        mBuilder.build();
+        initChannels();
+    }
+
+    public void initChannels() {
+        if (Build.VERSION.SDK_INT < 26) {
+            return;
+        }
+        NotificationManager notificationManager =
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel( getString(R.string.driving_title),
+                getString(R.string.driving_title),
+                NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription( getString(R.string.driving_title));
+        notificationManager.createNotificationChannel(channel);
     }
 
     private void toggleDrivingIcon(){
-        drivingToggle.setBackgroundResource(isDrivingActivate ? R.mipmap.driving_on : R.mipmap.driving_off);
+        drivingToggle.setBackgroundResource(controller.getDrivingData().isDriving() ? R.mipmap.driving_on : R.mipmap.driving_off);
     }
 
     private void destinationAlert(){
@@ -195,57 +193,21 @@ public class DrivingActivity extends HelperActivity implements GoogleApiClient.C
 
     private void changeDestination (String newDestination){
         this.destination.setText(newDestination);
-        drivingData.setDestination(newDestination);
+        controller.updateDestination(newDestination);
     }
 
-    //region Location Listeners
-    @Override
-    public void onLocationChanged(Location location) {
-        drivingData.setLat(String.valueOf(location.getLatitude()));
-        drivingData.setLon(String.valueOf(location.getLongitude()));
-        controller.updateLocation(drivingData);
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Location location = getLastLocation();
-        if (location != null){
-            drivingData.setLat(String.valueOf(location.getLatitude()));
-            drivingData.setLon(String.valueOf(location.getLongitude()));
-        }
-        controller.saveDrivingData(drivingData);
-        startLocationUpdates();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-    //endregion
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case MY_PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     if (checkPlayServices()){
-                        buildGoogleApiClient();
+                        //buildGoogleApiClient();
                     }
                 }
                 break;
         }
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-    }
-
     //region OnClick
     public void viewsHandles(View v){
         switch (v.getId()){
@@ -253,18 +215,57 @@ public class DrivingActivity extends HelperActivity implements GoogleApiClient.C
                 destinationAlert();
                 break;
             case R.id.parking_layout:
-                drivingData.setSearchingParking(!drivingData.isSearchingParking());
-                parking_icon.setBackgroundResource(drivingData.isSearchingParking() ? R.mipmap.parking_icon : R.mipmap.no_parking);
+                controller.updateParking(!controller.getDrivingData().isSearchingParking());
+                toggleParkingIcon();
                 break;
             case R.id.call_layout:
-                drivingData.setAcceptCalls(!drivingData.isAcceptCalls());
-                call_layout.setBackgroundResource(drivingData.isAcceptCalls() ? R.drawable.destination_shape : R.drawable.disabled_shape);
+                controller.updateAcceptCalls(!controller.getDrivingData().isAcceptCalls());
+                toggleCallIcon();
                 break;
             case R.id.image:
                 /*Intent intent = new Intent(DrivingActivity.this, CameraService.class);
                 intent.putExtra("image", lastImage.getDrawingCache());
                 startService(intent);*/
                 break;
+        }
+    }
+
+    private void toggleCallIcon(){
+        call_layout.setBackgroundResource(controller.getDrivingData().isAcceptCalls() ? R.drawable.destination_shape : R.drawable.disabled_shape);
+    }
+
+    private  void toggleParkingIcon(){
+        parking_icon.setBackgroundResource(controller.getDrivingData().isSearchingParking() ? R.mipmap.parking_icon : R.mipmap.no_parking);
+    }
+
+    private void changeStartTimeText(){
+        int hour = controller.getDrivingData().getStartTimeHour();
+        int min = controller.getDrivingData().getStartTimeMin();
+        startTimeData.setText(hour == 0 && min == 0 ? "--:--" : String.format("%02d", hour) + ":" + String.format("%02d", min));
+    }
+    //endregion
+    //region GPS sensor
+    private void turnGPSOn(){
+        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+        if(!provider.contains("gps")){ //if gps is disabled
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            sendBroadcast(poke);
+        }
+    }
+
+    private void turnGPSOff(){
+        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+        if(provider.contains("gps")){ //if gps is enabled
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            sendBroadcast(poke);
         }
     }
     //endregion

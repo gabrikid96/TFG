@@ -96,10 +96,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="grodrich7.tfg.Activities.HomeActivity" />
         </activity>
-        <service android:name=".Models.LocationServices"
-            android:exported="true"
-            android:enabled="true"
-            />
+        <service android:name=".LocationService"/>
         <activity
             android:name=".Activities.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

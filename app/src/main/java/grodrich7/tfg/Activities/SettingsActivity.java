@@ -23,6 +23,7 @@ import android.support.v4.app.NavUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import grodrich7.tfg.Controller;
 import grodrich7.tfg.R;
 
 import java.util.List;
@@ -166,6 +167,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public void onHeaderClick(Header header, int position) {
         super.onHeaderClick(header, position);
         if (header.id == R.id.logout_header) {
+            Controller.destroy();
              FirebaseAuth.getInstance().signOut();
                 launchIntent(MainActivity.class, false);
                 finish();

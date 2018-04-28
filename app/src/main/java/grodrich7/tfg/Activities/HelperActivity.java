@@ -190,6 +190,4 @@ public abstract class HelperActivity extends AppCompatActivity {
     }
 
     protected abstract void getViewsByXML();
-
-
 }

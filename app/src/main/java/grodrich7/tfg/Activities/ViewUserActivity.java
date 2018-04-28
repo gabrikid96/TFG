@@ -82,14 +82,19 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         controller.dataReference.child(friendUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
-                    for (DataSnapshot drivingDataSnapshot : groupSnapshot.getChildren()){
-                        if (drivingDataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid())){
-                            drivingData = drivingDataSnapshot.getValue(DrivingData.class);
+                try{
+                    for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
+                        for (DataSnapshot drivingDataSnapshot : groupSnapshot.getChildren()){
+                            if (drivingDataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid())){
+                                drivingData = drivingDataSnapshot.getValue(DrivingData.class);
+                            }
                         }
                     }
+                }catch (Exception ex){
+
+                }finally {
+                    putData(drivingData);
                 }
-                putData(drivingData);
             }
 
             @Override
@@ -205,7 +210,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         driving.setTextColor(booleanColor);
 
         destinationData.setText(data.getDestination() != null &&
-                data.getDestination().isEmpty() ? data.getDestination() :
+                !data.getDestination().isEmpty() ? data.getDestination() :
                 getResources().getString(R.string.unknownInformation));
 
         int hour = data.getStartTimeHour();
@@ -219,7 +224,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         booleanColor = data.isSearchingParking() ? Color.GREEN : Color.RED;
         parkingData.setText(parseString(data.isSearchingParking()));
         parkingData.setTextColor(booleanColor);
-
+        updateLocation();
     }
 
     public DisplayMetrics getMetrics(){

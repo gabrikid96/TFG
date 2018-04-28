@@ -1,15 +1,16 @@
-package grodrich7.tfg.Models;
+package grodrich7.tfg;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-public class LocationServices extends Service
+public class LocationService extends Service
 {
     private static final String TAG = "LOCATION_SERVICE";
     private LocationManager mLocationManager = null;
@@ -30,6 +31,7 @@ public class LocationServices extends Service
         public void onLocationChanged(Location location)
         {
             Log.e(TAG, "onLocationChanged: " + location);
+            Controller.getInstance().updateLocation(location);
             mLastLocation.set(location);
         }
 

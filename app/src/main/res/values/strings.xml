@@ -171,4 +171,6 @@
     <string name="unknownInformation">Unknown</string>
     <string name="estimated_time">Estimated time:</string>
     <string name="unknownTime">--:--</string>
+    <string name="driving_notification">Sharing your in background</string>
+    <string name="end_action">End sharing</string>
 </resources>
