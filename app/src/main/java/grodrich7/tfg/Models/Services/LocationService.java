@@ -1,4 +1,4 @@
-package grodrich7.tfg;
+package grodrich7.tfg.Models.Services;
 
 import android.app.Service;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+
+import grodrich7.tfg.Controller;
 
 public class LocationService extends Service
 {

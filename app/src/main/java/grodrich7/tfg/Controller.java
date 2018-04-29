@@ -3,6 +3,7 @@ package grodrich7.tfg;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -220,7 +221,7 @@ public class Controller {
     public void updateLocation(Location location){
         drivingData.setLat(String.valueOf(location.getLatitude()));
         drivingData.setLon(String.valueOf(location.getLongitude()));
-        if (drivingData.isDriving()) {
+        if (drivingData.isDriving() != null && drivingData.isDriving()) {
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
                 for (final String email : entry.getValue().getUsers()) {
@@ -249,7 +250,7 @@ public class Controller {
     }
     public void updateDestination(String destination){
         drivingData.setDestination(destination);
-        if (drivingData.isDriving()){
+        if (drivingData.isDriving() != null && drivingData.isDriving()){
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
                 for (final String email : entry.getValue().getUsers()){
@@ -278,7 +279,7 @@ public class Controller {
 
     public void updateAcceptCalls(boolean acceptCalls){
         drivingData.setAcceptCalls(acceptCalls);
-        if (drivingData.isDriving()){
+        if (drivingData.isDriving() != null && drivingData.isDriving()){
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
                 for (final String email : entry.getValue().getUsers()){
@@ -307,7 +308,7 @@ public class Controller {
 
     public void updateParking(boolean parking){
         drivingData.setSearchingParking(parking);
-        if (drivingData.isDriving()){
+        if (drivingData.isDriving() != null && drivingData.isDriving()){
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
                 for (final String email : entry.getValue().getUsers()){
@@ -384,6 +385,34 @@ public class Controller {
     }
 
     //endregion
+
+    public void updateImages(final Uri url){
+        if (drivingData.isDriving() != null && drivingData.isDriving()) {
+            final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
+                for (final String email : entry.getValue().getUsers()) {
+                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            try {
+                                String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                                if (entry.getValue().getPermissions().get(Constants.Data.IMAGES.toString())) {
+                                    friend_ref.child("images").push().setValue(url);
+                                }
+                            } catch (NullPointerException ex) {
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        }
+    }
     public static Controller getInstance() {
         if(instance == null && FirebaseAuth.getInstance().getCurrentUser() != null) {
             instance = new Controller();

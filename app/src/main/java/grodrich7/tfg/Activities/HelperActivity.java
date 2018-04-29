@@ -111,8 +111,8 @@ public abstract class HelperActivity extends AppCompatActivity {
     }
 //endregion
 
-    public String parseString(boolean bool){
-        return bool ? getResources().getString(R.string.yes) : getResources().getString(R.string.no);
+    public String parseString(Boolean bool){
+        return bool != null && bool ? getResources().getString(R.string.yes) : getResources().getString(R.string.no);
     }
 
     public boolean isOnline() {

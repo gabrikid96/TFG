@@ -79,6 +79,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     }
 
     private void getData(String friendUid){
+        drivingData = new DrivingData();
         controller.dataReference.child(friendUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -86,14 +87,14 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
                     for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
                         for (DataSnapshot drivingDataSnapshot : groupSnapshot.getChildren()){
                             if (drivingDataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid())){
-                                drivingData = drivingDataSnapshot.getValue(DrivingData.class);
+                                drivingData.merge(drivingDataSnapshot.getValue(DrivingData.class));
                             }
                         }
                     }
                 }catch (Exception ex){
-
+                    Log.e("VIEW", ex.getMessage());
                 }finally {
-                    putData(drivingData != null ? drivingData : new DrivingData());
+                    putData(drivingData);
                 }
             }
 
@@ -205,7 +206,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     }
 
     private void putData(DrivingData data){
-        int booleanColor = data.isDriving() ? Color.GREEN : Color.RED;
+        int booleanColor = data.isDriving() != null && data.isDriving() ? Color.GREEN : Color.RED;
         driving.setText(parseString(data.isDriving()));
         driving.setTextColor(booleanColor);
 
@@ -213,15 +214,15 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
                 !data.getDestination().isEmpty() ? data.getDestination() :
                 getResources().getString(R.string.unknownInformation));
 
-        int hour = data.getStartTimeHour();
-        int min = data.getStartTimeMin();
-        startTimeData.setText(String.format("%02d", hour) + ":" + String.format("%02d", min));
+        Integer hour = data.getStartTimeHour();
+        Integer min = data.getStartTimeMin();
+        startTimeData.setText(hour == null && min == null ? "--:--" : String.format("%02d", hour) + ":" + String.format("%02d", min));
 
-        booleanColor = data.isAcceptCalls() ? Color.GREEN : Color.RED;
+        booleanColor = data.isAcceptCalls() != null && data.isAcceptCalls() ? Color.GREEN : Color.RED;
         acceptCallsData.setText(parseString(data.isAcceptCalls()));
         acceptCallsData.setTextColor(booleanColor);
 
-        booleanColor = data.isSearchingParking() ? Color.GREEN : Color.RED;
+        booleanColor = data.isSearchingParking() != null && data.isSearchingParking() ? Color.GREEN : Color.RED;
         parkingData.setText(parseString(data.isSearchingParking()));
         parkingData.setTextColor(booleanColor);
         updateLocation();

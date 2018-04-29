@@ -6,17 +6,19 @@ import android.location.Location;
 import java.lang.reflect.Field;
 import java.util.Date;
 
+import grodrich7.tfg.Activities.DrivingActivity;
+
 /**
  * Created by gabri on 21/04/2018.
  */
 
 public class DrivingData {
-    private boolean driving;
-    private boolean acceptCalls;
+    private Boolean driving;
+    private Boolean acceptCalls;
 
-    private int startTimeHour;
-    private int startTimeMin;
-    private boolean searchingParking;
+    private Integer startTimeHour;
+    private Integer startTimeMin;
+    private Boolean searchingParking;
     private String destination;
     private String lat;
     private String lon;
@@ -25,43 +27,43 @@ public class DrivingData {
     }
 
 
-    public boolean isDriving() {
+    public Boolean isDriving() {
         return driving;
     }
 
-    public void setDriving(boolean driving) {
+    public void setDriving(Boolean driving) {
         this.driving = driving;
     }
 
-    public boolean isAcceptCalls() {
+    public Boolean isAcceptCalls() {
         return acceptCalls;
     }
 
-    public void setAcceptCalls(boolean acceptCalls) {
+    public void setAcceptCalls(Boolean acceptCalls) {
         this.acceptCalls = acceptCalls;
     }
 
-    public int getStartTimeHour() {
+    public Integer getStartTimeHour() {
         return startTimeHour;
     }
 
-    public void setStartTimeHour(int startTimeHour) {
+    public void setStartTimeHour(Integer startTimeHour) {
         this.startTimeHour = startTimeHour;
     }
 
-    public int getStartTimeMin() {
+    public Integer getStartTimeMin() {
         return startTimeMin;
     }
 
-    public void setStartTimeMin(int startTimeMin) {
+    public void setStartTimeMin(Integer startTimeMin) {
         this.startTimeMin = startTimeMin;
     }
 
-    public boolean isSearchingParking() {
+    public Boolean isSearchingParking() {
         return searchingParking;
     }
 
-    public void setSearchingParking(boolean searchingParking) {
+    public void setSearchingParking(Boolean searchingParking) {
         this.searchingParking = searchingParking;
     }
 
@@ -87,6 +89,17 @@ public class DrivingData {
 
     public void setLon(String lon) {
         this.lon = lon;
+    }
+
+    public void merge(DrivingData object) {
+        this.driving = this.driving != null ? this.driving : object.driving;
+        this.acceptCalls = this.acceptCalls != null ? this.acceptCalls : object.acceptCalls;
+        this.startTimeHour = this.startTimeHour != null ? this.startTimeHour : object.startTimeHour;
+        this.startTimeMin = this.startTimeMin != null ? this.startTimeMin : object.startTimeMin;
+        this.searchingParking = this.searchingParking != null ? this.searchingParking : object.searchingParking;
+        this.destination = this.destination != null ? this.destination : object.destination;
+        this.lat = this.lat != null ? this.lat : object.lat;
+        this.lon = this.lon != null ? this.lon : object.lon;
     }
 
 }

@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,12 +25,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-import grodrich7.tfg.LocationService;
-import grodrich7.tfg.Models.DrivingData;
+import grodrich7.tfg.Models.Services.CameraService;
+import grodrich7.tfg.Models.Services.LocationService;
 import grodrich7.tfg.R;
 
 public class DrivingActivity extends HelperActivity {
@@ -103,7 +108,7 @@ public class DrivingActivity extends HelperActivity {
     }
 
     private void showDrivingDialog(){
-        int message = !controller.getDrivingData().isDriving() ? R.string.driving_mode_on_attempt : R.string.driving_mode_off_attempt;
+        int message = controller.getDrivingData().isDriving() == null || !controller.getDrivingData().isDriving() ? R.string.driving_mode_on_attempt : R.string.driving_mode_off_attempt;
 
         new AlertDialog.Builder(DrivingActivity.this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -113,7 +118,7 @@ public class DrivingActivity extends HelperActivity {
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        controller.getDrivingData().setDriving(!controller.getDrivingData().isDriving());
+                        controller.getDrivingData().setDriving(controller.getDrivingData().isDriving() != null ? !controller.getDrivingData().isDriving() : true);
                         toggleDrivingIcon();
 
                         if (controller.getDrivingData().isDriving()){
@@ -136,9 +141,10 @@ public class DrivingActivity extends HelperActivity {
         controller.getDrivingData().setStartTimeHour(now.getHours());
         controller.getDrivingData().setStartTimeMin(now.getMinutes());
         changeStartTimeText();
-        startService(new Intent(this, LocationService.class));
-        createNotification();
+
+        //createNotification();
         controller.saveDrivingData();
+        startService(new Intent(this, LocationService.class));
     }
 
     private void createNotification(){
@@ -165,7 +171,7 @@ public class DrivingActivity extends HelperActivity {
     }
 
     private void toggleDrivingIcon(){
-        drivingToggle.setBackgroundResource(controller.getDrivingData().isDriving() ? R.mipmap.driving_on : R.mipmap.driving_off);
+        drivingToggle.setBackgroundResource(controller.getDrivingData().isDriving() != null && controller.getDrivingData().isDriving() ? R.mipmap.driving_on : R.mipmap.driving_off);
     }
 
     private void destinationAlert(){
@@ -194,6 +200,41 @@ public class DrivingActivity extends HelperActivity {
     private void changeDestination (String newDestination){
         this.destination.setText(newDestination);
         controller.updateDestination(newDestination);
+        estimateDestination();
+    }
+
+    private void estimateDestination(){
+        String destination = controller.getDrivingData().getDestination();
+        if (destination != null && !destination.isEmpty()){
+            Geocoder gc = new Geocoder(this);
+            if(gc.isPresent()) {
+
+                try {
+                    List<Address> addresses = gc.getFromLocationName(destination, 1);
+                    if (addresses.size() > 0){
+                        Address address = addresses.get(0);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+    }
+
+    private void takePicture(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                        100);
+            }else{
+                startService(new Intent(DrivingActivity.this, CameraService.class));
+            }
+        }else{
+            startService(new Intent(DrivingActivity.this, CameraService.class));
+        }
     }
 
     @Override
@@ -206,6 +247,13 @@ public class DrivingActivity extends HelperActivity {
                     }
                 }
                 break;
+            case 100:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+                }
+            break;
         }
     }
     //region OnClick
@@ -215,33 +263,31 @@ public class DrivingActivity extends HelperActivity {
                 destinationAlert();
                 break;
             case R.id.parking_layout:
-                controller.updateParking(!controller.getDrivingData().isSearchingParking());
+                controller.updateParking(controller.getDrivingData().isSearchingParking() != null ?!controller.getDrivingData().isSearchingParking() : true);
                 toggleParkingIcon();
                 break;
             case R.id.call_layout:
-                controller.updateAcceptCalls(!controller.getDrivingData().isAcceptCalls());
+                controller.updateAcceptCalls(controller.getDrivingData().isAcceptCalls() != null ?!controller.getDrivingData().isAcceptCalls() : true);
                 toggleCallIcon();
                 break;
             case R.id.image:
-                /*Intent intent = new Intent(DrivingActivity.this, CameraService.class);
-                intent.putExtra("image", lastImage.getDrawingCache());
-                startService(intent);*/
+                //takePicture();
                 break;
         }
     }
 
     private void toggleCallIcon(){
-        call_layout.setBackgroundResource(controller.getDrivingData().isAcceptCalls() ? R.drawable.destination_shape : R.drawable.disabled_shape);
+        call_layout.setBackgroundResource(controller.getDrivingData().isAcceptCalls() != null && controller.getDrivingData().isAcceptCalls() ? R.drawable.destination_shape : R.drawable.disabled_shape);
     }
 
     private  void toggleParkingIcon(){
-        parking_icon.setBackgroundResource(controller.getDrivingData().isSearchingParking() ? R.mipmap.parking_icon : R.mipmap.no_parking);
+        parking_icon.setBackgroundResource(controller.getDrivingData().isSearchingParking() != null && controller.getDrivingData().isSearchingParking() ? R.mipmap.parking_icon : R.mipmap.no_parking);
     }
 
     private void changeStartTimeText(){
-        int hour = controller.getDrivingData().getStartTimeHour();
-        int min = controller.getDrivingData().getStartTimeMin();
-        startTimeData.setText(hour == 0 && min == 0 ? "--:--" : String.format("%02d", hour) + ":" + String.format("%02d", min));
+        Integer hour = controller.getDrivingData().getStartTimeHour();
+        Integer min = controller.getDrivingData().getStartTimeMin();
+        startTimeData.setText(hour == null && min == null ? "--:--" : String.format("%02d", hour) + ":" + String.format("%02d", min));
     }
     //endregion
     //region GPS sensor
