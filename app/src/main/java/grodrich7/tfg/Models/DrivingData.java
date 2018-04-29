@@ -1,13 +1,6 @@
 package grodrich7.tfg.Models;
 
 
-import android.location.Location;
-
-import java.lang.reflect.Field;
-import java.util.Date;
-
-import grodrich7.tfg.Activities.DrivingActivity;
-
 /**
  * Created by gabri on 21/04/2018.
  */
@@ -20,8 +13,8 @@ public class DrivingData {
     private Integer startTimeMin;
     private Boolean searchingParking;
     private String destination;
-    private String lat;
-    private String lon;
+    private LocationInfo locationInfo;
+
 
     public DrivingData() {
     }
@@ -67,28 +60,20 @@ public class DrivingData {
         this.searchingParking = searchingParking;
     }
 
+    public LocationInfo getLocationInfo() {
+        return locationInfo;
+    }
+
+    public void setLocationInfo(LocationInfo locationInfo) {
+        this.locationInfo = locationInfo;
+    }
+
     public String getDestination() {
         return destination;
     }
 
     public void setDestination(String destination) {
         this.destination = destination;
-    }
-
-    public String getLat() {
-        return lat;
-    }
-
-    public void setLat(String lat) {
-        this.lat = lat;
-    }
-
-    public String getLon() {
-        return lon;
-    }
-
-    public void setLon(String lon) {
-        this.lon = lon;
     }
 
     public void merge(DrivingData object) {
@@ -98,8 +83,7 @@ public class DrivingData {
         this.startTimeMin = this.startTimeMin != null ? this.startTimeMin : object.startTimeMin;
         this.searchingParking = this.searchingParking != null ? this.searchingParking : object.searchingParking;
         this.destination = this.destination != null ? this.destination : object.destination;
-        this.lat = this.lat != null ? this.lat : object.lat;
-        this.lon = this.lon != null ? this.lon : object.lon;
+        this.locationInfo = this.locationInfo != null ? this.locationInfo : object.locationInfo;
     }
 
 }

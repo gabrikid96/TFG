@@ -109,7 +109,7 @@ public class ViewUsersActivity extends HelperActivity {
                     public void onClick(View view) {
                         Intent intent = new Intent(ViewUsersActivity.this,ViewUserActivity.class);
                         intent.putExtra("key",getRef(position).getKey());
-                        intent.putExtra("name",holder.name_label.toString());
+                        intent.putExtra("name",model.getName().toUpperCase());
                         startActivity(intent);
                         overridePendingTransition(R.anim.transition_left_in, R.anim.transition_left_out);
                     }

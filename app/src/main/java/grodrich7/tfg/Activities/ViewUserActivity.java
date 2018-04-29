@@ -1,7 +1,6 @@
 package grodrich7.tfg.Activities;
 
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,23 +44,6 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     private MapFragment mapFragment;
     private GoogleMap googleMap;
     private ImageButton fullBtn;
-
-    /*private double randomLatitudes[] = {
-            41.392379,//Ronda Litoral
-            41.386377,//Placa Universitat
-            41.388732 //Everis
-    };
-    private double randomLongitudes[] = {
-            2.202206, //Ronda Litoral
-            2.164178,//Placa Universitat,
-            2.128944 //Everis
-    };
-
-    private String randomDestinations[] = {
-            "Premià de Dalt",
-            "Andorra",
-            "Mataró"
-    };*/
 
     private TextView driving;
     private TextView destinationData;
@@ -107,7 +89,8 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     protected void getViewsByXML() {
         setContentView(R.layout.activity_view_user_activiy);
         createMapFragment();
-        enableToolbar((String) getIntent().getSerializableExtra("name"));
+        String name = (String) getIntent().getSerializableExtra("name");
+        enableToolbar(name);
         fullBtn = findViewById(R.id.fullBtn);
         fullBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,17 +268,18 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     public void updateLocation(){
         LatLng location = getLocation();
         googleMap.clear();
-        googleMap.addMarker(new MarkerOptions().position(location).title("Marker"));
+        String title = drivingData != null && drivingData.getLocationInfo() != null ?
+                drivingData.getLocationInfo().getLastLocationTime() :
+                getString(R.string.unknownInformation);
+        googleMap.addMarker(new MarkerOptions().position(location).title(title));
         googleMap.moveCamera(getCameraPosition(location));
     }
 
     public LatLng getLocation(){
-        if (drivingData != null && drivingData.getLat() != null && !drivingData.getLat().isEmpty() && drivingData.getLon() != null && !drivingData.getLon().isEmpty() ){
-            return new LatLng(Double.parseDouble(drivingData.getLat()), Double.parseDouble(drivingData.getLon()));
-        }
-        double lat = 41.386377;
-        double lon = 2.164178;
-        return new LatLng(lat, lon);
+        return drivingData.getLocationInfo() != null ?
+                new LatLng(Double.parseDouble(drivingData.getLocationInfo().getLat()),
+                        Double.parseDouble(drivingData.getLocationInfo().getLon())) :
+                new LatLng(41.386377, 2.164178);
     }
 
     public CameraUpdate getCameraPosition(LatLng currLatLng){

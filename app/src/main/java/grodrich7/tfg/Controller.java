@@ -17,12 +17,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import grodrich7.tfg.Activities.DrivingActivity;
 import grodrich7.tfg.Models.Constants;
 import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.Models.Group;
+import grodrich7.tfg.Models.LocationInfo;
 import grodrich7.tfg.Models.User;
 
 import static grodrich7.tfg.Models.Constants.DATA_REFERENCE;
@@ -202,8 +204,7 @@ public class Controller {
                         permitted.setDestination(model.getDestination());
                         break;
                     case LOCATION:
-                        permitted.setLon(model.getLon());
-                        permitted.setLat(model.getLat());
+                        permitted.setLocationInfo(model.getLocationInfo());
                         break;
                     case TRIP_TIME_START:
                         permitted.setStartTimeHour(model.getStartTimeHour());
@@ -219,8 +220,8 @@ public class Controller {
     }
 
     public void updateLocation(Location location){
-        drivingData.setLat(String.valueOf(location.getLatitude()));
-        drivingData.setLon(String.valueOf(location.getLongitude()));
+        LocationInfo locationInfo = new LocationInfo(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude()), Calendar.getInstance().getTime());
+        drivingData.setLocationInfo(locationInfo);
         if (drivingData.isDriving() != null && drivingData.isDriving()) {
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
@@ -230,10 +231,9 @@ public class Controller {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             try {
                                 String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                                 if (entry.getValue().getPermissions().get(Constants.Data.LOCATION.toString())) {
-                                    friend_ref.child("lon").setValue(drivingData.getLon());
-                                    friend_ref.child("lat").setValue(drivingData.getLat());
+                                    friend_ref.child("locationInfo").setValue(drivingData.getLocationInfo());
                                 }
                             } catch (NullPointerException ex) {
                             }
