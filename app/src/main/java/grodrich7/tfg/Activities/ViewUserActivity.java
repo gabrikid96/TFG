@@ -89,7 +89,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
                             if (drivingDataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid())){
                                 drivingData.merge(drivingDataSnapshot.getValue(DrivingData.class));
                             }
-                        }
+                          }
                     }
                 }catch (Exception ex){
                     Log.e("VIEW", ex.getMessage());
