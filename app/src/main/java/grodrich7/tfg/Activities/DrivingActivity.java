@@ -4,15 +4,18 @@ import android.Manifest;
 import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -223,6 +226,18 @@ public class DrivingActivity extends HelperActivity {
 
     }
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            //LocalBinder binder = (LocalBinder) service;
+            //mService = binder.getService();
+        }
+
+        public void onServiceDisconnected(ComponentName arg0) {
+        }
+    };
+
     private void takePicture(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA)
@@ -271,7 +286,7 @@ public class DrivingActivity extends HelperActivity {
                 toggleCallIcon();
                 break;
             case R.id.image:
-                //takePicture();
+               //takePicture();
                 break;
         }
     }
