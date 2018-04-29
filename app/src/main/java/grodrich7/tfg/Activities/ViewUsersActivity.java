@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +18,14 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.Models.Group;
 import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
@@ -92,6 +98,7 @@ public class ViewUsersActivity extends HelperActivity {
                 holder.name_label.setText(model.getName().toUpperCase());
                 holder.email_label.setText(String.valueOf(model.getEmail()));
                 toggleDrivingIcon(holder.action_btn, true);
+                isDriving(holder.action_btn, getRef(position).getKey());
                 if (position > lastPosition)
                 {
                     holder.setAnimation();
@@ -115,6 +122,39 @@ public class ViewUsersActivity extends HelperActivity {
 
     private void toggleDrivingIcon(ImageView drivingState, boolean isDriving){
         drivingState.setBackgroundResource(isDriving ? R.mipmap.driving_on : R.mipmap.driving_off);
+    }
+
+    private void isDriving(final ImageView drivingState, String friendUid){
+        final boolean[] isDriving = {false};
+        controller.dataReference.child(friendUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try{
+                    for (DataSnapshot groupSnapshot : dataSnapshot.getChildren()) {
+                        for (DataSnapshot drivingDataSnapshot : groupSnapshot.getChildren()){
+                            if (drivingDataSnapshot.getKey().equals(FirebaseAuth.getInstance().getUid())){
+                                DrivingData drivingData = drivingDataSnapshot.getValue(DrivingData.class);
+                                isDriving[0] = drivingData.isDriving() != null && drivingData.isDriving();
+                                if (isDriving[0]){
+                                    break;
+                                }
+                            }
+                        }
+                        if (isDriving[0]){
+                            break;
+                        }
+                    }
+                }catch (Exception ex){
+                    Log.e("VIEW", ex.getMessage());
+                }finally {
+                    toggleDrivingIcon(drivingState, isDriving[0]);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     private class FriendHolder extends RecyclerView.ViewHolder {
