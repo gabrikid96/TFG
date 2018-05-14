@@ -93,6 +93,7 @@
         </activity>
         <activity
             android:name=".Activities.DrivingActivity"
+            android:launchMode="singleTop"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_driving"
             android:parentActivityName=".Activities.HomeActivity"

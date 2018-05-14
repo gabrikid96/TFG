@@ -1,6 +1,8 @@
 package grodrich7.tfg.Models;
 
 
+import com.google.firebase.database.Exclude;
+
 /**
  * Created by gabri on 21/04/2018.
  */
@@ -77,13 +79,18 @@ public class DrivingData {
     }
 
     public void merge(DrivingData object) {
-        this.driving = this.driving != null ? this.driving : object.driving;
-        this.acceptCalls = this.acceptCalls != null ? this.acceptCalls : object.acceptCalls;
-        this.startTimeHour = this.startTimeHour != null ? this.startTimeHour : object.startTimeHour;
-        this.startTimeMin = this.startTimeMin != null ? this.startTimeMin : object.startTimeMin;
-        this.searchingParking = this.searchingParking != null ? this.searchingParking : object.searchingParking;
-        this.destination = this.destination != null ? this.destination : object.destination;
-        this.locationInfo = this.locationInfo != null ? this.locationInfo : object.locationInfo;
+        this.driving = getNew(this.driving, object.driving);
+        this.acceptCalls = getNew(this.acceptCalls, object.acceptCalls);
+        this.startTimeHour = getNew(this.startTimeHour, object.startTimeHour);
+        this.startTimeMin = getNew(this.startTimeMin, object.startTimeMin);
+        this.searchingParking = getNew(this.searchingParking, object.searchingParking);
+        this.destination = getNew(this.destination, object.destination);
+        this.locationInfo = getNew(this.locationInfo, object.locationInfo);
+    }
+
+    @Exclude
+    private <T extends Object> T getNew(T old, T newO){
+       return (old != null && newO != null) || (old == null && newO != null) ? newO : old;
     }
 
 }

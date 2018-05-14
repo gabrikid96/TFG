@@ -2,24 +2,17 @@ package grodrich7.tfg.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.Uri;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.View;
@@ -53,8 +46,10 @@ public class DrivingActivity extends HelperActivity {
 
     private RelativeLayout call_layout;
 
-    private static final int MY_PERMISSION_REQUEST_CODE = 7171;
 
+
+    private static final int MY_PERMISSION_REQUEST_CODE = 7171;
+    public static final String FINISH_ACTION  = "FINISH";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +124,6 @@ public class DrivingActivity extends HelperActivity {
                         }else{
                             stopService(new Intent(DrivingActivity.this, LocationService.class));
                             controller.endDriving();
-                            //turnGPSOff();
                         }
                     }
                 })
@@ -138,7 +132,7 @@ public class DrivingActivity extends HelperActivity {
     }
 
     private void shareData() {
-//        turnGPSOn();
+        statusCheck();
         controller.getDrivingData().setDriving(true);
         Date now = Calendar.getInstance().getTime();
         controller.getDrivingData().setStartTimeHour(now.getHours());
@@ -148,29 +142,7 @@ public class DrivingActivity extends HelperActivity {
         //createNotification();
         controller.saveDrivingData();
         startService(new Intent(this, LocationService.class));
-    }
 
-    private void createNotification(){
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this,getString(R.string.driving_title))
-                .setSmallIcon(R.mipmap.driving_on)
-                .setContentTitle(getString(R.string.driving_title))
-                .setContentText(getString(R.string.driving_notification))
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
-        mBuilder.build();
-        initChannels();
-    }
-
-    public void initChannels() {
-        if (Build.VERSION.SDK_INT < 26) {
-            return;
-        }
-        NotificationManager notificationManager =
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel channel = new NotificationChannel( getString(R.string.driving_title),
-                getString(R.string.driving_title),
-                NotificationManager.IMPORTANCE_HIGH);
-        channel.setDescription( getString(R.string.driving_title));
-        notificationManager.createNotificationChannel(channel);
     }
 
     private void toggleDrivingIcon(){
@@ -222,21 +194,8 @@ public class DrivingActivity extends HelperActivity {
                 }
             }
         }
-
-
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            //LocalBinder binder = (LocalBinder) service;
-            //mService = binder.getService();
-        }
-
-        public void onServiceDisconnected(ComponentName arg0) {
-        }
-    };
 
     private void takePicture(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -305,29 +264,51 @@ public class DrivingActivity extends HelperActivity {
         startTimeData.setText(hour == null && min == null ? "--:--" : String.format("%02d", hour) + ":" + String.format("%02d", min));
     }
     //endregion
-    //region GPS sensor
-    private void turnGPSOn(){
-        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
 
-        if(!provider.contains("gps")){ //if gps is disabled
-            final Intent poke = new Intent();
-            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            poke.setData(Uri.parse("3"));
-            sendBroadcast(poke);
+    //region GPS enable
+    public void statusCheck() {
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
         }
     }
 
-    private void turnGPSOff(){
-        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-
-        if(provider.contains("gps")){ //if gps is enabled
-            final Intent poke = new Intent();
-            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            poke.setData(Uri.parse("3"));
-            sendBroadcast(poke);
-        }
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
     //endregion
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.getAction() != null){
+            switch (intent.getAction()){
+                case FINISH_ACTION:
+                    stopService(new Intent(DrivingActivity.this, LocationService.class));
+                    controller.endDriving();
+                    toggleDrivingIcon();
+                    break;
+            }
+        }
+        super.onNewIntent(intent);
+
+    }
+
+
+
 }

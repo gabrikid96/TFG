@@ -1,14 +1,17 @@
 package grodrich7.tfg.Models.Services;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,7 +25,11 @@ import com.androidhiddencamera.config.CameraResolution;
 
 import java.io.File;
 
+import grodrich7.tfg.Activities.DrivingActivity;
+import grodrich7.tfg.R;
 import grodrich7.tfg.StorageController;
+
+import static grodrich7.tfg.Activities.DrivingActivity.FINISH_ACTION;
 
 /**
  * Created by grodrich on 24/04/2018.
@@ -36,6 +43,12 @@ public class CameraService extends HiddenCameraService {
         return null;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        /*intent = new Intent(BROADCAST_ACTION);*/
+        addNotification();
+    }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -64,7 +77,31 @@ public class CameraService extends HiddenCameraService {
         } else {
             Toast.makeText(this, "Camera permission not available", Toast.LENGTH_SHORT).show();
         }
-        return START_NOT_STICKY;
+        return START_STICKY;
+    }
+    private void addNotification(){
+        Intent notificationIntent = new Intent(this, DrivingActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        notificationIntent.setAction(FINISH_ACTION);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.car)
+                .setContentTitle(getString(R.string.sharingData))
+                .setContentText(getString(R.string.sharingData))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setColor(Color.BLUE)
+                .addAction(new NotificationCompat.Action(
+                        R.mipmap.driving_on,
+                        getString(R.string.finish),
+                        PendingIntent.getActivity(this,0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                ));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationBuilder.setChannelId("1337");
+        }
+        startForeground(1337,notificationBuilder.build());
     }
 
     @Override

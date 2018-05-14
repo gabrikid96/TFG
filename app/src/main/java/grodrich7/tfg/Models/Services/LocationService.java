@@ -2,18 +2,26 @@ package grodrich7.tfg.Models.Services;
 
 
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
+import grodrich7.tfg.Activities.DrivingActivity;
 import grodrich7.tfg.Controller;
+import grodrich7.tfg.Models.Constants;
+import grodrich7.tfg.R;
+
+import static grodrich7.tfg.Activities.DrivingActivity.FINISH_ACTION;
 
 public class LocationService extends Service {
     public static final String BROADCAST_ACTION = "Hello World";
@@ -28,15 +36,26 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
         intent = new Intent(BROADCAST_ACTION);
+        addNotification();
     }
 
     @SuppressLint("MissingPermission")
     @Override
-    public void onStart(Intent intent, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+
+        String time = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .getString("location_sync", "");
+        int interval;
+        try{
+            interval = Integer.parseInt(time) * 1000;//seconds
+        }catch (NumberFormatException ex){
+            interval = Constants.DEFAULT_TIME_LOCATION;
+        }
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 0, listener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 0, listener);
+        return START_STICKY;
     }
 
     @Override
@@ -97,6 +116,31 @@ public class LocationService extends Service {
         return provider1.equals(provider2);
     }
 
+    private void addNotification(){
+        Intent notificationIntent = new Intent(this, DrivingActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        notificationIntent.setAction(FINISH_ACTION);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.car)
+                .setContentTitle(getString(R.string.sharingData))
+                .setContentText(getString(R.string.sharingData))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setColor(Color.BLUE)
+                .addAction(new NotificationCompat.Action(
+                        R.mipmap.driving_on,
+                        getString(R.string.finish),
+                        PendingIntent.getActivity(this,0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                ));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            notificationBuilder.setChannelId("1337");
+        }
+        startForeground(1337,notificationBuilder.build());
+    }
+
 
 
     @Override
@@ -126,8 +170,7 @@ public class LocationService extends Service {
         return t;
     }
 
-
-
+    public static final String NOTIFICATION_CHANNEL_ID = "1337";
 
     public class MyLocationListener implements LocationListener
     {

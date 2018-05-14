@@ -7,9 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -216,7 +213,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     }
 
     //region ToolbarSettings
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_view_user, menu);
@@ -238,7 +235,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         }
 
         return true;
-    }
+    }*/
     //endregion
 
     //region MapFragment

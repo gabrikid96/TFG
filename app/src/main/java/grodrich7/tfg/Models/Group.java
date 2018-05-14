@@ -52,9 +52,6 @@ public class Group implements Serializable{
         return permissions;
     }
 
-    public void setPermissions(HashMap<String, Boolean> permissions) {
-        this.permissions = permissions;
-    }
 
     public ArrayList<String> getUsers() {
         return users;
