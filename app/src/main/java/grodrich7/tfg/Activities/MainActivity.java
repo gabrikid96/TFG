@@ -256,6 +256,8 @@ public class MainActivity extends HelperActivity {
             });
     }
 
+
+
     //region INPUT VALIDATIONS
     public boolean checkInputs(){
         boolean isCorrect = true;

@@ -1,5 +1,6 @@
 package grodrich7.tfg.Activities;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import grodrich7.tfg.Activities.Services.AppService;
+import grodrich7.tfg.Activities.Services.NotificationService;
 import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
@@ -58,7 +61,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     boolean full;
     private String friendUid;
 
-    private FirebaseRecyclerAdapter<String, ImageHolder> imagesAdapter;
+    public static final String VIEW_ACTION  = "VIEW";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -282,6 +285,18 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         return CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(currLatLng).zoom(14.0f).build());
     }
     //endregion
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.getAction() != null){
+            switch (intent.getAction()){
+                case VIEW_ACTION:
+                    if (isServiceRunning(NotificationService.class)) stopService(new Intent(this, NotificationService.class));
+                    break;
+            }
+        }
+        super.onNewIntent(intent);
+
+    }
 
     public class ResizeAnimation extends Animation {
         final int targetHeight;
@@ -312,4 +327,6 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
             return true;
         }
     }
+
+
 }

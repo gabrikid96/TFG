@@ -103,8 +103,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="grodrich7.tfg.Activities.HomeActivity" />
         </activity>
-        <service android:name=".Models.Services.LocationService"/>
-        <service android:name=".Models.Services.CameraService" />
+
         <activity
             android:name=".Activities.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -123,6 +122,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="grodrich7.tfg.Activities.HomeActivity" />
         </activity>
+
+        <!--Services-->
+        <service android:name=".Activities.Services.AppService"/>
+        <service
+            android:name=".Activities.Services.NotificationService"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="your.app.domain.NotificationService" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="grodrich7.tfg.Activities.Services.CameraReceiver" >
+            <intent-filter>
+                <action android:name="grodrich7.tfg.CAMERA_ACTION" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

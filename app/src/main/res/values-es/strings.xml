@@ -84,4 +84,10 @@
     <string name="deleted_group">Grupo eliminado</string>
     <string name="undo">Deshacer</string>
     <string name="view_users">Visualizar usuarios</string>
+    <string name="unknownInformation">Desconocido</string>
+    <string name="estimated_time">Tiempo estimado:</string>
+    <string name="driving_notification">Compartiendo datos en segundo plano</string>
+    <string name="finish">Finalizar</string>
+    <string name="sharingData">Compartiendo datos en segundo plano</string>
+    <string name="gps_disabled">Tu GPS parece estar desactivado. ¿Quiéres activarlo?</string>
 </resources>

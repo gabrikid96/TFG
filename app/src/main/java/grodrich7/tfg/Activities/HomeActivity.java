@@ -1,11 +1,14 @@
 package grodrich7.tfg.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import grodrich7.tfg.Activities.Services.NotificationService;
 import grodrich7.tfg.R;
 
 public class HomeActivity extends HelperActivity {
@@ -38,5 +41,15 @@ public class HomeActivity extends HelperActivity {
                 launchIntent(SettingsActivity.class, TRANSITION_RIGHT);
                 break;
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        boolean notifications = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .getBoolean("notifications_new_message", false);
+        if (notifications){
+            startService(new Intent(this,NotificationService.class));
+        }
+
     }
 }

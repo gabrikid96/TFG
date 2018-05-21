@@ -114,7 +114,7 @@
     <string name="pref_title_image_sync_frequency">Image sync frequency</string>
 
     <string-array name="pref_sync_frequency_titles">
-        <item>1 minutos</item>
+        <item>1 minuto</item>
         <item>5 minutos</item>
         <item>10 minutos</item>
         <item>15 minutos</item>
@@ -172,10 +172,9 @@
     <string name="view_users">View users</string>
     <string name="unknownInformation">Unknown</string>
     <string name="estimated_time">Estimated time:</string>
-    <string name="unknownTime">--:--</string>
-    <string name="driving_notification">Sharing your in background</string>
-    <string name="end_action">End sharing</string>
+    <string name="unknownTime" translatable="false">--:--</string>
     <string name="sharingData">Sharing data on background</string>
     <string name="finish">Finish</string>
     <string name="gps_disabled">Your GPS seems to be disabled, do you want to enable it?</string>
+    <string name="driving_notification">Sharing data on background</string>
 </resources>

@@ -1,5 +1,4 @@
-package grodrich7.tfg.Models.Services;
-
+package grodrich7.tfg.Activities.Services;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -11,7 +10,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -23,29 +21,25 @@ import grodrich7.tfg.R;
 
 import static grodrich7.tfg.Activities.DrivingActivity.FINISH_ACTION;
 
-public class LocationService extends Service {
-    public static final String BROADCAST_ACTION = "Hello World";
+public class LocationHandler {
+
+    private Service service;
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     public LocationManager locationManager;
     public MyLocationListener listener;
     public Location previousBestLocation = null;
 
-    Intent intent;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        intent = new Intent(BROADCAST_ACTION);
+    public LocationHandler(Service service){
+        this.service = service;
         addNotification();
     }
 
     @SuppressLint("MissingPermission")
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    public void start(){
+        locationManager = (LocationManager) service.getSystemService(Context.LOCATION_SERVICE);
         listener = new MyLocationListener();
 
-        String time = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+        String time = PreferenceManager.getDefaultSharedPreferences(service.getApplicationContext())
                 .getString("location_sync", "");
         int interval;
         try{
@@ -55,13 +49,6 @@ public class LocationService extends Service {
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, interval, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, interval, 0, listener);
-        return START_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent)
-    {
-        return null;
     }
 
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
@@ -106,8 +93,6 @@ public class LocationService extends Service {
         return false;
     }
 
-
-
     /** Checks whether two providers are the same */
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
@@ -117,63 +102,37 @@ public class LocationService extends Service {
     }
 
     private void addNotification(){
-        Intent notificationIntent = new Intent(this, DrivingActivity.class);
+        Intent notificationIntent = new Intent(service, DrivingActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         notificationIntent.setAction(FINISH_ACTION);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+        PendingIntent pendingIntent = PendingIntent.getActivity(service, 0,
                 notificationIntent, 0);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(service)
                 .setSmallIcon(R.drawable.car)
-                .setContentTitle(getString(R.string.sharingData))
-                .setContentText(getString(R.string.sharingData))
+                .setContentTitle(service.getString(R.string.sharingData))
+                .setContentText(service.getString(R.string.sharingData))
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setColor(Color.BLUE)
                 .addAction(new NotificationCompat.Action(
                         R.mipmap.driving_on,
-                        getString(R.string.finish),
-                        PendingIntent.getActivity(this,0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                        service.getString(R.string.finish),
+                        PendingIntent.getActivity(service,0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 ));
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             notificationBuilder.setChannelId("1337");
         }
-        startForeground(1337,notificationBuilder.build());
+        service.startForeground(1337,notificationBuilder.build());
     }
 
-
-
-    @Override
-    public void onDestroy() {
-        // handler.removeCallbacks(sendUpdatesToUI);
-        super.onDestroy();
-        Log.v("STOP_SERVICE", "DONE");
-        try{
-            locationManager.removeUpdates(listener);
-        }catch (Exception ex){
-
-        }
+    public void stop(){
+        locationManager.removeUpdates(listener);
     }
-
-    public static Thread performOnBackgroundThread(final Runnable runnable) {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                } finally {
-
-                }
-            }
-        };
-        t.start();
-        return t;
-    }
-
-    public static final String NOTIFICATION_CHANNEL_ID = "1337";
 
     public class MyLocationListener implements LocationListener
     {
+
 
         public void onLocationChanged(final Location loc)
         {
@@ -182,28 +141,21 @@ public class LocationService extends Service {
                 loc.getLatitude();
                 loc.getLongitude();
                 Controller.getInstance().updateLocation(loc);
-                intent.putExtra("Latitude", loc.getLatitude());
-                intent.putExtra("Longitude", loc.getLongitude());
-                intent.putExtra("Provider", loc.getProvider());
-                sendBroadcast(intent);
             }
         }
 
         public void onProviderDisabled(String provider)
         {
-            //Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
         }
 
 
         public void onProviderEnabled(String provider)
         {
-            //Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
 
 
         public void onStatusChanged(String provider, int status, Bundle extras)
         {
-
         }
 
     }

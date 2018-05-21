@@ -176,9 +176,9 @@
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/front_image"
                     android:clickable="true"
                     android:id="@+id/image"
+                    android:background="@color/cardview_dark_background"
                     android:onClick="viewsHandles"
                     android:layout_weight="1"/>
             </LinearLayout>

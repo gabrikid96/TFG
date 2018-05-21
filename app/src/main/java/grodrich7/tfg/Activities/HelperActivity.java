@@ -1,5 +1,6 @@
 package grodrich7.tfg.Activities;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -20,6 +21,8 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
+import grodrich7.tfg.Activities.Services.AppService;
+import grodrich7.tfg.Activities.Services.NotificationService;
 import grodrich7.tfg.Controller;
 import grodrich7.tfg.R;
 
@@ -42,6 +45,7 @@ public abstract class HelperActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (isServiceRunning(NotificationService.class)) stopService(new Intent(this, NotificationService.class));
         controller = Controller.getInstance();
         getViewsByXML();
     }
@@ -178,6 +182,16 @@ public abstract class HelperActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    public boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

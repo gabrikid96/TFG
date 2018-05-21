@@ -4,7 +4,7 @@
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:defaultValue="15"
+        android:defaultValue="5"
         android:entries="@array/pref_location_sync_frequency_titles"
         android:entryValues="@array/pref_location_sync_frequency_values"
         android:key="location_sync"
@@ -13,7 +13,7 @@
         android:title="@string/pref_title_location_sync_frequency" />
 
     <ListPreference
-        android:defaultValue="5"
+        android:defaultValue="1"
         android:entries="@array/pref_sync_frequency_titles"
         android:entryValues="@array/pref_sync_frequency_values"
         android:key="image_sync"

@@ -5,21 +5,18 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,16 +25,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.ceylonlabs.imageviewpopup.ImagePopup;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import grodrich7.tfg.Models.Constants;
-import grodrich7.tfg.Models.Services.CameraService;
-import grodrich7.tfg.Models.Services.LocationService;
+import grodrich7.tfg.Activities.Services.AppService;
+import grodrich7.tfg.Activities.Services.CameraReceiver;
 import grodrich7.tfg.R;
 
 public class DrivingActivity extends HelperActivity {
@@ -53,10 +50,10 @@ public class DrivingActivity extends HelperActivity {
     private static final int LOCATION_PERMISSION = 7171;
     private static final int CAMERA_PERMISSION = 100;
     private static final int DRAW_OVER_PERMISSION = 101;
+    private CameraReceiver cameraReceiver;
 
     public static final String FINISH_ACTION  = "FINISH";
 
-    private Timer timer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +88,6 @@ public class DrivingActivity extends HelperActivity {
         }
     }
 
-
     protected void getViewsByXML() {
         setContentView(R.layout.activity_driving);
         enableToolbar(R.string.driving_title);
@@ -125,6 +121,15 @@ public class DrivingActivity extends HelperActivity {
         toggleParkingIcon();
         toggleCallIcon();
         changeStartTimeText();
+        if (controller.getDrivingData() != null && controller.getDrivingData().getImages() != null && controller.getDrivingData().getImages().size() > 0){
+            String url = controller.getDrivingData().getImages().get(controller.getDrivingData().getImages().size() -1);
+            Glide.with(this).load(url).into(lastImage);
+        }
+        if (controller.getDrivingData() != null && controller.getDrivingData().isDriving() != null && controller.getDrivingData().isDriving().booleanValue()){
+            cameraReceiver = new CameraReceiver(this,lastImage);
+            IntentFilter intentFilter = new IntentFilter("grodrich7.tfg.CAMERA_ACTION");
+            registerReceiver(cameraReceiver, intentFilter);
+        }
     }
 
     private void showDrivingDialog(){
@@ -153,11 +158,13 @@ public class DrivingActivity extends HelperActivity {
     }
 
     private void stopDriving() {
-        stopService(new Intent(DrivingActivity.this, LocationService.class));
+        stopService(new Intent(DrivingActivity.this, AppService.class));
         controller.endDriving();
+        if (cameraReceiver != null){
+            unregisterReceiver(cameraReceiver);
+            cameraReceiver = null;
+        }
        // stopService(new Intent(DrivingActivity.this, CameraService.class));
-        timer.cancel();
-        timer = null;
     }
 
     private void shareData() {
@@ -167,11 +174,13 @@ public class DrivingActivity extends HelperActivity {
         controller.getDrivingData().setStartTimeHour(now.getHours());
         controller.getDrivingData().setStartTimeMin(now.getMinutes());
         changeStartTimeText();
-
-        //createNotification();
         controller.saveDrivingData();
-        startService(new Intent(this, LocationService.class));
-        startCameraService();
+
+        cameraReceiver = new CameraReceiver(this,lastImage);
+        IntentFilter intentFilter = new IntentFilter("grodrich7.tfg.CAMERA_ACTION");
+        registerReceiver(cameraReceiver, intentFilter);
+
+        startService(new Intent(this, AppService.class));
     }
 
     private void toggleDrivingIcon(){
@@ -225,21 +234,6 @@ public class DrivingActivity extends HelperActivity {
         }
     }
 
-
-    private void takePicture(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA},
-                        100);
-            }else{
-                startService(new Intent(DrivingActivity.this, CameraService.class));
-            }
-        }else{
-            startService(new Intent(DrivingActivity.this, CameraService.class));
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -259,6 +253,7 @@ public class DrivingActivity extends HelperActivity {
             break;
         }
     }
+
     //region OnClick
     public void viewsHandles(View v){
         switch (v.getId()){
@@ -274,7 +269,12 @@ public class DrivingActivity extends HelperActivity {
                 toggleCallIcon();
                 break;
             case R.id.image:
-               takePicture();
+                final ImagePopup imagePopup = new ImagePopup(DrivingActivity.this);
+                imagePopup.setFullScreen(true); // Optional
+                imagePopup.setBackgroundColor(getResources().getColor(R.color.transparent));
+                imagePopup.setImageOnClickClose(true);  // Optional
+                imagePopup.initiatePopup(lastImage.getDrawable());
+                imagePopup.viewPopup();
                 break;
         }
     }
@@ -293,7 +293,6 @@ public class DrivingActivity extends HelperActivity {
         startTimeData.setText(hour == null && min == null ? "--:--" : String.format("%02d", hour) + ":" + String.format("%02d", min));
     }
     //endregion
-
     //region GPS enable
     public void statusCheck() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -324,11 +323,20 @@ public class DrivingActivity extends HelperActivity {
     //endregion
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (cameraReceiver != null){
+            unregisterReceiver(cameraReceiver);
+            cameraReceiver = null;
+        }
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         if (intent.getAction() != null){
             switch (intent.getAction()){
                 case FINISH_ACTION:
-                    stopService(new Intent(DrivingActivity.this, LocationService.class));
+                    stopService(new Intent(DrivingActivity.this, AppService.class));
                     controller.endDriving();
                     toggleDrivingIcon();
                     break;
@@ -337,26 +345,6 @@ public class DrivingActivity extends HelperActivity {
         super.onNewIntent(intent);
 
     }
-
-    private void startCameraService(){
-        String time = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                .getString("image_sync", "");
-        long interval;
-        try{
-            interval = Long.parseLong(time) * 60 * 1000;//seconds
-        }catch (NumberFormatException ex){
-            interval = Constants.DEFAULT_TIME_LOCATION;
-        }
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Log.d("CAMERA_TASK", "Hello");
-            }
-
-        }, 0, interval);
-    }
-
 
 
 }
