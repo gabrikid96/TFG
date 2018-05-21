@@ -1,5 +1,6 @@
 package grodrich7.tfg.Activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +16,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -34,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import grodrich7.tfg.Models.DrivingData;
+import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
 
 public class ViewUserActivity extends HelperActivity implements OnMapReadyCallback {
@@ -50,11 +56,14 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     private RecyclerView recyclerView;
     private DrivingData drivingData;
     boolean full;
+    private String friendUid;
 
+    private FirebaseRecyclerAdapter<String, ImageHolder> imagesAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getData((String) getIntent().getSerializableExtra("key"));
+        friendUid = (String) getIntent().getSerializableExtra("key");
+        getData(friendUid);
     }
 
     private void getData(String friendUid){
@@ -110,42 +119,29 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         startTimeData = findViewById(R.id.startTimeData);
         acceptCallsData = findViewById(R.id.acceptCallsData);
         parkingData = findViewById(R.id.parkingData);
-        recyclerImages();
     }
 
     private void recyclerImages(){
-        // Initialize a new String array
-        final String[] animals = {
-                "Aardvark",
-                "Albatross",
-                "Alligator",
-                "Alpaca",
-                "Ant",
-                "Anteater",
-        };
-
-        // Intilize an array list from array
-        final List<String> animalsList = new ArrayList(Arrays.asList(animals));
-
         recyclerView = findViewById(R.id.recyclerImages);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-
-        RecyclerView.Adapter groupsAdapter = new RecyclerView.Adapter<CustomViewHolder>() {
+        RecyclerView.Adapter groupsAdapter = new RecyclerView.Adapter<ImageHolder>() {
             @Override
-            public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            public ImageHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                 View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_square
                         , viewGroup, false);
-                return new CustomViewHolder(view);
+                return new ImageHolder(view);
             }
 
             @Override
-            public void onBindViewHolder(CustomViewHolder viewHolder, int i) {
+            public void onBindViewHolder(ImageHolder viewHolder, int i) {
                 viewHolder.description.setText("Imagen " + String.valueOf(i+1));
                 try{
-                    viewHolder.imageButton.setImageResource(R.drawable.front_image);
+                    String url = drivingData.getImages().get(i);
+                    Glide.with(ViewUserActivity.this).load(url).into(viewHolder.imageButton);
+                    //viewHolder.imageButton.setImageResource(R.drawable.front_image);
                     final ImagePopup imagePopup = new ImagePopup(ViewUserActivity.this);
                     imagePopup.setFullScreen(true); // Optional
                     imagePopup.setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -155,7 +151,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
                     viewHolder.imageButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            /** Initiate Popup view **/
+                            // Initiate Popup view
                             imagePopup.viewPopup();
                         }
                     });
@@ -166,19 +162,18 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
 
             @Override
             public int getItemCount() {
-                return animalsList.size();
+                return drivingData.getImages().size();
             }
         };
         recyclerView.setAdapter(groupsAdapter);
-
     }
 
-    private class CustomViewHolder extends RecyclerView.ViewHolder {
+    private class ImageHolder extends RecyclerView.ViewHolder {
 
         private TextView description;
         private ImageView imageButton;
 
-        public CustomViewHolder(View itemView) {
+        public ImageHolder(View itemView) {
             super(itemView);
             imageButton = itemView.findViewById(R.id.image);
             description = itemView.findViewById(R.id.description);
@@ -206,6 +201,10 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         parkingData.setText(parseString(data.isSearchingParking()));
         parkingData.setTextColor(booleanColor);
         updateLocation();
+        if (drivingData.getImages() != null){
+            recyclerImages();
+        }
+
     }
 
     public DisplayMetrics getMetrics(){

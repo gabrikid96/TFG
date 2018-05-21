@@ -5,8 +5,11 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -386,7 +389,14 @@ public class Controller {
 
     //endregion
 
-    public void updateImages(final Uri url){
+    public void updateImages(final String url){
+        if (drivingData.getImages() == null){
+            drivingData.setImages(new ArrayList<String>(10));
+        }
+        if (drivingData.getImages().size() >= 10){
+            drivingData.getImages().remove(0);
+        }
+        drivingData.getImages().add(url);
         if (drivingData.isDriving() != null && drivingData.isDriving()) {
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
@@ -397,8 +407,14 @@ public class Controller {
                             try {
                                 String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
                                 DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                                friend_ref.child("images").setValue(drivingData.getImages());
                                 if (entry.getValue().getPermissions().get(Constants.Data.IMAGES.toString())) {
-                                    friend_ref.child("images").push().setValue(url);
+                                    friend_ref.child("images").setValue(drivingData.getImages()).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("IMAGES", e.getMessage());
+                                        }
+                                    });
                                 }
                             } catch (NullPointerException ex) {
                             }

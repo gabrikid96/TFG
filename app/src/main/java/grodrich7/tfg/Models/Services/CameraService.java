@@ -1,148 +1,335 @@
 package grodrich7.tfg.Models.Services;
 
-import android.Manifest;
-import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.hardware.Camera;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.androidhiddencamera.CameraConfig;
-import com.androidhiddencamera.CameraError;
-import com.androidhiddencamera.HiddenCameraService;
-import com.androidhiddencamera.HiddenCameraUtils;
-import com.androidhiddencamera.config.CameraFacing;
-import com.androidhiddencamera.config.CameraImageFormat;
-import com.androidhiddencamera.config.CameraResolution;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-import grodrich7.tfg.Activities.DrivingActivity;
-import grodrich7.tfg.R;
 import grodrich7.tfg.StorageController;
 
-import static grodrich7.tfg.Activities.DrivingActivity.FINISH_ACTION;
+public class CameraService extends Service implements
+        SurfaceHolder.Callback {
 
-/**
- * Created by grodrich on 24/04/2018.
- */
+    // Camera variables
+    // a surface holder
+    // a variable to control the camera
+    private Camera mCamera;
+    // the camera parameters
+    private Camera.Parameters parameters;
+    private Bitmap bmp;
+    private String FLASH_MODE;
+    private Camera.Size pictureSize;
+    SurfaceView sv;
+    private SurfaceHolder sHolder;
+    private WindowManager windowManager;
+    WindowManager.LayoutParams params;
+    public Intent cameraIntent;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+    int width = 0, height = 0;
 
-public class CameraService extends HiddenCameraService {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-    @Nullable
+    }
+
+    private void setBesttPictureResolution() {
+        // get biggest picture size
+        width = pref.getInt("Picture_Width", 0);
+        height = pref.getInt("Picture_height", 0);
+
+        if (width == 0 | height == 0) {
+            pictureSize = getBiggesttPictureSize(parameters);
+            if (pictureSize != null)
+                parameters
+                        .setPictureSize(pictureSize.width, pictureSize.height);
+            // save width and height in sharedprefrences
+            width = pictureSize.width;
+            height = pictureSize.height;
+            editor.putInt("Picture_Width", width);
+            editor.putInt("Picture_height", height);
+            editor.commit();
+
+        } else {
+            // if (pictureSize != null)
+            parameters.setPictureSize(width, height);
+        }
+    }
+
+    private Camera.Size getBiggesttPictureSize(Camera.Parameters parameters) {
+        Camera.Size result = null;
+
+        for (Camera.Size size : parameters.getSupportedPictureSizes()) {
+            if (result == null) {
+                result = size;
+            } else {
+                int resultArea = result.width * result.height;
+                int newArea = size.width * size.height;
+
+                if (newArea > resultArea) {
+                    result = size;
+                }
+            }
+        }
+
+        return (result);
+    }
+
+    /** Check if this device has a camera */
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            // this device has a camera
+            return true;
+        } else {
+            // no camera on this device
+            return false;
+        }
+    }
+    Handler handler = new Handler();
+
+    private class TakeImage extends AsyncTask<Intent, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Intent... params) {
+            takeImage(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+        }
+    }
+
+    private synchronized void takeImage(Intent intent) {
+
+        if (checkCameraHardware(getApplicationContext())) {
+            FLASH_MODE = "off";
+            if (mCamera != null) {
+                mCamera.stopPreview();
+                mCamera.release();
+                mCamera = Camera.open();
+            } else
+                mCamera = getCameraInstance();
+
+            try {
+                if (mCamera != null) {
+                    mCamera.setPreviewDisplay(sv.getHolder());
+                    parameters = mCamera.getParameters();
+                    parameters.setFlashMode(FLASH_MODE);
+                    setBesttPictureResolution();
+                    mCamera.setParameters(parameters);
+                    mCamera.startPreview();
+                    Log.d("CAMERA_SERVICE", "OnTake()");
+                    mCamera.takePicture(null, null, mCall);
+                } else {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    "Camera is unavailable !",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            } catch (IOException e) {
+                Log.e("CAMERA_SERVICE", "CmaraHeadService()::takePicture", e);
+            }
+        } else {
+            handler.post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Your Device dosen't have a Camera !",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+            stopSelf();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // sv = new SurfaceView(getApplicationContext());
+        cameraIntent = intent;
+        Log.d("CAMERA_SERVICE", "StartCommand()");
+        pref = getApplicationContext().getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
+
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        int LAYOUT_FLAG;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
+        }
+
+        params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                LAYOUT_FLAG,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
+
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.width = 1;
+        params.height = 1;
+        params.x = 0;
+        params.y = 0;
+        sv = new SurfaceView(getApplicationContext());
+        try{
+            windowManager.addView(sv, params);
+            sHolder = sv.getHolder();
+            sHolder.addCallback(this);
+        }catch(Exception ex){
+            Toast.makeText(getApplicationContext(), "Insufficient permissions",Toast.LENGTH_SHORT).show();
+        }
+
+        // tells Android that this surface will have its data constantly
+        // replaced
+        if (Build.VERSION.SDK_INT < 11)
+            sHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        return START_STICKY;
+    }
+
+    Camera.PictureCallback mCall = new Camera.PictureCallback() {
+
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            // decode the data obtained by the camera into a Bitmap
+            Log.d("CAMERA_SERVICE", "Done");
+            if (bmp != null)
+                bmp.recycle();
+            System.gc();
+            bmp = decodeBitmap(data);
+            StorageController.getInstance().uploadImage(bmp);
+            if (mCamera != null) {
+                mCamera.stopPreview();
+                mCamera.release();
+                mCamera = null;
+            }
+            Log.d("CAMERA_SERVICE", "Image Taken !");
+            if (bmp != null) {
+                bmp.recycle();
+                bmp = null;
+                System.gc();
+            }
+            mCamera = null;
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(),
+                            "Your Picture has been taken !", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            });
+            stopSelf();
+        }
+    };
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        /*intent = new Intent(BROADCAST_ACTION);*/
-        addNotification();
-    }
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-
-            if (HiddenCameraUtils.canOverDrawOtherApps(this)) {
-                CameraConfig cameraConfig = new CameraConfig()
-                        .getBuilder(this)
-                        .setCameraFacing(CameraFacing.REAR_FACING_CAMERA)
-                        .setCameraResolution(CameraResolution.MEDIUM_RESOLUTION)
-                        .setImageFormat(CameraImageFormat.FORMAT_JPEG)
-                        .build();
-
-                startCamera(cameraConfig);
-
-                new android.os.Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        takePicture();
-                    }
-                }, 2000);
-            } else {
-
-                //Open settings to grant permission for "Draw other apps".
-                HiddenCameraUtils.openDrawOverPermissionSetting(this);
-            }
-        } else {
-            Toast.makeText(this, "Camera permission not available", Toast.LENGTH_SHORT).show();
+    public static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
         }
-        return START_STICKY;
-    }
-    private void addNotification(){
-        Intent notificationIntent = new Intent(this, DrivingActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        notificationIntent.setAction(FINISH_ACTION);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.car)
-                .setContentTitle(getString(R.string.sharingData))
-                .setContentText(getString(R.string.sharingData))
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setColor(Color.BLUE)
-                .addAction(new NotificationCompat.Action(
-                        R.mipmap.driving_on,
-                        getString(R.string.finish),
-                        PendingIntent.getActivity(this,0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                ));
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            notificationBuilder.setChannelId("1337");
-        }
-        startForeground(1337,notificationBuilder.build());
+        return c; // returns null if camera is unavailable
     }
 
     @Override
-    public void onImageCapture(@NonNull File imageFile) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath(), options);
-        //Do something with the bitmap
-        /*StorageController storageController = StorageController.getInstance();
-        storageController.uploadImage(bitmap);*/
-        Log.d("Image capture", imageFile.length() + "");
-        stopSelf();
+    public void onDestroy() {
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
+        if (sv != null)
+            windowManager.removeView(sv);
+        Intent intent = new Intent("custom-event-name");
+        // You can also include some extra data.
+        intent.putExtra("message", "This is my message!");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+        super.onDestroy();
     }
 
     @Override
-    public void onCameraError(@CameraError.CameraErrorCodes int errorCode) {
-        switch (errorCode) {
-            case CameraError.ERROR_CAMERA_OPEN_FAILED:
-                //Camera open failed. Probably because another application
-                //is using the camera
-                Toast.makeText(this, "Cannot open camera.", Toast.LENGTH_LONG).show();
-                break;
-            case CameraError.ERROR_IMAGE_WRITE_FAILED:
-                //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
-                Toast.makeText(this, "Cannot write image captured by camera.", Toast.LENGTH_LONG).show();
-                break;
-            case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
-                //camera permission is not available
-                //Ask for the camera permission before initializing it.
-                Toast.makeText(this, "Camera permission not available.", Toast.LENGTH_LONG).show();
-                break;
-            case CameraError.ERROR_DOES_NOT_HAVE_OVERDRAW_PERMISSION:
-                //Display information dialog to the user with steps to grant "Draw over other app"
-                //permission for the app.
-                HiddenCameraUtils.openDrawOverPermissionSetting(this);
-                break;
-            case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
-                Toast.makeText(this, "Your device does not have front camera.", Toast.LENGTH_LONG).show();
-                break;
-        }
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,
+                               int height) {
+        // TODO Auto-generated method stub
 
-        stopSelf();
     }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        if (cameraIntent != null)
+            new TakeImage().execute(cameraIntent);
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    public static Bitmap decodeBitmap(byte[] data) {
+
+        Bitmap bitmap = null;
+        BitmapFactory.Options bfOptions = new BitmapFactory.Options();
+        bfOptions.inDither = false; // Disable Dithering mode
+        bfOptions.inPurgeable = true; // Tell to gc that whether it needs free
+        // memory, the Bitmap can be cleared
+        bfOptions.inInputShareable = true; // Which kind of reference will be
+        // used to recover the Bitmap data
+        // after being clear, when it will
+        // be used in the future
+        bfOptions.inTempStorage = new byte[32 * 1024];
+
+        if (data != null)
+            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length,
+                    bfOptions);
+
+        return bitmap;
+    }
+
 }

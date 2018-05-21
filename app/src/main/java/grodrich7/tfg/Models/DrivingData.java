@@ -3,6 +3,8 @@ package grodrich7.tfg.Models;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.ArrayList;
+
 /**
  * Created by gabri on 21/04/2018.
  */
@@ -16,6 +18,7 @@ public class DrivingData {
     private Boolean searchingParking;
     private String destination;
     private LocationInfo locationInfo;
+    private ArrayList<String> images;
 
 
     public DrivingData() {
@@ -86,6 +89,15 @@ public class DrivingData {
         this.searchingParking = getNew(this.searchingParking, object.searchingParking);
         this.destination = getNew(this.destination, object.destination);
         this.locationInfo = getNew(this.locationInfo, object.locationInfo);
+        this.images = getNew(this.images, object.images);
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
     }
 
     @Exclude

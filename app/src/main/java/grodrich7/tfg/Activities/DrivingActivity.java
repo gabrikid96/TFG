@@ -9,12 +9,17 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,7 +32,10 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import grodrich7.tfg.Models.Constants;
 import grodrich7.tfg.Models.Services.CameraService;
 import grodrich7.tfg.Models.Services.LocationService;
 import grodrich7.tfg.R;
@@ -36,24 +44,24 @@ public class DrivingActivity extends HelperActivity {
 
     private ImageButton drivingToggle;
     private ImageButton helpBtn;
-
     private TextView destination;
     private TextView timeEstimated;
     private TextView startTimeData;
-
     private ImageView parking_icon;
     private ImageView lastImage;
-
     private RelativeLayout call_layout;
+    private static final int LOCATION_PERMISSION = 7171;
+    private static final int CAMERA_PERMISSION = 100;
+    private static final int DRAW_OVER_PERMISSION = 101;
 
-
-
-    private static final int MY_PERMISSION_REQUEST_CODE = 7171;
     public static final String FINISH_ACTION  = "FINISH";
+
+    private Timer timer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationSettings();
+        cameraSettings();
     }
 
     private void locationSettings(){
@@ -62,13 +70,27 @@ public class DrivingActivity extends HelperActivity {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION
-            }, MY_PERMISSION_REQUEST_CODE);
+            }, LOCATION_PERMISSION);
         }else{
             if (checkPlayServices()){
             }
         }
-
     }
+
+    private void cameraSettings(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                        CAMERA_PERMISSION);
+            }
+            if (!Settings.canDrawOverlays(this.getApplicationContext())) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivityForResult(intent, DRAW_OVER_PERMISSION);
+            }
+        }
+    }
+
 
     protected void getViewsByXML() {
         setContentView(R.layout.activity_driving);
@@ -122,13 +144,20 @@ public class DrivingActivity extends HelperActivity {
                         if (controller.getDrivingData().isDriving()){
                             shareData();
                         }else{
-                            stopService(new Intent(DrivingActivity.this, LocationService.class));
-                            controller.endDriving();
+                            stopDriving();
                         }
                     }
                 })
                 .setNegativeButton(R.string.no, null)
                 .show();
+    }
+
+    private void stopDriving() {
+        stopService(new Intent(DrivingActivity.this, LocationService.class));
+        controller.endDriving();
+       // stopService(new Intent(DrivingActivity.this, CameraService.class));
+        timer.cancel();
+        timer = null;
     }
 
     private void shareData() {
@@ -142,7 +171,7 @@ public class DrivingActivity extends HelperActivity {
         //createNotification();
         controller.saveDrivingData();
         startService(new Intent(this, LocationService.class));
-
+        startCameraService();
     }
 
     private void toggleDrivingIcon(){
@@ -214,14 +243,14 @@ public class DrivingActivity extends HelperActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
-            case MY_PERMISSION_REQUEST_CODE:
+            case LOCATION_PERMISSION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     if (checkPlayServices()){
                         //buildGoogleApiClient();
                     }
                 }
                 break;
-            case 100:
+            case CAMERA_PERMISSION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
                 } else {
@@ -245,7 +274,7 @@ public class DrivingActivity extends HelperActivity {
                 toggleCallIcon();
                 break;
             case R.id.image:
-               //takePicture();
+               takePicture();
                 break;
         }
     }
@@ -276,9 +305,10 @@ public class DrivingActivity extends HelperActivity {
 
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+
+        builder.setMessage(R.string.gps_disabled)
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
@@ -293,7 +323,6 @@ public class DrivingActivity extends HelperActivity {
     }
     //endregion
 
-
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent.getAction() != null){
@@ -307,6 +336,25 @@ public class DrivingActivity extends HelperActivity {
         }
         super.onNewIntent(intent);
 
+    }
+
+    private void startCameraService(){
+        String time = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                .getString("image_sync", "");
+        long interval;
+        try{
+            interval = Long.parseLong(time) * 60 * 1000;//seconds
+        }catch (NumberFormatException ex){
+            interval = Constants.DEFAULT_TIME_LOCATION;
+        }
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Log.d("CAMERA_TASK", "Hello");
+            }
+
+        }, 0, interval);
     }
 
 
