@@ -1,6 +1,5 @@
 package grodrich7.tfg.Activities;
 
-import android.app.Notification;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,8 +18,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,18 +29,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import grodrich7.tfg.Activities.Services.AppService;
 import grodrich7.tfg.Activities.Services.NotificationService;
 import grodrich7.tfg.Models.DrivingData;
-import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
+
+import static grodrich7.tfg.Models.Constants.DEFAULT_LOCATION;
 
 public class ViewUserActivity extends HelperActivity implements OnMapReadyCallback {
 
@@ -62,6 +54,8 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     private String friendUid;
 
     public static final String VIEW_ACTION  = "VIEW";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +91,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
 
     protected void getViewsByXML() {
         setContentView(R.layout.activity_view_user_activiy);
+
         createMapFragment();
         String name = (String) getIntent().getSerializableExtra("name");
         enableToolbar(name);
@@ -140,17 +135,20 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
 
             @Override
             public void onBindViewHolder(ImageHolder viewHolder, int i) {
-                viewHolder.description.setText("Imagen " + String.valueOf(i+1));
+                viewHolder.description.setText(getString(R.string.image) + String.valueOf(i+1));
                 try{
                     String url = drivingData.getImages().get(i);
-                    Glide.with(ViewUserActivity.this).load(url).into(viewHolder.imageButton);
+                    //Glide.with()
+
                     //viewHolder.imageButton.setImageResource(R.drawable.front_image);
                     final ImagePopup imagePopup = new ImagePopup(ViewUserActivity.this);
                     imagePopup.setFullScreen(true); // Optional
                     imagePopup.setBackgroundColor(getResources().getColor(R.color.transparent));
                     imagePopup.setImageOnClickClose(true);  // Optional
 
-                    imagePopup.initiatePopup(viewHolder.imageButton.getDrawable());
+                    //imagePopup.initiatePopup(viewHolder.imageButton.getDrawable());
+                    imagePopup.initiatePopupWithGlide(url);
+                    Glide.with(ViewUserActivity.this).load(url).into(viewHolder.imageButton);
                     viewHolder.imageButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -255,30 +253,43 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng location = getLocation();
+        /*if (location == null){
+            location = DEFAULT_LOCATION;
+            findViewById(R.id.unkown_label).setVisibility(View.VISIBLE);
+        }else{
+            findViewById(R.id.unkown_label).setVisibility(View.GONE);
+        }
         googleMap.addMarker(new MarkerOptions()
                 .position(location)
                 .title("Marker"));
+
+        googleMap.moveCamera(getCameraPosition(location));*/
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        googleMap.moveCamera(getCameraPosition(location));
         googleMap.setTrafficEnabled(true);
         this.googleMap = googleMap;
     }
 
     public void updateLocation(){
         LatLng location = getLocation();
-        googleMap.clear();
-        String title = drivingData != null && drivingData.getLocationInfo() != null ?
-                drivingData.getLocationInfo().getLastLocationTime() :
-                getString(R.string.unknownInformation);
-        googleMap.addMarker(new MarkerOptions().position(location).title(title));
-        googleMap.moveCamera(getCameraPosition(location));
+        String title;
+        if (location == null){
+            location = DEFAULT_LOCATION;
+            findViewById(R.id.unkown_label).setVisibility(View.VISIBLE);
+        }else{
+            title = drivingData.getLocationInfo().getLastLocationTime();
+            findViewById(R.id.unkown_label).setVisibility(View.GONE);
+            googleMap.clear();
+            googleMap.addMarker(new MarkerOptions().position(location).title(title));
+            googleMap.moveCamera(getCameraPosition(location));
+        }
+
     }
 
     public LatLng getLocation(){
         return drivingData.getLocationInfo() != null ?
                 new LatLng(Double.parseDouble(drivingData.getLocationInfo().getLat()),
                         Double.parseDouble(drivingData.getLocationInfo().getLon())) :
-                new LatLng(41.386377, 2.164178);
+                null;
     }
 
     public CameraUpdate getCameraPosition(LatLng currLatLng){
