@@ -1,10 +1,13 @@
 package grodrich7.tfg.Activities.Services;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -28,16 +31,41 @@ public class AppService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        locationHandler.start();
+        int coarse = ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION);
+        int fine = ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        int camera = ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.CAMERA);
+        boolean draw = false;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            draw = Settings.canDrawOverlays(this);
+        }
+        boolean stopLocation = false;
+        boolean stopCamera = false;
+        if (coarse == 0 && fine == 0){
+            locationHandler.start();
+        }else{
+            stopLocation = true;
+        }
 
-        startCameraService();
+        if (camera == 0 && draw){
+            startCameraService();
+        }else{
+            stopCamera = true;
+        }
+
+        if (stopCamera && stopLocation){
+            stopSelf();
+        }
+
         return START_STICKY;
     }
 
     private void startCameraService(){
         String time = PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
                 .getString("image_sync", "");
-        long interval = Constants.DEFAULT_TIME_LOCATION;
+        long interval = Constants.DEFAULT_TIME_CAMERA;
         try{
             interval = Long.parseLong(time) * 60 * 1000;//seconds
         }catch (NumberFormatException ex){

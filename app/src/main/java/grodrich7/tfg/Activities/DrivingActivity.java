@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -23,12 +24,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -47,9 +48,7 @@ public class DrivingActivity extends HelperActivity {
     private ImageView parking_icon;
     private ImageView lastImage;
     private RelativeLayout call_layout;
-    private static final int LOCATION_PERMISSION = 7171;
-    private static final int CAMERA_PERMISSION = 100;
-    private static final int DRAW_OVER_PERMISSION = 101;
+    private static final int ALL_PERMISSIONS = 7171;
     private CameraReceiver cameraReceiver;
 
     public static final String FINISH_ACTION  = "FINISH";
@@ -57,34 +56,22 @@ public class DrivingActivity extends HelperActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationSettings();
-        cameraSettings();
+
     }
 
-    private void locationSettings(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-            }, LOCATION_PERMISSION);
-        }else{
-            if (checkPlayServices()){
-            }
-        }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        permissionsSettings();
     }
 
-    private void cameraSettings(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA},
-                        CAMERA_PERMISSION);
-            }
-            if (!Settings.canDrawOverlays(this.getApplicationContext())) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                startActivityForResult(intent, DRAW_OVER_PERMISSION);
-            }
+    private void permissionsSettings(){
+        ArrayList<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissions.add(Manifest.permission.CAMERA);
+        if (permissions.size() > 0){
+            ActivityCompat.requestPermissions(this, permissions.toArray(new String[3]),ALL_PERMISSIONS);
         }
     }
 
@@ -237,20 +224,26 @@ public class DrivingActivity extends HelperActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
-            case LOCATION_PERMISSION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    if (checkPlayServices()){
-                        //buildGoogleApiClient();
+            case ALL_PERMISSIONS:
+                if (grantResults.length > 0 ){
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED){//Location
+
+                    }
+
+                    if (grantResults[1] == PackageManager.PERMISSION_GRANTED){//Location
+
+                    }
+
+                    if (grantResults[2] == PackageManager.PERMISSION_GRANTED){//Camera
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (!Settings.canDrawOverlays(this)) {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                                startActivityForResult(intent, 0);
+                            }
+                        }
                     }
                 }
                 break;
-            case CAMERA_PERMISSION:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
-                }
-            break;
         }
     }
 
@@ -348,3 +341,4 @@ public class DrivingActivity extends HelperActivity {
 
 
 }
+

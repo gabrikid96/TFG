@@ -10,14 +10,22 @@
     tools:context="grodrich7.tfg.Activities.ViewUserActivity"
     tools:showIn="@layout/activity_view_user_activiy">
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/unkown_label"
+            android:textSize="50sp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:textColor="#000"
+            android:text="@string/unknownInformation"/>
 
         <ImageButton
             android:id="@+id/fullBtn"
@@ -26,6 +34,7 @@
             android:layout_gravity="right|bottom"
             android:layout_marginTop="10dp"
             android:background="@mipmap/full_window" />
+
     </fragment>
 
     <ScrollView

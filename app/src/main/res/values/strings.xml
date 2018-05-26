@@ -177,4 +177,8 @@
     <string name="finish">Finish</string>
     <string name="gps_disabled">Your GPS seems to be disabled, do you want to enable it?</string>
     <string name="driving_notification">Sharing data on background</string>
+    <string name="image">Image</string>
+    <string name="pref_title_led" translatable="false">LED</string>
+    <string name="driving_now">is driving now!</string>
+    <string name="tap_to_view">Tap top view</string>
 </resources>

@@ -90,4 +90,7 @@
     <string name="finish">Finalizar</string>
     <string name="sharingData">Compartiendo datos en segundo plano</string>
     <string name="gps_disabled">Tu GPS parece estar desactivado. ¿Quiéres activarlo?</string>
+    <string name="tap_to_view">Toca para ver</string>
+    <string name="driving_now">está conduciendo ahora!</string>
+    <string name="image">Imagen</string>
 </resources>
