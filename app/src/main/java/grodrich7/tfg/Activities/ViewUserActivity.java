@@ -1,5 +1,6 @@
 package grodrich7.tfg.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,8 +15,19 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
 import com.google.android.gms.maps.CameraUpdate;
@@ -23,19 +35,26 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Locale;
+
 import grodrich7.tfg.Activities.Services.NotificationService;
 import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.R;
 
-import static grodrich7.tfg.Models.Constants.DEFAULT_LOCATION;
+import static grodrich7.tfg.Models.Constants.WEATHER_URL;
 
 public class ViewUserActivity extends HelperActivity implements OnMapReadyCallback {
 
@@ -55,17 +74,26 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
 
     public static final String VIEW_ACTION  = "VIEW";
 
-
+    private RequestQueue mRequestQueue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+        // Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+        // Instantiate the RequestQueue with the cache and network.
+        mRequestQueue = new RequestQueue(cache, network);
+
+
         friendUid = (String) getIntent().getSerializableExtra("key");
         getData(friendUid);
     }
 
     private void getData(String friendUid){
         drivingData = new DrivingData();
-        controller.dataReference.child(friendUid).addValueEventListener(new ValueEventListener() {
+        controller.getDataReference().child(friendUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try{
@@ -252,34 +280,33 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng location = getLocation();
-        /*if (location == null){
-            location = DEFAULT_LOCATION;
-            findViewById(R.id.unkown_label).setVisibility(View.VISIBLE);
-        }else{
-            findViewById(R.id.unkown_label).setVisibility(View.GONE);
-        }
-        googleMap.addMarker(new MarkerOptions()
-                .position(location)
-                .title("Marker"));
-
-        googleMap.moveCamera(getCameraPosition(location));*/
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.setMapType(GoogleMap.	MAP_TYPE_NORMAL	);
+       // googleMap.setBuildingsEnabled(true);
         googleMap.setTrafficEnabled(true);
         this.googleMap = googleMap;
     }
 
     public void updateLocation(){
         LatLng location = getLocation();
-        String title;
         if (location == null){
-            location = DEFAULT_LOCATION;
             findViewById(R.id.unkown_label).setVisibility(View.VISIBLE);
         }else{
-            title = drivingData.getLocationInfo().getLastLocationTime();
+            String moment = getString(R.string.location_time) + " " + drivingData.getLocationInfo().getLastLocationTime();
             findViewById(R.id.unkown_label).setVisibility(View.GONE);
             googleMap.clear();
-            googleMap.addMarker(new MarkerOptions().position(location).title(title));
+            googleMap.addMarker(new MarkerOptions().position(location)
+                            .title(getString(R.string.location_info))
+                            .snippet(moment)
+                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.car_marker_icon)));
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
+            googleMap.setInfoWindowAdapter(new InfoWindow(inflater, moment));
+            googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+
+                }
+            });
             googleMap.moveCamera(getCameraPosition(location));
         }
 
@@ -339,5 +366,87 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         }
     }
 
+    public class InfoWindow implements GoogleMap.InfoWindowAdapter {
+
+        private View popup;
+        private LayoutInflater inflater;
+        private String moment;
+        private String description;
+        private String icon;
+        private Double temp;
+
+
+        public InfoWindow(LayoutInflater inflater, String moment) {
+            super();
+            this.inflater = inflater;
+            this.moment = moment;
+            getWeatherInformation();
+        }
+
+        public InfoWindow(LayoutInflater layoutInflater) {
+            super();
+            this.inflater = layoutInflater;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+
+            if (popup == null) {
+                popup = inflater.inflate(R.layout.marker_layout, null);
+            }
+            TextView tvTitle = (TextView) popup.findViewById(R.id.title);
+            tvTitle.setText(marker.getTitle());
+
+            TextView tvSnippet = (TextView) popup.findViewById(R.id.moment);
+            tvSnippet.setText(moment);
+
+            LinearLayout weatherLayout = (LinearLayout) popup.findViewById(R.id.weather_info);
+            weatherLayout.setVisibility(View.GONE);
+            if (description != null && icon != null && temp != null){
+                ((TextView)weatherLayout.findViewById(R.id.description_label)).setText(" " + description);
+                ((TextView)weatherLayout.findViewById(R.id.temperature)).setText(String.valueOf(temp)+"ºC");
+                Glide.with(ViewUserActivity.this).load(icon).into((ImageView) weatherLayout.findViewById(R.id.weather_icon));
+                weatherLayout.setVisibility(View.VISIBLE);
+            }
+            return popup;
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+
+            return null;
+        }
+
+        public void getWeatherInformation(){
+            String url = WEATHER_URL + "lat=" + drivingData.getLocationInfo().getLat() + "&lon="+drivingData.getLocationInfo().getLon() + "&units=metric"
+                    + "&appId=5fe1e836d1bf995e7f336ec370666161" + "&lang=" + Locale.getDefault().getLanguage();
+            //
+            mRequestQueue.start();
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                    (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONObject weather = response.getJSONArray("weather").getJSONObject(0);
+                                description = weather.getString("description");
+                                icon = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
+                                temp = response.getJSONObject("main").getDouble("temp");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            mRequestQueue.stop();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            mRequestQueue.stop();
+                        }
+                    });
+            mRequestQueue.add(jsonObjectRequest);
+
+
+        }
+
+    }
 
 }

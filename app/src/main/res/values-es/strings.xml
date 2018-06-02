@@ -93,4 +93,9 @@
     <string name="tap_to_view">Toca para ver</string>
     <string name="driving_now">está conduciendo ahora!</string>
     <string name="image">Imagen</string>
+    <string name="no_groups_title">Faltan usuarios</string>
+    <string name="no_groups_message">El modo conducción no se activará porque no tienes ningún grupo configurado con usuarios a los que compartir.</string>
+    <string name="location_time">"Momento: "</string>
+    <string name="location_info">Información de la localización</string>
+    <string name="weather_label">Tiempo:</string>
 </resources>

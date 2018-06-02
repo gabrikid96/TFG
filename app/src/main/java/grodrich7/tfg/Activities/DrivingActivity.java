@@ -130,13 +130,19 @@ public class DrivingActivity extends HelperActivity {
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        controller.getDrivingData().setDriving(controller.getDrivingData().isDriving() != null ? !controller.getDrivingData().isDriving() : true);
-                        toggleDrivingIcon();
-
-                        if (controller.getDrivingData().isDriving()){
-                            shareData();
+                        if (controller.getCurrentUser().getGroups()== null ||  controller.getCurrentUser().getGroups().size() == 0){
+                            new AlertDialog.Builder(DrivingActivity.this).setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setTitle(R.string.no_groups_title)
+                                    .setMessage(R.string.no_groups_message).show();
                         }else{
-                            stopDriving();
+                            controller.getDrivingData().setDriving(controller.getDrivingData().isDriving() != null ? !controller.getDrivingData().isDriving() : true);
+                            toggleDrivingIcon();
+
+                            if (controller.getDrivingData().isDriving()){
+                                shareData();
+                            }else{
+                                stopDriving();
+                            }
                         }
                     }
                 })

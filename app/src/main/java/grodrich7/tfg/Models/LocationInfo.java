@@ -9,7 +9,7 @@ public class LocationInfo {
     private String lat;
     private String lon;
     private String lastLocationTime;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd-MM-yyyy");
 
     public LocationInfo(){}
 

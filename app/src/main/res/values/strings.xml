@@ -181,4 +181,9 @@
     <string name="pref_title_led" translatable="false">LED</string>
     <string name="driving_now">is driving now!</string>
     <string name="tap_to_view">Tap top view</string>
+    <string name="no_groups_title">Missing users</string>
+    <string name="no_groups_message">Driving mode will not be activated because there are no groups and users to share.</string>
+    <string name="location_time">Time:</string>
+    <string name="location_info">Location information</string>
+    <string name="weather_label">Weather:</string>
 </resources>

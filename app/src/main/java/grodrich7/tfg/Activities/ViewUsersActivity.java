@@ -123,7 +123,7 @@ public class ViewUsersActivity extends HelperActivity {
 
     private void isDriving(final ImageView drivingState, String friendUid){
         final boolean[] isDriving = {false};
-        controller.dataReference.child(friendUid).addValueEventListener(new ValueEventListener() {
+        controller.getDataReference().child(friendUid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try{

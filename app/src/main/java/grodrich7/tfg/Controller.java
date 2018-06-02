@@ -41,10 +41,10 @@ import static grodrich7.tfg.Models.Constants.USERS_REFERENCE;
 public class Controller {
     private static Controller instance = null;
     private FirebaseDatabase database;
-    public DatabaseReference usersReference;
-    public DatabaseReference userGroupsReference;
-    public DatabaseReference userFriendsReference;
-    public DatabaseReference dataReference;
+    private DatabaseReference usersReference;
+    private DatabaseReference userGroupsReference;
+    private DatabaseReference userFriendsReference;
+    private DatabaseReference dataReference;
     private DrivingData drivingData;
 
     private User currentUser;
@@ -381,6 +381,10 @@ public class Controller {
 
     public DatabaseReference getUserFriendsReference() {
         return userFriendsReference;
+    }
+
+    public DatabaseReference getDataReference() {
+        return dataReference;
     }
 
     public DrivingData getDrivingData() {
