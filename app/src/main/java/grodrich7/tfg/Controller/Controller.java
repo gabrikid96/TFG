@@ -1,13 +1,8 @@
-package grodrich7.tfg;
+package grodrich7.tfg.Controller;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.location.Location;
-import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import grodrich7.tfg.Activities.DrivingActivity;
 import grodrich7.tfg.Models.Constants;
 import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.Models.Group;
@@ -172,7 +166,7 @@ public class Controller {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         try{
                             String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                            DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                            DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                             friend_ref.setValue(getPermittedData(drivingData, entry.getValue()));
                         }catch (NullPointerException ex){
                         }
@@ -262,7 +256,7 @@ public class Controller {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             try{
                                 String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                                 if (entry.getValue().getPermissions().get(Constants.Data.DESTINATION.toString())){
                                     friend_ref.child("destination").setValue(drivingData.getDestination());
                                 }
@@ -291,7 +285,7 @@ public class Controller {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             try{
                                 String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                                 if (entry.getValue().getPermissions().get(Constants.Data.ACCEPT_CALLS.toString())){
                                     friend_ref.child("acceptCalls").setValue(drivingData.isAcceptCalls());
                                 }
@@ -320,7 +314,7 @@ public class Controller {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             try{
                                 String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                                 if (entry.getValue().getPermissions().get(Constants.Data.SEARCHING_PARKING.toString())){
                                     friend_ref.child("searchingParking").setValue(drivingData.isSearchingParking());
                                 }
@@ -338,6 +332,47 @@ public class Controller {
         }
     }
 
+    public void updateImages(final String url){
+        if (drivingData.getImages() == null){
+            drivingData.setImages(new ArrayList<String>(10));
+        }
+        if (drivingData.getImages().size() >= 10){
+            drivingData.getImages().remove(0);
+        }
+        drivingData.getImages().add(url);
+        if (drivingData.isDriving() != null && drivingData.isDriving()) {
+            final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
+                for (final String email : entry.getValue().getUsers()) {
+                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            try {
+                                String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
+                                friend_ref.child("images").setValue(drivingData.getImages());
+                                if (entry.getValue().getPermissions().get(Constants.Data.IMAGES.toString())) {
+                                    friend_ref.child("images").setValue(drivingData.getImages()).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.e("IMAGES", e.getMessage());
+                                        }
+                                    });
+                                }
+                            } catch (NullPointerException ex) {
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     public void endDriving(){
         drivingData.setDriving(false);
         final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -348,7 +383,7 @@ public class Controller {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         try{
                             String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                            DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
+                            DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                             if (entry.getValue().getPermissions().get(Constants.Data.DRIVING.toString())){
                                 friend_ref.child("driving").setValue(drivingData.isDriving());
                             }
@@ -391,48 +426,8 @@ public class Controller {
         return drivingData;
     }
 
+
     //endregion
-
-    public void updateImages(final String url){
-        if (drivingData.getImages() == null){
-            drivingData.setImages(new ArrayList<String>(10));
-        }
-        if (drivingData.getImages().size() >= 10){
-            drivingData.getImages().remove(0);
-        }
-        drivingData.getImages().add(url);
-        if (drivingData.isDriving() != null && drivingData.isDriving()) {
-            final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
-                for (final String email : entry.getValue().getUsers()) {
-                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            try {
-                                String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);//TODO : uidUser
-                                friend_ref.child("images").setValue(drivingData.getImages());
-                                if (entry.getValue().getPermissions().get(Constants.Data.IMAGES.toString())) {
-                                    friend_ref.child("images").setValue(drivingData.getImages()).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.e("IMAGES", e.getMessage());
-                                        }
-                                    });
-                                }
-                            } catch (NullPointerException ex) {
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-        }
-    }
     public static Controller getInstance() {
         if(instance == null && FirebaseAuth.getInstance().getCurrentUser() != null) {
             instance = new Controller();

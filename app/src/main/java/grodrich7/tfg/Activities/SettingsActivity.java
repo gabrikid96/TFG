@@ -23,7 +23,7 @@ import android.support.v4.app.NavUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import grodrich7.tfg.Controller;
+import grodrich7.tfg.Controller.Controller;
 import grodrich7.tfg.R;
 
 import java.util.List;

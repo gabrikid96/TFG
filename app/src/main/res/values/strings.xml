@@ -186,4 +186,7 @@
     <string name="location_time">Time:</string>
     <string name="location_info">Location information</string>
     <string name="weather_label">Weather:</string>
+    <string name="exit_message">Are you sure you want to exit? You will lose all your changes</string>
+    <string name="exit_title">Discard changes</string>
+    <string name="image_taken">Your Picture has been taken !</string>
 </resources>

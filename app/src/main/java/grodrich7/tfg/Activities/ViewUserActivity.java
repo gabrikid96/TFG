@@ -443,8 +443,6 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
                         }
                     });
             mRequestQueue.add(jsonObjectRequest);
-
-
         }
 
     }

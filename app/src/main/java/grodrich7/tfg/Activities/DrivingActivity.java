@@ -2,11 +2,13 @@ package grodrich7.tfg.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
@@ -16,14 +18,17 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
@@ -35,7 +40,7 @@ import java.util.Date;
 import java.util.List;
 
 import grodrich7.tfg.Activities.Services.AppService;
-import grodrich7.tfg.Activities.Services.CameraReceiver;
+import grodrich7.tfg.Activities.Services.CameraHandler;
 import grodrich7.tfg.R;
 
 public class DrivingActivity extends HelperActivity {
@@ -49,7 +54,7 @@ public class DrivingActivity extends HelperActivity {
     private ImageView lastImage;
     private RelativeLayout call_layout;
     private static final int ALL_PERMISSIONS = 7171;
-    private CameraReceiver cameraReceiver;
+    private BroadcastReceiver cameraReceiver;
 
     public static final String FINISH_ACTION  = "FINISH";
 
@@ -113,9 +118,9 @@ public class DrivingActivity extends HelperActivity {
             Glide.with(this).load(url).into(lastImage);
         }
         if (controller.getDrivingData() != null && controller.getDrivingData().isDriving() != null && controller.getDrivingData().isDriving().booleanValue()){
-            cameraReceiver = new CameraReceiver(this,lastImage);
+            cameraReceiver = createCameraReceiver();
             IntentFilter intentFilter = new IntentFilter("grodrich7.tfg.CAMERA_ACTION");
-            registerReceiver(cameraReceiver, intentFilter);
+            LocalBroadcastManager.getInstance(this).registerReceiver(cameraReceiver, intentFilter);
         }
     }
 
@@ -154,7 +159,8 @@ public class DrivingActivity extends HelperActivity {
         stopService(new Intent(DrivingActivity.this, AppService.class));
         controller.endDriving();
         if (cameraReceiver != null){
-            unregisterReceiver(cameraReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraReceiver);
+            //unregisterReceiver(cameraReceiver);
             cameraReceiver = null;
         }
        // stopService(new Intent(DrivingActivity.this, CameraService.class));
@@ -169,7 +175,7 @@ public class DrivingActivity extends HelperActivity {
         changeStartTimeText();
         controller.saveDrivingData();
 
-        cameraReceiver = new CameraReceiver(this,lastImage);
+        cameraReceiver = createCameraReceiver();
         IntentFilter intentFilter = new IntentFilter("grodrich7.tfg.CAMERA_ACTION");
         registerReceiver(cameraReceiver, intentFilter);
 
@@ -325,7 +331,7 @@ public class DrivingActivity extends HelperActivity {
     protected void onPause() {
         super.onPause();
         if (cameraReceiver != null){
-            unregisterReceiver(cameraReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraReceiver);
             cameraReceiver = null;
         }
     }
@@ -345,6 +351,22 @@ public class DrivingActivity extends HelperActivity {
 
     }
 
-
+    private BroadcastReceiver createCameraReceiver(){
+        return cameraReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                try{
+                    byte[] data = intent.getByteArrayExtra("image");
+                    if (data != null){
+                        Bitmap bitmap = CameraHandler.decodeBitmap(data);
+                        lastImage.setImageBitmap(bitmap);
+                    }
+                    Log.d("RECEIVE", "Receive");
+                }catch (Exception ex){
+                    Toast.makeText(context, "RECEIVE" + ex.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+    }
 }
 

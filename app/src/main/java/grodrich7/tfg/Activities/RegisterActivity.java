@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import grodrich7.tfg.BuildConfig;
-import grodrich7.tfg.Controller;
+import grodrich7.tfg.Controller.Controller;
 import grodrich7.tfg.Models.User;
 import grodrich7.tfg.R;
 

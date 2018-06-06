@@ -134,12 +134,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-
-        <receiver android:name="grodrich7.tfg.Activities.Services.CameraReceiver" >
-            <intent-filter>
-                <action android:name="grodrich7.tfg.CAMERA_ACTION" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

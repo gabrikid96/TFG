@@ -73,7 +73,9 @@ public class GroupActivity extends HelperActivity {
         userAddInput = findViewById(R.id.input_add_user);
         destination = findViewById(R.id.destinationToggle);
         location = findViewById(R.id.locationToggle);
+        location.setChecked(true);
         driving = findViewById(R.id.drivingToggle);
+        driving.setChecked(true);
         startTime = findViewById(R.id.startTimeToggle);
         frontalImages = findViewById(R.id.imagesToggle);
         acceptCalls = findViewById(R.id.callToggle);
@@ -186,6 +188,7 @@ public class GroupActivity extends HelperActivity {
                             userAddInput.setError(getResources().getText(R.string.email_added));
                         }else{
                             group.addUser(userAddInput.getText().toString());
+                            userAddInput.setText("");
                             Snackbar.make(userAddInput, getResources().getText(R.string.user_added), Snackbar.LENGTH_SHORT).show();
                         }
                     }
@@ -274,8 +277,21 @@ public class GroupActivity extends HelperActivity {
     }
 
     @Override
-    public void onBackPressed(){
-        badEdit();
-        super.onBackPressed();
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle(R.string.exit_title)
+        .setMessage(getString(R.string.exit_message))
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                badEdit();
+                GroupActivity.super.onBackPressed();
+            }
+
+        })
+        .setNegativeButton(R.string.no, null)
+        .show();
     }
 }

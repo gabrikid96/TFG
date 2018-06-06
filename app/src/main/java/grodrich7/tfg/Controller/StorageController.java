@@ -1,4 +1,4 @@
-package grodrich7.tfg;
+package grodrich7.tfg.Controller;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,25 +6,23 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.widget.ImageView;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import grodrich7.tfg.Activities.Services.AppService;
+import grodrich7.tfg.Activities.Services.CameraHandler;
 
 /**
  * Created by grodrich on 24/04/2018.
@@ -46,7 +44,7 @@ public class StorageController {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap = RotateBitmap(bitmap, 90);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
+            final byte[] data = baos.toByteArray();
             Date now = Calendar.getInstance().getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd-HH:mm:ss");
             String name = "image"+ sdf.format(now) +".jpg";
@@ -62,10 +60,15 @@ public class StorageController {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Controller.getInstance().updateImages(downloadUrl.toString());
-                    /*Intent intent = new Intent("grodrich7.tfg.CAMERA_ACTION");
-                    // You can also include some extra data.
-                    intent.putExtra("message", "This is my message!");
-                    service.sendBroadcast(intent);*/
+//                    LocalBroadcastManager.getInstance(service).sendBroadcast(intent);
+                    /*try{
+                        Intent intent = new Intent("grodrich7.tfg.CAMERA_ACTION");
+                        // You can also include some extra data.
+                        intent.putExtra("image",data);
+                        service.sendBroadcast(intent);
+                    }catch (Exception ex){
+                        Toast.makeText(service.getApplicationContext(), "RECEIVE" + ex.getMessage(), Toast.LENGTH_LONG).show();
+                    }*/
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

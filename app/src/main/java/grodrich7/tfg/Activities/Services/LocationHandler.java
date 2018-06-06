@@ -15,7 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import grodrich7.tfg.Activities.DrivingActivity;
-import grodrich7.tfg.Controller;
+import grodrich7.tfg.Controller.Controller;
 import grodrich7.tfg.Models.Constants;
 import grodrich7.tfg.R;
 

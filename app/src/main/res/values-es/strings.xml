@@ -98,4 +98,7 @@
     <string name="location_time">"Momento: "</string>
     <string name="location_info">Información de la localización</string>
     <string name="weather_label">Tiempo:</string>
+    <string name="exit_message">¿Estás seguro que quieres salir? Perderás todos tus cambios</string>
+    <string name="exit_title">Descartar cambios</string>
+    <string name="image_taken">¡Imagen capturada!</string>
 </resources>

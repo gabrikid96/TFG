@@ -2,7 +2,6 @@ package grodrich7.tfg.Activities.Services;
 
 import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,7 +11,7 @@ import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -22,7 +21,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import grodrich7.tfg.StorageController;
+import grodrich7.tfg.Controller.StorageController;
+import grodrich7.tfg.R;
 
 import static android.content.Context.WINDOW_SERVICE;
 
@@ -202,7 +202,7 @@ public class CameraHandler implements
                 @Override
                 public void run() {
                     Toast.makeText(service.getApplicationContext(),
-                            "Your Picture has been taken !", Toast.LENGTH_SHORT)
+                            R.string.image_taken, Toast.LENGTH_SHORT)
                             .show();
                 }
             });

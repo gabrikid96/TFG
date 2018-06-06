@@ -21,9 +21,8 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
-import grodrich7.tfg.Activities.Services.AppService;
 import grodrich7.tfg.Activities.Services.NotificationService;
-import grodrich7.tfg.Controller;
+import grodrich7.tfg.Controller.Controller;
 import grodrich7.tfg.R;
 
 /**
