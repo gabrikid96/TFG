@@ -1,7 +1,9 @@
 package grodrich7.tfg.Activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -112,6 +114,7 @@ public class GroupsActivity extends HelperActivity {
                 holder.container.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //pressEffect(holder.container);
                         editGroup(postKey,model);
                     }
                 });
@@ -119,24 +122,29 @@ public class GroupsActivity extends HelperActivity {
                 holder.action_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final Animation animation = AnimationUtils.loadAnimation(GroupsActivity.this, android.R.anim.slide_out_right);
-                        animation.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
+                        pressEffect(holder.action_btn);
+                        if (!controller.getDrivingData().isDriving()) {
+                            final Animation animation = AnimationUtils.loadAnimation(GroupsActivity.this, android.R.anim.slide_out_right);
+                            animation.setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
 
-                            }
+                                }
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                deleteGroup(postKey, model);
-                            }
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    deleteGroup(postKey, model);
+                                }
 
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
 
-                            }
-                        });
-                        holder.itemView.startAnimation(animation);
+                                }
+                            });
+                            holder.itemView.startAnimation(animation);
+                        }else{
+                            Snackbar.make(groups_list,R.string.deleted_group_driving, Snackbar.LENGTH_LONG).show();
+                        }
 
 
                     }
@@ -174,8 +182,9 @@ public class GroupsActivity extends HelperActivity {
     }
 
     public void deleteGroup(String postKey, final Group group){
+        Snackbar mySnackbar;
         controller.removeGroup(postKey, group);
-        Snackbar mySnackbar = Snackbar.make(groups_list,
+        mySnackbar = Snackbar.make(groups_list,
                 R.string.deleted_group, Snackbar.LENGTH_LONG);
         mySnackbar.setAction(R.string.undo, new View.OnClickListener() {
             @Override
@@ -183,7 +192,9 @@ public class GroupsActivity extends HelperActivity {
                 controller.createGroup(group);
             }
         });
+        mySnackbar.setActionTextColor(Color.WHITE);
         mySnackbar.show();
+
     }
 
 

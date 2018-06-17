@@ -165,6 +165,7 @@ public class GroupActivity extends HelperActivity {
     }
 
     public void handleButtons(View v){
+        pressEffect(v);
         switch (v.getId()){
             case R.id.usersButton:
                 showUsersDialog();

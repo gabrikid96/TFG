@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -167,10 +168,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     public void onHeaderClick(Header header, int position) {
         super.onHeaderClick(header, position);
         if (header.id == R.id.logout_header) {
-            Controller.destroy();
-             FirebaseAuth.getInstance().signOut();
+            if (!Controller.getInstance().getDrivingData().isDriving()){
+                Controller.destroy();
+                FirebaseAuth.getInstance().signOut();
                 launchIntent(MainActivity.class, false);
                 finish();
+            }else{
+                Snackbar.make(findViewById(android.R.id.content),R.string.deleted_group_driving, Snackbar.LENGTH_LONG).show();
+            }
+
         }
     }
 

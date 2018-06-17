@@ -91,6 +91,7 @@ public class MainActivity extends HelperActivity {
     }
 
     public void login(final View v){
+        pressEffect(v);
         if (!checkInputs()) return;
         switchViews(false);
         hideKeyboard();
@@ -183,6 +184,7 @@ public class MainActivity extends HelperActivity {
     }
 
     public void register(View v){
+        pressEffect(v);
         launchIntentForResult(RegisterActivity.class, TRANSITION_RIGHT, LOGIN_RESULT);
     }
 
@@ -192,6 +194,7 @@ public class MainActivity extends HelperActivity {
      * @param v
      */
     public void forgotPassword(View v){
+        pressEffect(v);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setMessage(R.string.recover_password_title);
         final EditText email = new EditText(this);

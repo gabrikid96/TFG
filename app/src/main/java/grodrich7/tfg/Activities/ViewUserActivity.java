@@ -162,7 +162,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
             }
 
             @Override
-            public void onBindViewHolder(ImageHolder viewHolder, int i) {
+            public void onBindViewHolder(final ImageHolder viewHolder, int i) {
                 viewHolder.description.setText(getString(R.string.image) + String.valueOf(i+1));
                 try{
                     String url = drivingData.getImages().get(i);
@@ -181,6 +181,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
                         @Override
                         public void onClick(View view) {
                             // Initiate Popup view
+                            pressEffect(viewHolder.imageButton);
                             imagePopup.viewPopup();
                         }
                     });

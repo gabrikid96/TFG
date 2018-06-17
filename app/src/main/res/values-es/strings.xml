@@ -101,4 +101,5 @@
     <string name="exit_message">¿Estás seguro que quieres salir? Perderás todos tus cambios</string>
     <string name="exit_title">Descartar cambios</string>
     <string name="image_taken">¡Imagen capturada!</string>
+    <string name="deleted_group_driving">Finaliza el modo conducción antes de realizar la acción.</string>
 </resources>

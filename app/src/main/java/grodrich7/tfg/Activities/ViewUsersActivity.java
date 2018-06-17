@@ -104,6 +104,7 @@ public class ViewUsersActivity extends HelperActivity {
                 holder.container.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //pressEffect(holder.container);
                         Intent intent = new Intent(ViewUsersActivity.this,ViewUserActivity.class);
                         intent.putExtra("key",getRef(position).getKey());
                         intent.putExtra("name",model.getName().toUpperCase());

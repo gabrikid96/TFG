@@ -44,8 +44,8 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:layout_toLeftOf="@+id/add_user_button"
-            android:layout_toStartOf="@+id/add_user_button">
+            android:layout_toLeftOf="@+id/add_user_layout"
+            android:layout_toStartOf="@+id/add_user_layout">
 
             <AutoCompleteTextView
                 android:id="@+id/input_add_user"
@@ -59,37 +59,50 @@
 
         </android.support.design.widget.TextInputLayout>
 
-
-        <ImageButton
-            android:id="@+id/add_user_button"
+        <LinearLayout
+            android:id="@+id/add_user_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
             android:layout_alignBottom="@+id/layout_user"
-            android:layout_toLeftOf="@+id/usersButton"
-            android:layout_toStartOf="@+id/usersButton"
-            android:background="@mipmap/add_user_1"
-            android:backgroundTint="@color/colorAccent"
-            android:contentDescription="@string/add_users_group"
-            android:onClick="handleButtons" />
+            android:layout_toLeftOf="@+id/view_users_layout"
+            android:layout_toStartOf="@+id/view_users_layout"
+            android:background="@drawable/icon_shape">
 
-        <ImageButton
-            android:id="@+id/usersButton"
+            <ImageButton
+                android:id="@+id/add_user_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/add_user_1"
+                android:backgroundTint="@color/colorAccent"
+                android:contentDescription="@string/add_users_group"
+                android:onClick="handleButtons" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/view_users_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignEnd="@+id/layout_name_group"
             android:layout_alignRight="@+id/layout_name_group"
-            android:layout_alignTop="@+id/add_user_button"
-            android:background="@mipmap/groups_icon"
-            android:backgroundTint="@color/colorAccent"
-            android:contentDescription="@string/show_users_groups"
-            android:onClick="handleButtons" />
+            android:layout_alignTop="@+id/add_user_layout"
+            android:background="@drawable/icon_shape">
+            <ImageButton
+                android:id="@+id/usersButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/groups_icon"
+                android:backgroundTint="@color/colorAccent"
+                android:contentDescription="@string/show_users_groups"
+                android:onClick="handleButtons" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/usersButton"
+            android:layout_alignEnd="@+id/view_users_layout"
             android:layout_alignLeft="@+id/layout_user"
-            android:layout_alignRight="@+id/usersButton"
+            android:layout_alignRight="@+id/view_users_layout"
             android:layout_alignStart="@+id/layout_user"
             android:layout_below="@+id/layout_user">
 

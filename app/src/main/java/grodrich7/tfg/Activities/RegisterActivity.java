@@ -78,6 +78,7 @@ public class RegisterActivity extends HelperActivity {
     }
 
     public void register(final View v){
+        pressEffect(v);
         if (!checkInputs())return;
         if (!isOnline()){
             Snackbar.make(registerBtn,R.string.no_connection, Snackbar.LENGTH_SHORT).show();

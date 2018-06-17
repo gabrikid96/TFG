@@ -261,6 +261,7 @@ public class DrivingActivity extends HelperActivity {
 
     //region OnClick
     public void viewsHandles(View v){
+        pressEffect(v);
         switch (v.getId()){
             case R.id.destinationInfo:
                 destinationAlert();

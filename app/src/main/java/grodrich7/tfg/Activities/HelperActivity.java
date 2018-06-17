@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -191,6 +192,12 @@ public abstract class HelperActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    public void pressEffect(View button){
+        AlphaAnimation buttonAnimation = new AlphaAnimation(0.2f, 1.0f);
+        buttonAnimation.setDuration(250);
+        button.startAnimation(buttonAnimation);
     }
 
 

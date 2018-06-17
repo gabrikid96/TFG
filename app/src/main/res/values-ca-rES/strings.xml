@@ -102,4 +102,5 @@
     <string name="exit_message">Estas segur de que vols sortir? Perdreu tots els canvis</string>
     <string name="exit_title">Descartar canvis</string>
     <string name="image_taken">¡Imatge capturada!</string>
+    <string name="deleted_group_driving">Finalitza el mode conducció abans de realitzar l\'acció.</string>
 </resources>

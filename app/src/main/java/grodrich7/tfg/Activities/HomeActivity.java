@@ -27,6 +27,7 @@ public class HomeActivity extends HelperActivity {
     }
 
     public void handleButtons(View v){
+        pressEffect(v);
         switch (v.getId()){
             case R.id.drivingModeBtn:
                 launchIntent(DrivingActivity.class, TRANSITION_RIGHT);
