@@ -156,12 +156,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onMenuItemSelected(featureId, item);
     }
 
-//    @Override
-//    public void onBackPressed(){
-//        super.onBackPressed();
-//        overridePendingTransition(R.anim.transition_right_in, R.anim.transition_right_out);
-//        finish();
-//    }
 
 
     @Override

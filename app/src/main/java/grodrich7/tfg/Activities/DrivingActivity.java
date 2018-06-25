@@ -57,6 +57,7 @@ public class DrivingActivity extends HelperActivity {
     private BroadcastReceiver cameraReceiver;
 
     public static final String FINISH_ACTION  = "FINISH";
+    private String lastUrl = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,10 +114,7 @@ public class DrivingActivity extends HelperActivity {
         toggleParkingIcon();
         toggleCallIcon();
         changeStartTimeText();
-        if (controller.getDrivingData() != null && controller.getDrivingData().getImages() != null && controller.getDrivingData().getImages().size() > 0){
-            String url = controller.getDrivingData().getImages().get(controller.getDrivingData().getImages().size() -1);
-            Glide.with(this).load(url).into(lastImage);
-        }
+        putLastImage();
         if (controller.getDrivingData() != null && controller.getDrivingData().isDriving() != null && controller.getDrivingData().isDriving().booleanValue()){
             cameraReceiver = createCameraReceiver();
             IntentFilter intentFilter = new IntentFilter("grodrich7.tfg.CAMERA_ACTION");
@@ -126,7 +124,7 @@ public class DrivingActivity extends HelperActivity {
 
     private void showDrivingDialog(){
         int message = controller.getDrivingData().isDriving() == null || !controller.getDrivingData().isDriving() ? R.string.driving_mode_on_attempt : R.string.driving_mode_off_attempt;
-
+        putLastImage();
         new AlertDialog.Builder(DrivingActivity.this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(R.string.driving_title)
@@ -157,6 +155,7 @@ public class DrivingActivity extends HelperActivity {
 
     private void stopDriving() {
         stopService(new Intent(DrivingActivity.this, AppService.class));
+        putLastImage();
         controller.endDriving();
         if (cameraReceiver != null){
             LocalBroadcastManager.getInstance(this).unregisterReceiver(cameraReceiver);
@@ -262,6 +261,7 @@ public class DrivingActivity extends HelperActivity {
     //region OnClick
     public void viewsHandles(View v){
         pressEffect(v);
+        putLastImage();
         switch (v.getId()){
             case R.id.destinationInfo:
                 destinationAlert();
@@ -275,6 +275,7 @@ public class DrivingActivity extends HelperActivity {
                 toggleCallIcon();
                 break;
             case R.id.image:
+                putLastImage();
                 final ImagePopup imagePopup = new ImagePopup(DrivingActivity.this);
                 imagePopup.setFullScreen(true); // Optional
                 imagePopup.setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -283,6 +284,19 @@ public class DrivingActivity extends HelperActivity {
                 imagePopup.viewPopup();
                 break;
         }
+    }
+
+    private void putLastImage(){
+        try{
+            if (controller.getDrivingData() != null && controller.getDrivingData().getImages() != null && controller.getDrivingData().getImages().size() > 0){
+                String url = controller.getDrivingData().getImages().get(controller.getDrivingData().getImages().size() -1);
+                if (!url.equals(lastUrl)){
+                    lastUrl = url;
+                    Glide.with(this).load(url).into(lastImage);
+                }
+            }
+        }catch (Exception ex){}
+
     }
 
     private void toggleCallIcon(){

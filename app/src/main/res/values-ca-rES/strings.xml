@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TFG</string>
     <string name="prompt_email">Correu electrònic</string>
     <string name="prompt_password">Contrasenya</string>
     <string name="action_login">Iniciar sessió</string>

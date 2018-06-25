@@ -123,7 +123,7 @@ public class GroupsActivity extends HelperActivity {
                     @Override
                     public void onClick(View view) {
                         pressEffect(holder.action_btn);
-                        if (!controller.getDrivingData().isDriving()) {
+                        if (controller.getDrivingData().isDriving() == null || !controller.getDrivingData().isDriving()) {
                             final Animation animation = AnimationUtils.loadAnimation(GroupsActivity.this, android.R.anim.slide_out_right);
                             animation.setAnimationListener(new Animation.AnimationListener() {
                                 @Override

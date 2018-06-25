@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">TFG</string>
+    <string name="app_name" translatable="false">MoveShare</string>
     <string name="title_activity_main" translatable="false">MainActivity</string>
     <string name="Logo" translatable="false">Logo</string>
     <string name="login_information" translatable="false">login</string>

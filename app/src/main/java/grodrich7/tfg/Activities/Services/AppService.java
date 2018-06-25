@@ -37,9 +37,11 @@ public class AppService extends Service {
                 Manifest.permission.ACCESS_FINE_LOCATION);
         int camera = ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.CAMERA);
-        boolean draw = false;
+        boolean draw;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             draw = Settings.canDrawOverlays(this);
+        }else{
+            draw = true;
         }
         boolean stopLocation = false;
         boolean stopCamera = false;
