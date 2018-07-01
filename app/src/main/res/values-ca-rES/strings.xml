@@ -49,16 +49,16 @@
     <string name="driving_mode_on_attempt">" El mode de conducció s'activarà, recordeu que les vostres dades es compartiran amb els grups que heu configurat, esteu segur que voleu activar el mode de conducció?"</string>
     <string name="driving_mode_off_attempt">Esteu segur que voleu desactivar el mode de conducció? Es deixarà de compartir dades.</string>
     <string name="call">Trucar</string>
-    <string name="say_call">Digues \"trucar a"\</string>
+    <string name="say_call">Digui \"trucar a\"</string>
     <string name="contact_name_label">Contacte</string>
-    <string name="message">Enviar un missatge</string>
-    <string name="say_message">Digues \"missatge a"\</string>
+    <string name="message">Enviar un \nmissatge</string>
+    <string name="say_message">Digui \"missatge a\"</string>
     <string name="actions_label">Accions</string>
     <string name="change_data">Canviar informació</string>
-    <string name="say_destination">Digues destinació</string>
-    <string name="change_destination">Canviar \ndestinació</string>
-    <string name="change_parking">Canviar \nbuscant aparcament</string>
-    <string name="say_parking">Digues \"aparcant"\</string>
+    <string name="say_destination">Digui \"destinació\"</string>
+    <string name="change_destination">Destinació</string>
+    <string name="change_parking">Buscant \naparcament</string>
+    <string name="say_parking">Digui \"Parking\"</string>
     <string name="actualInformation">Informació actual</string>
     <string name="title_activity_settings">Preferències</string>
     <string name="pref_header_data_sync">Sincronització de les dades</string>
@@ -102,4 +102,12 @@
     <string name="exit_title">Descartar canvis</string>
     <string name="image_taken">¡Imatge capturada!</string>
     <string name="deleted_group_driving">Finalitza el mode conducció abans de realitzar l\'acció.</string>
+    <string name="destinationCommand">destinació</string>
+    <string name="callsCommand">trucades</string>
+    <string name="parkingCommand">parking</string>
+    <string name="change_calls">Accepta \ntrucades</string>
+    <string name="say_calls">Digui \"Trucades\"</string>
+    <string name="callToCommand">trucar a</string>
+    <string name="messageCommand">missatge a</string>
+    <string name="pref_title_voice">Reconeixement de veu</string>
 </resources>

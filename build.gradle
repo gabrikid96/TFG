@@ -6,6 +6,9 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        flatDir {
+            dirs 'aars'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'

@@ -64,13 +64,13 @@
     <string name="call">Make a call</string>
     <string name="say_call">Say \"Call to\"</string>
     <string name="contact_name_label">Contact name\"</string>
-    <string name="message">Send a message</string>
+    <string name="message">Send a \nmessage</string>
     <string name="say_message">Say \"Message to\"</string>
     <string name="actions_label">Actions</string>
     <string name="change_data">Change information</string>
-    <string name="change_destination">Change \ndestination</string>
+    <string name="change_destination">Destination</string>
     <string name="say_destination">Say \"Destination\"</string>
-    <string name="change_parking">Change looking\nfor parking</string>
+    <string name="change_parking">Looking for \nparking</string>
     <string name="say_parking">Say \"Parking\"</string>
     <string name="actualInformation">Actual information</string>
     <string name="title_activity_settings">Settings</string>
@@ -190,4 +190,12 @@
     <string name="exit_title">Discard changes</string>
     <string name="image_taken">Your Picture has been taken !</string>
     <string name="deleted_group_driving">Finish driving mode before performing the action</string>
+    <string name="destinationCommand">destination</string>
+    <string name="callsCommand">calls</string>
+    <string name="parkingCommand">parking</string>
+    <string name="change_calls">Accept \ncalls</string>
+    <string name="say_calls">Say \"Calls\"</string>
+    <string name="callToCommand">call to</string>
+    <string name="messageCommand">message to</string>
+    <string name="pref_title_voice">Voice recognition</string>
 </resources>

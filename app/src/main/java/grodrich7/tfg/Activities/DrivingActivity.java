@@ -2,6 +2,7 @@ package grodrich7.tfg.Activities;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,8 +17,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -30,18 +34,36 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.ceylonlabs.imageviewpopup.ImagePopup;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import grodrich7.tfg.Activities.Services.AppService;
 import grodrich7.tfg.Activities.Services.CameraHandler;
+import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.R;
+
+import static grodrich7.tfg.Models.Constants.GOOGLE_MAPS_URL;
+import static grodrich7.tfg.Models.Constants.WEATHER_URL;
 
 public class DrivingActivity extends HelperActivity {
 
@@ -59,10 +81,19 @@ public class DrivingActivity extends HelperActivity {
     public static final String FINISH_ACTION  = "FINISH";
     private String lastUrl = "";
 
+    private RecognitionCommands recognitionCommands;
+    private RequestQueue mRequestQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        recognitionCommands = new RecognitionCommands(this);
+        // Instantiate the cache
+        Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024); // 1MB cap
+        // Set up the network to use HttpURLConnection as the HTTP client.
+        Network network = new BasicNetwork(new HurlStack());
+        // Instantiate the RequestQueue with the cache and network.
+        mRequestQueue = new RequestQueue(cache, network);
     }
 
     @Override
@@ -75,7 +106,9 @@ public class DrivingActivity extends HelperActivity {
         ArrayList<String> permissions = new ArrayList<>();
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissions.add(Manifest.permission.RECORD_AUDIO);
         permissions.add(Manifest.permission.CAMERA);
+
         if (permissions.size() > 0){
             ActivityCompat.requestPermissions(this, permissions.toArray(new String[3]),ALL_PERMISSIONS);
         }
@@ -155,6 +188,7 @@ public class DrivingActivity extends HelperActivity {
 
     private void stopDriving() {
         stopService(new Intent(DrivingActivity.this, AppService.class));
+        recognitionCommands.stopListening();
         putLastImage();
         controller.endDriving();
         if (cameraReceiver != null){
@@ -179,6 +213,7 @@ public class DrivingActivity extends HelperActivity {
         registerReceiver(cameraReceiver, intentFilter);
 
         startService(new Intent(this, AppService.class));
+        recognitionCommands.startListening();
     }
 
     private void toggleDrivingIcon(){
@@ -211,24 +246,8 @@ public class DrivingActivity extends HelperActivity {
     private void changeDestination (String newDestination){
         this.destination.setText(newDestination);
         controller.updateDestination(newDestination);
-        estimateDestination();
-    }
-
-    private void estimateDestination(){
-        String destination = controller.getDrivingData().getDestination();
-        if (destination != null && !destination.isEmpty()){
-            Geocoder gc = new Geocoder(this);
-            if(gc.isPresent()) {
-
-                try {
-                    List<Address> addresses = gc.getFromLocationName(destination, 1);
-                    if (addresses.size() > 0){
-                        Address address = addresses.get(0);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        if (controller.getDrivingData() != null && controller.getDrivingData().getLocationInfo() != null){
+            getEstimatedTime();
         }
     }
 
@@ -245,7 +264,11 @@ public class DrivingActivity extends HelperActivity {
 
                     }
 
-                    if (grantResults[2] == PackageManager.PERMISSION_GRANTED){//Camera
+                    if (grantResults[2] == PackageManager.PERMISSION_GRANTED){//Audio
+
+                    }
+
+                    if (grantResults[3] == PackageManager.PERMISSION_GRANTED){//Camera
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (!Settings.canDrawOverlays(this)) {
                                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
@@ -299,11 +322,11 @@ public class DrivingActivity extends HelperActivity {
 
     }
 
-    private void toggleCallIcon(){
+    public void toggleCallIcon(){
         call_layout.setBackgroundResource(controller.getDrivingData().isAcceptCalls() != null && controller.getDrivingData().isAcceptCalls() ? R.drawable.destination_shape : R.drawable.disabled_shape);
     }
 
-    private  void toggleParkingIcon(){
+    public  void toggleParkingIcon(){
         parking_icon.setBackgroundResource(controller.getDrivingData().isSearchingParking() != null && controller.getDrivingData().isSearchingParking() ? R.mipmap.parking_icon : R.mipmap.no_parking);
     }
 
@@ -382,6 +405,91 @@ public class DrivingActivity extends HelperActivity {
                 }
             }
         };
+    }
+    public void startVoiceToTextService(int CODE) {
+        Intent intent = new Intent(CODE == 1 ? RecognizerIntent.ACTION_RECOGNIZE_SPEECH : RecognizerIntent.ACTION_VOICE_SEARCH_HANDS_FREE);
+        //You can set here own local Language.
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        try {
+            startActivityForResult(intent, CODE);
+        }
+        catch (ActivityNotFoundException a) {
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case 1: {
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList<String> resultsList = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (resultsList != null && resultsList.size() > 0){
+                        changeDestination(resultsList.get(0));
+                    }
+                    recognitionCommands.restartListening();
+                }
+                break;
+            }
+            case 2: {
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList<String> resultsList = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (resultsList != null && resultsList.size() > 0){
+                       // changeDestination(resultsList.get(0));
+                    }
+                    recognitionCommands.restartListening();
+                }
+                break;
+            }
+            case 3: {
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList<String> resultsList = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (resultsList != null && resultsList.size() > 0){
+                        // changeDestination(resultsList.get(0));
+                    }
+                    recognitionCommands.restartListening();
+                }
+                break;
+            }
+
+        }
+    }
+
+    public void getEstimatedTime(){
+        DrivingData drivingData = controller.getDrivingData();
+        String url = GOOGLE_MAPS_URL + "units=metric" + "&origins=" +  drivingData.getLocationInfo().getLat() + "," + drivingData.getLocationInfo().getLon() +
+                "&destinations=" + drivingData.getDestination() + "&departure_time=now" + "&mode=driving" + "&language=" + Locale.getDefault().getLanguage() +
+                "&key=AIzaSyA89lb-rq0M168bt_w7NpAYz41QeJyZzMI";
+        Log.d("ESTIMATED", url);
+        mRequestQueue.start();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject elements = response.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0);
+                            timeEstimated.setText(" " + elements.getJSONObject("duration").getString("text"));
+
+                            /*description = weather.getString("description");
+                            icon = "http://openweathermap.org/img/w/" + weather.getString("icon") + ".png";
+                            temp = response.getJSONObject("main").getDouble("temp");*/
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mRequestQueue.stop();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        mRequestQueue.stop();
+                    }
+                });
+        mRequestQueue.add(jsonObjectRequest);
     }
 }
 

@@ -50,14 +50,14 @@
     <string name="call">Realizar llamada</string>
     <string name="say_call">Di \"Llamar a\"</string>
     <string name="contact_name_label">Nombre del contacto</string>
-    <string name="message">Enviar mensaje</string>
+    <string name="message">Enviar \nmensaje</string>
     <string name="say_message">Di \"Mensaje para\"</string>
     <string name="actions_label">Acciones</string>
     <string name="change_data">Cambiar información</string>
-    <string name="change_destination">Cambiar\ndestinación</string>
+    <string name="change_destination">Destinación</string>
     <string name="say_destination">Di \"Destino\"</string>
     <string name="change_parking">Buscando\naparcamiento</string>
-    <string name="say_parking">Di \"Aparcando\"</string>
+    <string name="say_parking">Di \"Parking\"</string>
     <string name="actualInformation">Información actual</string>
     <string name="title_activity_settings">Ajustes</string>
     <string name="pref_header_notifications">Notificaciones</string>
@@ -102,4 +102,12 @@
     <string name="exit_title">Descartar cambios</string>
     <string name="image_taken">¡Imagen capturada!</string>
     <string name="deleted_group_driving">Finaliza el modo conducción antes de realizar la acción.</string>
+    <string name="destinationCommand">destino</string>
+    <string name="callsCommand">llamadas</string>
+    <string name="parkingCommand">parking</string>
+    <string name="say_calls">Di \"Llamadas\"</string>
+    <string name="change_calls">Acepta \nllamadas</string>
+    <string name="callToCommand">llamar a</string>
+    <string name="messageCommand">mensaje a</string>
+    <string name="pref_title_voice">Reconocimiento de voz</string>
 </resources>
