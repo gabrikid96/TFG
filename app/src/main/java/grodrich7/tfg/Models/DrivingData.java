@@ -26,7 +26,7 @@ public class DrivingData {
 
 
     public Boolean isDriving() {
-        return driving;
+        return driving == null ? false : driving;
     }
 
     public void setDriving(Boolean driving) {

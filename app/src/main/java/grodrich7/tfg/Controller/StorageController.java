@@ -24,6 +24,8 @@ import java.util.Date;
 
 import grodrich7.tfg.Activities.Services.CameraHandler;
 
+import static grodrich7.tfg.Models.Constants.IMAGE_QUALITY;
+
 /**
  * Created by grodrich on 24/04/2018.
  */
@@ -43,12 +45,9 @@ public class StorageController {
             // Get the data from an ImageView as bytes
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap = RotateBitmap(bitmap, 90);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            final byte[] data = baos.toByteArray();
-            Date now = Calendar.getInstance().getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd-HH:mm:ss");
-            String name = "image"+ sdf.format(now) +".jpg";
-            UploadTask uploadTask = drivingImages.child(name).putBytes(data);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, baos);
+
+            UploadTask uploadTask = drivingImages.child(getImageName()).putBytes(baos.toByteArray());
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -80,11 +79,38 @@ public class StorageController {
             Toast.makeText(service, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
+    public void removeImage(String url){
+        // Create a reference to the file to delete
+        StorageReference referenceFromUrl = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+
+        // Delete the file
+        referenceFromUrl.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("STORAGE", "Image removed successfully");
+                // File deleted successfully
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("STORAGE", "Image removed unsuccessfully");
+                // Uh-oh, an error occurred!
+            }
+        });
+    }
+
     private Bitmap RotateBitmap(Bitmap source, float angle)
     {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    private String getImageName(){
+        Date now = Calendar.getInstance().getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd-HH:mm:ss");
+        return "image"+ sdf.format(now) +".jpg";
     }
 
     public static StorageController getInstance() {

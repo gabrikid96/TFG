@@ -47,9 +47,7 @@ public class Controller {
         Log.d("CONTROLLER", "Get instance");
         try{
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        }catch (DatabaseException ex){
-
-        }
+        }catch (DatabaseException ex){}
         database = FirebaseDatabase.getInstance();
         usersReference = database.getReference(USERS_REFERENCE);
         usersReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).keepSynced(true);
@@ -210,6 +208,9 @@ public class Controller {
                     case SEARCHING_PARKING:
                         permitted.setSearchingParking(model.isSearchingParking());
                         break;
+                    case IMAGES:
+                        permitted.setImages(model.getImages());
+                        break;
                 }
             }
         }
@@ -222,25 +223,26 @@ public class Controller {
         if (drivingData.isDriving() != null && drivingData.isDriving()) {
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
-                for (final String email : entry.getValue().getUsers()) {
-                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            try {
-                                String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
-                                if (entry.getValue().getPermissions().get(Constants.Data.LOCATION.toString())) {
+                if (entry.getValue().getPermissions().get(Constants.Data.LOCATION.toString())) {
+                    for (final String email : entry.getValue().getUsers()) {
+                        usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                try {
+                                    String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                                    DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                                     friend_ref.child("locationInfo").setValue(drivingData.getLocationInfo());
+
+                                } catch (NullPointerException ex) {
                                 }
-                            } catch (NullPointerException ex) {
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -250,26 +252,26 @@ public class Controller {
         if (drivingData.isDriving() != null && drivingData.isDriving()){
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
-                for (final String email : entry.getValue().getUsers()){
-                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            try{
-                                String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
-                                if (entry.getValue().getPermissions().get(Constants.Data.DESTINATION.toString())){
+                if (entry.getValue().getPermissions().get(Constants.Data.DESTINATION.toString())) {
+                    for (final String email : entry.getValue().getUsers()) {
+                        usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                try {
+                                    String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                                    DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                                     friend_ref.child("destination").setValue(drivingData.getDestination());
+                                } catch (NullPointerException ex) {
                                 }
-                            }catch (NullPointerException ex){
                             }
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
-
             }
         }
     }
@@ -279,26 +281,27 @@ public class Controller {
         if (drivingData.isDriving() != null && drivingData.isDriving()){
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
-                for (final String email : entry.getValue().getUsers()){
-                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            try{
-                                String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
-                                if (entry.getValue().getPermissions().get(Constants.Data.ACCEPT_CALLS.toString())){
+                if (entry.getValue().getPermissions().get(Constants.Data.ACCEPT_CALLS.toString())){
+                    for (final String email : entry.getValue().getUsers()) {
+                        usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                try {
+                                    String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                                    DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
                                     friend_ref.child("acceptCalls").setValue(drivingData.isAcceptCalls());
+
+                                } catch (NullPointerException ex) {
                                 }
-                            }catch (NullPointerException ex){
                             }
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
-
             }
         }
     }
@@ -308,26 +311,28 @@ public class Controller {
         if (drivingData.isDriving() != null && drivingData.isDriving()){
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
-                for (final String email : entry.getValue().getUsers()){
-                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            try{
-                                String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
-                                if (entry.getValue().getPermissions().get(Constants.Data.SEARCHING_PARKING.toString())){
+                if (entry.getValue().getPermissions().get(Constants.Data.SEARCHING_PARKING.toString())) {
+                    for (final String email : entry.getValue().getUsers()) {
+                        usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                try {
+                                    String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                                    DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
+
                                     friend_ref.child("searchingParking").setValue(drivingData.isSearchingParking());
+
+                                } catch (NullPointerException ex) {
                                 }
-                            }catch (NullPointerException ex){
                             }
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
-
             }
         }
     }
@@ -337,37 +342,39 @@ public class Controller {
             drivingData.setImages(new ArrayList<String>(10));
         }
         if (drivingData.getImages().size() >= 10){
-            drivingData.getImages().remove(0);
+            String urlToRemove = drivingData.getImages().remove(0);
+            StorageController.getInstance().removeImage(urlToRemove);
         }
         drivingData.getImages().add(url);
         if (drivingData.isDriving() != null && drivingData.isDriving()) {
             final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
             for (final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
-                for (final String email : entry.getValue().getUsers()) {
-                    usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            try {
-                                String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
-                                DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
-                                friend_ref.child("images").setValue(drivingData.getImages());
-                                if (entry.getValue().getPermissions().get(Constants.Data.IMAGES.toString())) {
+                if (entry.getValue().getPermissions().get(Constants.Data.IMAGES.toString())) {
+                    for (final String email : entry.getValue().getUsers()) {
+                        usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                try {
+                                    String uid = (String) ((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
+                                    DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
+                                    friend_ref.child("images").setValue(drivingData.getImages());
                                     friend_ref.child("images").setValue(drivingData.getImages()).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             Log.e("IMAGES", e.getMessage());
                                         }
                                     });
+
+                                } catch (NullPointerException ex) {
                                 }
-                            } catch (NullPointerException ex) {
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -377,6 +384,7 @@ public class Controller {
         drivingData.setDriving(false);
         final DatabaseReference ref = dataReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         for(final HashMap.Entry<String, Group> entry : currentUser.getGroups().entrySet()) {
+            if (entry.getValue().getPermissions().get(Constants.Data.DRIVING.toString())){
             for (final String email : entry.getValue().getUsers()){
                 usersReference.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -384,9 +392,7 @@ public class Controller {
                         try{
                             String uid = (String)((HashMap) dataSnapshot.getValue()).keySet().toArray()[0];
                             DatabaseReference friend_ref = ref.child(entry.getKey()).child(uid);
-                            if (entry.getValue().getPermissions().get(Constants.Data.DRIVING.toString())){
-                                friend_ref.child("driving").setValue(drivingData.isDriving());
-                            }
+                            friend_ref.child("driving").setValue(drivingData.isDriving());
                         }catch (NullPointerException ex){
                         }
                     }
@@ -396,6 +402,7 @@ public class Controller {
                     }
                 });
             }
+        }
 
         }
     }

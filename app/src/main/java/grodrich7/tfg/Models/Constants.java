@@ -25,6 +25,7 @@ public class Constants {
     public static final String DATA_REFERENCE = "driving_data";
     public static final int DEFAULT_TIME_LOCATION = 5000;//5 segundos
     public static final long DEFAULT_TIME_CAMERA = 60000; //60 segundos
+    public static final int IMAGE_QUALITY = 75;
     public static final String WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?";
     public static final String GOOGLE_MAPS_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?";
     public static final ArrayList<String> LANGUAGES_AVAILABLES = new ArrayList<String>() {
