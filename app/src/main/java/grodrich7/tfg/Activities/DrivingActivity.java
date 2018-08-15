@@ -74,6 +74,7 @@ public class DrivingActivity extends HelperActivity {
     private TextView startTimeData;
     private ImageView parking_icon;
     private ImageView lastImage;
+    private RelativeLayout voice_layout;
     private RelativeLayout call_layout;
     private static final int ALL_PERMISSIONS = 7171;
     private BroadcastReceiver cameraReceiver;
@@ -83,6 +84,7 @@ public class DrivingActivity extends HelperActivity {
 
     private RecognitionCommands recognitionCommands;
     private RequestQueue mRequestQueue;
+    private boolean voiceCommands;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +144,7 @@ public class DrivingActivity extends HelperActivity {
         parking_icon = findViewById(R.id.parking_icon);
         call_layout = findViewById(R.id.call_layout);
         lastImage = findViewById(R.id.image);
+        voice_layout = findViewById(R.id.voice_layout);
         this.destination.setText(controller.getDrivingData().getDestination() == null || controller.getDrivingData().getDestination().isEmpty() ? getString(R.string.unknownInformation) : controller.getDrivingData().getDestination());
         toggleDrivingIcon();
         toggleParkingIcon();
@@ -213,7 +216,7 @@ public class DrivingActivity extends HelperActivity {
         registerReceiver(cameraReceiver, intentFilter);
 
         startService(new Intent(this, AppService.class));
-        recognitionCommands.startListening();
+        recognitionCommands.startListening(voiceCommands);
     }
 
     private void toggleDrivingIcon(){
@@ -305,6 +308,15 @@ public class DrivingActivity extends HelperActivity {
                 imagePopup.setImageOnClickClose(true);  // Optional
                 imagePopup.initiatePopup(lastImage.getDrawable());
                 imagePopup.viewPopup();
+                break;
+            case R.id.voice_layout:
+                this.voiceCommands = !voiceCommands;
+                voice_layout.setBackgroundResource(voiceCommands ? R.drawable.destination_shape : R.drawable.disabled_shape);
+                if (controller.getDrivingData().isDriving() != null && controller.getDrivingData().isDriving() && this.voiceCommands){
+                    recognitionCommands.startListening(this.voiceCommands);
+                }else if (controller.getDrivingData().isDriving() != null && controller.getDrivingData().isDriving() && !this.voiceCommands){
+                    recognitionCommands.stopListening();
+                }
                 break;
         }
     }

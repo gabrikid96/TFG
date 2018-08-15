@@ -45,12 +45,10 @@ public class RecognitionCommands implements RecognitionListener {
         this.messageCommand = drivingActivity.getString(R.string.messageCommand);
     }
 
-    public void startListening(){
+    public void startListening(boolean active){
         int audio = ContextCompat.checkSelfPermission(drivingActivity.getApplicationContext(),
                 Manifest.permission.RECORD_AUDIO);
-        boolean notifications = PreferenceManager.getDefaultSharedPreferences(drivingActivity.getApplicationContext())
-                .getBoolean("voice_recognition", false);
-        if (audio == 0 && notifications){
+        if (audio == 0 && active){
             new SetupTask(drivingActivity).execute();
         }
     }

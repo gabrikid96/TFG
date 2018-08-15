@@ -159,9 +159,9 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginRight="15dp"
                     android:layout_weight="1"
+                    android:background="@drawable/disabled_shape"
                     android:clickable="true"
-                    android:onClick="viewsHandles"
-                    android:background="@drawable/disabled_shape">
+                    android:onClick="viewsHandles">
 
                     <ImageView
                         android:id="@+id/call_icon"
@@ -183,9 +183,46 @@
                     android:layout_weight="1"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/voice_recognition_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/call_image_layout"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="7dp"
+                android:weightSum="2">
+
+                <RelativeLayout
+                    android:id="@+id/voice_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="15dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/disabled_shape"
+                    android:clickable="true"
+                    android:onClick="viewsHandles">
+
+                    <ImageView
+                        android:id="@+id/voice_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:background="@mipmap/voice_icon"
+                        android:backgroundTint="#FFF" />
+
+                </RelativeLayout>
+            </LinearLayout>
+
             <include
                 layout="@layout/music_layout"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_height="match_parent"
                 android:layout_below="@id/call_image_layout"
                 android:layout_centerHorizontal="true"
