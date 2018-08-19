@@ -9,6 +9,8 @@ import java.util.ArrayList;
  */
 
 public class Constants {
+    public static final float DEFAULT_ZOOM = 14.0f;
+
     public enum Data {
         DRIVING,
         LOCATION,

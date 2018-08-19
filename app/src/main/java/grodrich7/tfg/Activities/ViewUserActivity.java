@@ -51,6 +51,7 @@ import org.json.JSONObject;
 import java.util.Locale;
 
 import grodrich7.tfg.Activities.Services.NotificationService;
+import grodrich7.tfg.Models.Constants;
 import grodrich7.tfg.Models.DrivingData;
 import grodrich7.tfg.R;
 
@@ -71,6 +72,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     private DrivingData drivingData;
     boolean full;
     private String friendUid;
+    private float zoomLevel;
 
     public static final String VIEW_ACTION  = "VIEW";
 
@@ -85,7 +87,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         Network network = new BasicNetwork(new HurlStack());
         // Instantiate the RequestQueue with the cache and network.
         mRequestQueue = new RequestQueue(cache, network);
-
+        zoomLevel = Constants.DEFAULT_ZOOM;
 
         friendUid = (String) getIntent().getSerializableExtra("key");
         getData(friendUid);
@@ -284,6 +286,7 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
         googleMap.setMapType(GoogleMap.	MAP_TYPE_NORMAL	);
        // googleMap.setBuildingsEnabled(true);
         googleMap.setTrafficEnabled(true);
+        googleMap.setOnCameraMoveListener(getCameraChangeListener());
         this.googleMap = googleMap;
     }
 
@@ -321,8 +324,21 @@ public class ViewUserActivity extends HelperActivity implements OnMapReadyCallba
     }
 
     public CameraUpdate getCameraPosition(LatLng currLatLng){
-        return CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(currLatLng).zoom(14.0f).build());
+        return CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder().target(currLatLng).zoom(zoomLevel).build());
     }
+
+    public GoogleMap.OnCameraMoveListener getCameraChangeListener()
+    {
+        return new GoogleMap.OnCameraMoveListener()
+        {
+            @Override
+            public void onCameraMove() {
+                CameraPosition cameraPosition = googleMap.getCameraPosition();
+                zoomLevel = cameraPosition.zoom;
+            }
+        };
+    }
+
     //endregion
     @Override
     protected void onNewIntent(Intent intent) {

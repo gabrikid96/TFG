@@ -21,7 +21,9 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import grodrich7.tfg.Activities.DrivingActivity;
 import grodrich7.tfg.Activities.Services.CameraHandler;
 
 import static grodrich7.tfg.Models.Constants.IMAGE_QUALITY;

@@ -212,8 +212,8 @@ public class DrivingActivity extends HelperActivity {
         controller.saveDrivingData();
 
         cameraReceiver = createCameraReceiver();
-        IntentFilter intentFilter = new IntentFilter("grodrich7.tfg.CAMERA_ACTION");
-        registerReceiver(cameraReceiver, intentFilter);
+        /*IntentFilter intentFilter = new IntentFilter("grodrich7.tfg.CAMERA_ACTION");
+        registerReceiver(cameraReceiver, intentFilter);*/
 
         startService(new Intent(this, AppService.class));
         recognitionCommands.startListening(voiceCommands);
